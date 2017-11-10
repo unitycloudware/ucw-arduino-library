@@ -5,8 +5,8 @@
 #define UCW_API_HOST          "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT          80
 
-char ssid[] = "TELUS0458";     // your network SSID (name)
-char pass[] = "neu474jiy4"; // your network password (use for WPA, or use as key for WEP)
+char ssid[] = "ssid";     // your network SSID (name)
+char pass[] = "pass"; // your network password (use for WPA, or use as key for WEP)
 
 int keyIndex = 0;              // your network key Index number (needed only for WEP)
 byte mac[6];
@@ -27,7 +27,7 @@ void myClass::setupSerialPorts() {
     //Initialize serial and wait for port to open:
     Serial.begin(9600);
     setupWifi();
-  
+
     while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
@@ -38,9 +38,9 @@ void myClass::setupWifi() {
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
    */
-  
+
   WiFi.setPins(8, 7, 4, 2); // Configure pins for Adafruit ATWINC1500 Feather
-  
+
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     Serial.println("WiFi shield not present");
@@ -52,16 +52,16 @@ void myClass::setupWifi() {
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
-    
+
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
 
     // wait 10 seconds for connection:
     delay(10000);
   }
-  
+
   Serial.println("Connected to WiFi!");
-  
+
   printWifiStatus();
 
   WiFi.hostByName(UCW_API_HOST, server);
@@ -74,10 +74,10 @@ void myClass::resetWifi() {
   Serial.println("");
 
   /*
-   * WiFi not recovering from wait for available TCP send buffer 
+   * WiFi not recovering from wait for available TCP send buffer
    * https://github.com/arduino-libraries/WiFi101/issues/118
    */
-  
+
   // shutdown WiFi stack, reset Feather M0, then restart WiFi101 software stack
   WiFi.end();
   digitalWrite(A0, LOW);
@@ -88,7 +88,7 @@ void myClass::resetWifi() {
 
 void myClass::printWifiStatus() {
   Serial.println();
-  
+
   // print the SSID of the network you're attached to:
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
@@ -111,7 +111,7 @@ void myClass::printWifiStatus() {
   Serial.print(mac[1],HEX);
   Serial.print(":");
   Serial.println(mac[0],HEX);
-  
+
   // print the received signal strength:
   long rssi = WiFi.RSSI();
   Serial.print("signal strength (RSSI):");
@@ -136,7 +136,7 @@ void myClass::printWifiStatus() {
 //    Serial.println("");
 
 //      if (payload.length() > 0) {
-//      sendData(deviceID,token,payload);      
+//      sendData(deviceID,token,payload);
 //    } else {
 //      Serial.println(""No data to send!");
 //      return
@@ -160,13 +160,13 @@ if ((millis() - lastConnectionTime) > postingInterval) {
       Serial.println("Sending payload: " + payload);
       Serial.print("Payload length: ");
       Serial.println(payload.length());
-  
+
       String apiUri = "POST /api/ucw/v1/data-streams/data-monitoring/messages/%deviceId HTTP/1.1";
       apiUri.replace("%deviceId", deviceID);
-  
+
       Serial.print("API URI: ");
       Serial.println(apiUri);
-      
+
       client.println(apiUri);
       client.print("Host: ");
       client.println(UCW_API_HOST);
@@ -199,7 +199,7 @@ if ((millis() - lastConnectionTime) > postingInterval) {
     client.stop();
 
   } else {
-    
+
     // if you couldn't make a connection
     if (token != UCW_API_DEVICE_TOKEN){
       Serial.println("invalid TOKEN; enter TOKEN for authentication");
