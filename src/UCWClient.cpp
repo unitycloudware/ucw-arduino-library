@@ -1,29 +1,41 @@
 #include <SPI.h>
 #include <WiFi101.h>
-#include "matrix.h"
+#include "UCWClient.h"
 
 #define UCW_API_HOST          "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT          80
 
-char ssid[] = "ssid";     // your network SSID (name)
-char pass[] = "pass"; // your network password (use for WPA, or use as key for WEP)
+char ssid[] = "your_ssid";     // your network SSID (name)
+char pass[] = "your_pass"; // your network password (use for WPA, or use as key for WEP)
 
 int keyIndex = 0;              // your network key Index number (needed only for WEP)
 byte mac[6];
 int status = WL_IDLE_STATUS;
 
-unsigned long lastConnectionTime = 0;               // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 15L * 1000L;  // delay between updates, in milliseconds
-
 IPAddress server;
 WiFiClient client;
 
+bool isTokenValid = false;
+int k_status = 0; //Counter
 
-myClass::myClass(){
-  Serial.println("It begins!");
+UCWClient::UCWClient(){
+  Serial.println("Start the data monitoring process");
   }
 
-void myClass::setupSerialPorts() {
+ void UCWClient::connect(String token){
+
+     if (token == UCW_API_DEVICE_TOKEN){
+
+        isTokenValid = true;
+        setupSerialPorts();
+
+     } else {
+         Serial.println("Invalid token, please enter valid token ");
+         return;
+     }
+ }
+
+void UCWClient::setupSerialPorts() {
     //Initialize serial and wait for port to open:
     Serial.begin(9600);
     setupWifi();
@@ -33,7 +45,7 @@ void myClass::setupSerialPorts() {
   }
 }
 
-void myClass::setupWifi() {
+void UCWClient::setupWifi() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
@@ -67,7 +79,7 @@ void myClass::setupWifi() {
   WiFi.hostByName(UCW_API_HOST, server);
 }
 
-void myClass::resetWifi() {
+void UCWClient::resetWifi() {
   Serial.println("");
   Serial.println("");
   Serial.println("*** Reseting device...");
@@ -86,7 +98,7 @@ void myClass::resetWifi() {
   WiFi.begin(ssid, pass);
 }
 
-void myClass::printWifiStatus() {
+void UCWClient::printWifiStatus() {
   Serial.println();
 
   // print the SSID of the network you're attached to:
@@ -124,34 +136,18 @@ void myClass::printWifiStatus() {
   Serial.println();
 }
 
-//void myClass::collectData(String deviceID,String token,String payload) {
-  //if ((millis() - lastConnectionTime) > postingInterval) {
-//    String data = "";
-//
-//    Serial.print("Data = ");
-//
-//    data = readData();
-//    Serial.print(data);
-//
-//    Serial.println("");
 
-//      if (payload.length() > 0) {
-//      sendData(deviceID,token,payload);
-//    } else {
-//      Serial.println(""No data to send!");
-//      return
-//      }
-//  }
-//}
+void UCWClient::sendData(String deviceID,String dataStreamName,String payload) {
+  if (isTokenValid==false){
+    Serial.println("invalid token, provide a valid token");
+    return;
+  }
 
+  if (payload.length() < 1) {
+    Serial.println("No data to send!");
+    return;
+  }
 
-void myClass::sendData(String deviceID,String token,String payload) {
-//  if (payload.length() < 1) {
-//    Serial.println("No data to send!");
-//    return;
-//  }
-
-if ((millis() - lastConnectionTime) > postingInterval) {
   if (payload.length() > 0) {
     if (client.connect(server, UCW_API_PORT)) {
       Serial.println();
@@ -161,8 +157,9 @@ if ((millis() - lastConnectionTime) > postingInterval) {
       Serial.print("Payload length: ");
       Serial.println(payload.length());
 
-      String apiUri = "POST /api/ucw/v1/data-streams/data-monitoring/messages/%deviceId HTTP/1.1";
+      String apiUri = "POST /api/ucw/v1/data-streams/%dataStreamName/messages/%deviceId HTTP/1.1";
       apiUri.replace("%deviceId", deviceID);
+      apiUri.replace("%dataStreamName", dataStreamName);
 
       Serial.print("API URI: ");
       Serial.println(apiUri);
@@ -176,7 +173,7 @@ if ((millis() - lastConnectionTime) > postingInterval) {
       client.print("Content-Length: ");
       client.println(payload.length());
       client.print("Authorization: Bearer ");
-      client.println(token);
+      client.println(UCW_API_DEVICE_TOKEN);
       client.println();
       client.println(payload);
 
@@ -188,30 +185,27 @@ if ((millis() - lastConnectionTime) > postingInterval) {
       while (client.available()) {
         char c = client.read();
         Serial.write(c);
+        if (c=='{' || k_status>0){
+          Serial.write(c);
+          k_status+=1;
+      }
+      if (c=='}'){
+        break;
       }
     }
-
-    // note the time that the connection was made:
-    lastConnectionTime = millis();
-
+    k_status=0;
     // close any connection before send a new request.
     // This will free the socket on the WiFi shield
     client.stop();
 
+  }
   } else {
 
     // if you couldn't make a connection
-    if (token != UCW_API_DEVICE_TOKEN){
-      Serial.println("invalid TOKEN; enter TOKEN for authentication");
-      return;
-      } else {
       Serial.println("connection failed");
       resetWifi();
   }
 }
-} else {
-  Serial.println("No data to send!");
-  return;
-  }
 }
-}
+
+

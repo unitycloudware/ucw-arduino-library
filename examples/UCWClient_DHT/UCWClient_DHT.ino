@@ -5,19 +5,18 @@
 
 #include <SPI.h>
 #include <WiFi101.h>
-#include "matrix.h"
+#include "UCWClient.h"
 #include "DHT.h"
 #define DHTPIN 6
 #define DHTTYPE DHT22
 
 DHT dht(DHTPIN, DHTTYPE);
 
-myClass myObject;
+UCWClient UCWClient_object;
 void setup() {
-
-myObject.setupSerialPorts();
   
-//  dht.begin();
+UCWClient_object.connect("DFD823J243");
+
 }
 
 void loop() {
@@ -48,7 +47,7 @@ void loop() {
   data.replace("%heat_indexC", String(hic));
   data.replace("%heat_indexF", String(hif));
   
-  myObject.sendData("deviceID","sadsadse3435",data);
+  UCWClient_object.sendData("deviceID","Temperature and Humidity Measurements",data);
   delay(1000);
  
 }
