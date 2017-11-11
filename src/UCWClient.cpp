@@ -17,12 +17,14 @@ WiFiClient client;
 
 bool isTokenValid = false;
 int k_status = 0; //Counter
+String token_1;
 
 UCWClient::UCWClient(){
   Serial.println("Start the data monitoring process");
   }
 
  void UCWClient::connect(String token){
+     token_1 = token;
 
      if (token == UCW_API_DEVICE_TOKEN){
 
@@ -173,7 +175,7 @@ void UCWClient::sendData(String deviceID,String dataStreamName,String payload) {
       client.print("Content-Length: ");
       client.println(payload.length());
       client.print("Authorization: Bearer ");
-      client.println(UCW_API_DEVICE_TOKEN);
+      client.println(token_1);
       client.println();
       client.println(payload);
 
