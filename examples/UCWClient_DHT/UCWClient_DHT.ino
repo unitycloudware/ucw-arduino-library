@@ -12,10 +12,10 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
-UCWClient UCWClient_object;
+UCWClient UCWClient_object; //create an object
 void setup() {
   
-UCWClient_object.connect("DFD823J243");
+UCWClient_object.connect("DFD823J243"); //enter token as string for authorisation
 
 }
 
