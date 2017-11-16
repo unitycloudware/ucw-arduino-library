@@ -15,7 +15,7 @@ DHT dht(DHTPIN, DHTTYPE);
 UCWClient UCWClient_object; //create an object
 void setup() {
   
-UCWClient_object.connect("DFD823J243"); //enter token as string for authorisation
+UCWClient_object.connect("your_token"); //enter token as string for authorisation
 
 }
 
@@ -47,7 +47,7 @@ void loop() {
   data.replace("%heat_indexC", String(hic));
   data.replace("%heat_indexF", String(hif));
   
-  UCWClient_object.sendData("deviceID","Temperature and Humidity Measurements",data);
+  UCWClient_object.sendData("your_deviceID","Temperature and Humidity Measurements",data);
   delay(1000);
  
 }

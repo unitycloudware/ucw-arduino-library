@@ -12,7 +12,7 @@ OneWire  ds(10);  // on pin 10 (a 4.7K resistor is necessary)
 
 UCWClient UCWClient_object;
 void setup() {
-UCWClient_object.connect("hadaskl");
+UCWClient_object.connect("your_token");
 }
 
 void loop() {
@@ -113,7 +113,7 @@ byte i;
   data_1.replace("%temperatureF", String(fahrenheit));
   
   
-  UCWClient_object.sendData("deviceID","Temperature measurements (C and F)",data_1);
+  UCWClient_object.sendData("your_deviceID","Temperature measurements (C and F)",data_1);
   delay(1000);
  
 }

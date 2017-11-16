@@ -9,7 +9,7 @@ class UCWClient  {
 
     //methods
     void connect(String token);
-    void sendData(String deviceID, String dataStreamName, String payload);
+    void sendData(String your_deviceID, String your_dataStreamName, String payload);
 
 
     private:
@@ -17,7 +17,7 @@ class UCWClient  {
     void setupWifi();
     void resetWifi();
     void printWifiStatus();
-    String UCW_API_DEVICE_TOKEN = "ha1mkr4gv5vrbrvnrb5gna9n6o45us2g";
+    String UCW_API_DEVICE_TOKEN = "your_token";
     bool isTokenValid;
     int k_status;
     String token_1;

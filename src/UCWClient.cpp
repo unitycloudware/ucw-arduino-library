@@ -139,7 +139,7 @@ void UCWClient::printWifiStatus() {
 }
 
 
-void UCWClient::sendData(String deviceID,String dataStreamName,String payload) {
+void UCWClient::sendData(String your_deviceID,String your_dataStreamName,String payload) {
   if (isTokenValid==false){
     Serial.println("invalid token, provide a valid token");
     return;
@@ -160,8 +160,8 @@ void UCWClient::sendData(String deviceID,String dataStreamName,String payload) {
       Serial.println(payload.length());
 
       String apiUri = "POST /api/ucw/v1/data-streams/%dataStreamName/messages/%deviceId HTTP/1.1";
-      apiUri.replace("%deviceId", deviceID);
-      apiUri.replace("%dataStreamName", dataStreamName);
+      apiUri.replace("%deviceId", your_deviceID);
+      apiUri.replace("%dataStreamName", your_dataStreamName);
 
       Serial.print("API URI: ");
       Serial.println(apiUri);
