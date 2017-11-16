@@ -6,7 +6,7 @@
 #define UCW_API_PORT          80
 
 char ssid[] = "your_ssid";     // your network SSID (name)
-char pass[] = "your_pass"; // your network password (use for WPA, or use as key for WEP)
+char pass[] = "your_password"; // your network password (use for WPA, or use as key for WEP)
 
 int keyIndex = 0;              // your network key Index number (needed only for WEP)
 byte mac[6];
