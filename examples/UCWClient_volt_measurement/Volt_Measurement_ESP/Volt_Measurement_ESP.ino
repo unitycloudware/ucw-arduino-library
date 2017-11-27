@@ -3,21 +3,20 @@
   Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#include <SPI.h>
-#include <WiFi101.h>
-#include "UCWClient.h"
+#include "UCW_ESP.h"
 
 int potPin = A0;
 int readValue; //potentiometer volatge between 0-1023V
 float voltage; //voltage between 0-5V
 
-UCWClient UCWClient_object; //create an object
+UCW_ESP UCW_ESP_object; //create an object
 
 void setup() {
 
   pinMode(potPin,INPUT); //set mode for A0 pin
   
-  UCWClient_object.connect("your_token"); //enter token as string for authorisation
+  UCW_ESP_object.connect("your_token"); //enter token as string for authorisation
+  UCW_ESP_object.setConnectionMode();
 
 }
 
@@ -33,10 +32,10 @@ void loop() {
     return;
   }
   
-  String data = "{\"voltage\": \"%voltage\"}";
+  String data = "{\"voltage\": %voltage}";
   data.replace("%voltage", String(voltage));
     
-  UCWClient_object.sendData("your_deviceID","Analog Voltage Measurements",data);
+  UCW_ESP_object.sendData("your_deviceID","Analog Voltage Measurements",data);
   delay(1000);
  
 }

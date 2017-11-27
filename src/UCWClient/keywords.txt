@@ -1,0 +1,10 @@
+
+#------------------------------------
+# Synthax Colouring for keywords
+#-----------------------------------
+
+UCWClient KEYWORD1 
+
+
+#Methods
+connect KEYWORD2

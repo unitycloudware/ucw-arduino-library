@@ -3,16 +3,16 @@
   Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#include <SPI.h>
-#include <WiFi101.h>
-#include "UCWClient.h"
+#include "UCW_M0.h"
 #include <OneWire.h>
 
 OneWire  ds(10);  // on pin 10 (a 4.7K resistor is necessary)
 
-UCWClient UCWClient_object;
+UCW_M0 UCW_M0_object;
+
 void setup() {
-UCWClient_object.connect("your_token");
+UCW_M0_object.connect("your_token");
+UCW_M0_object.setConnectionMode();
 }
 
 void loop() {
@@ -113,7 +113,7 @@ byte i;
   data_1.replace("%temperatureF", String(fahrenheit));
   
   
-  UCWClient_object.sendData("your_deviceID","Temperature measurements (C and F)",data_1);
+  UCW_M0_object.sendData("your_deviceID","Temperature measurements (C and F)",data_1);
   delay(1000);
  
 }

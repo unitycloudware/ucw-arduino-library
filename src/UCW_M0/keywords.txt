@@ -3,9 +3,9 @@
 # Synthax Colouring for keywords
 #-----------------------------------
 
-UCWClient KEYWORD1 
+UCW_M0 KEYWORD1 
 
 
 #Methods
-connect KEYWORD2
+setConnectionMode KEYWORD2
 sendData KEYWORD2

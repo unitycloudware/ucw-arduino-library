@@ -1,11 +1,12 @@
-#include <SPI.h>
+
+#include "UCW_M0.h"
 #include <WiFi101.h>
-#include "UCWClient.h"
+#include <SPI.h>
 
 #define UCW_API_HOST          "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT          80
 
-char ssid[] = "your_ssid";     // your network SSID (name)
+char ssid[] = "your_SSID";     // your network SSID (name)
 char pass[] = "your_password"; // your network password (use for WPA, or use as key for WEP)
 
 int keyIndex = 0;              // your network key Index number (needed only for WEP)
@@ -15,46 +16,34 @@ int status = WL_IDLE_STATUS;
 IPAddress server;
 WiFiClient client;
 
-bool isTokenValid = false;
-int k_status = 0; //Counter
-String token_1;
 
-UCWClient::UCWClient(){
-  Serial.println("Start the data monitoring process");
-  }
 
- void UCWClient::connect(String token){
-     token_1 = token;
+UCW_M0::UCW_M0(){
+analogReadResolution(12);
+}
 
-     if (token == UCW_API_DEVICE_TOKEN){
 
-        isTokenValid = true;
-        setupSerialPorts();
+void UCW_M0::setConnectionMode() {
 
-     } else {
-         Serial.println("Invalid token, please enter valid token ");
-         return;
-     }
- }
+    if (isTokenValid){
 
-void UCWClient::setupSerialPorts() {
-    //Initialize serial and wait for port to open:
-    Serial.begin(9600);
     setupWifi();
 
     while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
+} else {
+Serial.println("Please enter valid token");
+}
 }
 
-void UCWClient::setupWifi() {
+void UCW_M0::setupWifi() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
    */
 
-  WiFi.setPins(8, 7, 4, 2); // Configure pins for Adafruit ATWINC1500 Feather
-
+   WiFi.setPins(8, 7, 4, 2); // Configure pins for Adafruit ATWINC1500 Feather
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     Serial.println("WiFi shield not present");
@@ -81,7 +70,7 @@ void UCWClient::setupWifi() {
   WiFi.hostByName(UCW_API_HOST, server);
 }
 
-void UCWClient::resetWifi() {
+void UCW_M0::resetWifi() {
   Serial.println("");
   Serial.println("");
   Serial.println("*** Reseting device...");
@@ -100,7 +89,8 @@ void UCWClient::resetWifi() {
   WiFi.begin(ssid, pass);
 }
 
-void UCWClient::printWifiStatus() {
+
+void UCW_M0::printWifiStatus() {
   Serial.println();
 
   // print the SSID of the network you're attached to:
@@ -139,14 +129,16 @@ void UCWClient::printWifiStatus() {
 }
 
 
-void UCWClient::sendData(String your_deviceID,String your_dataStreamName,String payload) {
+void UCW_M0::sendData(String your_deviceID,String your_dataStreamName,String payload) {
   if (isTokenValid==false){
     Serial.println("invalid token, provide a valid token");
+    delay(1000);
     return;
   }
 
   if (payload.length() < 1) {
     Serial.println("No data to send!");
+    delay(1000);
     return;
   }
 
@@ -175,7 +167,7 @@ void UCWClient::sendData(String your_deviceID,String your_dataStreamName,String 
       client.print("Content-Length: ");
       client.println(payload.length());
       client.print("Authorization: Bearer ");
-      client.println(token_1);
+      client.println(UCW_API_DEVICE_TOKEN);
       client.println();
       client.println(payload);
 
@@ -185,29 +177,56 @@ void UCWClient::sendData(String your_deviceID,String your_dataStreamName,String 
 
     while (client.connected()) {
       while (client.available()) {
-        char c = client.read();
-        Serial.write(c);
-        if (c=='{' || k_status>0){
-          Serial.write(c);
-          k_status+=1;
+        String line [50]= client.readStringUntil('\r');
+        readResponse(line,"Content-Type");
+        Serial.println(line[16]);
       }
-      if (c=='}'){
-        break;
       }
-    }
-    k_status=0;
     // close any connection before send a new request.
     // This will free the socket on the WiFi shield
     client.stop();
-
-  }
   } else {
-
     // if you couldn't make a connection
       Serial.println("connection failed");
-      resetWifi();
+
   }
 }
+
 }
+
+void UCW_M0::readResponse(String http_header[50], String res_header ){
+
+  if (res_header == "Server"){
+    Serial.println(http_header[2]);
+    } else if (res_header == "Access-Control-Allow-Origin"){
+      Serial.println(http_header[3]);
+      } else if (res_header == "Access-Control-Allow-Credentials"){
+      Serial.println(http_header[4]);
+      }else if (res_header == "Access-Control-Allow-Methods"){
+      Serial.println(http_header[5]);
+      }else if (res_header == "Access-Control-Allow-Headers"){
+      Serial.println(http_header[6]);
+      }else if (res_header == "X-UCW-API-BuildNumber"){
+      Serial.println(http_header[7]);
+      }else if (res_header == "X-UCW-API-ServerName"){
+      Serial.println(http_header[8]);
+      }else if (res_header == "X-UCW-API-Version"){
+      Serial.println(http_header[9]);
+      }else if (res_header == "Content-Type"){
+      Serial.println(http_header[10]);
+      }else if (res_header == "Set-Cookie"){
+      Serial.println(http_header[11]);
+      }else if (res_header == "Connection"){
+      Serial.println(http_header[12]);
+      }else if (res_header == "Transfer-Encoding"){
+      Serial.println(http_header[13]);
+      }else if (res_header == "Status"){
+      Serial.println(http_header[16]);
+      }
+}
+
+
+
+
 
 

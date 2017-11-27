@@ -1,30 +1,27 @@
-#ifndef mat
-#define mat
+#ifndef UCWM0_H
+#define UCWM0_H
+
 #include <Arduino.h>
+#include "UCWClient.h"
 
-class UCWClient  {
+
+class UCW_M0 : public UCWClient
+{
   public:
-    UCWClient();
-
+    UCW_M0();
 
     //methods
-    void connect(String token);
+    void setConnectionMode();
     void sendData(String your_deviceID, String your_dataStreamName, String payload);
 
-
-    private:
-    void setupSerialPorts();
+    protected:
     void setupWifi();
     void resetWifi();
     void printWifiStatus();
+    void readResponse(String http_header[50], String res_header );
     String UCW_API_DEVICE_TOKEN = "your_token";
-    bool isTokenValid;
-    int k_status;
-    String token_1;
+    String line[];
 };
-
-
-
 #endif
 
 

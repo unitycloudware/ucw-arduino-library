@@ -3,19 +3,19 @@
   Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#include <SPI.h>
-#include <WiFi101.h>
-#include "UCWClient.h"
+#include "UCW_ESP.h"
 #include "DHT.h"
 #define DHTPIN 6
 #define DHTTYPE DHT22
 
 DHT dht(DHTPIN, DHTTYPE);
 
-UCWClient UCWClient_object; //create an object
+UCW_ESP UCW_ESP_object; //create an object
+
 void setup() {
   
-UCWClient_object.connect("your_token"); //enter token as string for authorisation
+UCW_ESP_object.connect("your_token"); //enter token as string for authorisation
+UCW_ESP_object.setConnectionMode();
 
 }
 
@@ -47,7 +47,7 @@ void loop() {
   data.replace("%heat_indexC", String(hic));
   data.replace("%heat_indexF", String(hif));
   
-  UCWClient_object.sendData("your_deviceID","Temperature and Humidity Measurements",data);
+  UCW_ESP_object.sendData("your_deviceID","Temperature and Humidity Measurements",data);
   delay(1000);
  
 }
