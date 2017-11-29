@@ -16,7 +16,7 @@ void setup() {
   
 UCW_M0_object.connect("your_token"); //enter token as string for authorisation
 UCW_M0_object.setConnectionMode();
-
+dht.begin();
 }
 
 void loop() {
