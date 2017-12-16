@@ -18,6 +18,7 @@ class UCW_M0 : public UCWClient
     void setupWifi();
     void resetWifi();
     void printWifiStatus();
+    void updateBattStatus();
     void readResponse(String http_header[50], String res_header );
     String UCW_API_DEVICE_TOKEN = "your_token";
     String line[];

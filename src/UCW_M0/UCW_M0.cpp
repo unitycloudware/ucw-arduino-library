@@ -5,6 +5,7 @@
 
 #define UCW_API_HOST          "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT          80
+#define VBATPIN A7
 
 char ssid[] = "your_SSID";     // your network SSID (name)
 char pass[] = "your_password"; // your network password (use for WPA, or use as key for WEP)
@@ -124,10 +125,8 @@ void UCW_M0::printWifiStatus() {
 
   Serial.print("WiFi firmware version: ");
   Serial.println(WiFi.firmwareVersion());
-
   Serial.println();
 }
-
 
 void UCW_M0::sendData(String your_deviceID,String your_dataStreamName,String payload) {
   if (isTokenValid==false){
@@ -180,15 +179,15 @@ void UCW_M0::sendData(String your_deviceID,String your_dataStreamName,String pay
         String line [50]= client.readStringUntil('\r');
         readResponse(line,"Content-Type");
         Serial.println(line[16]);
+        updateBattStatus();
       }
-      }
+    }
     // close any connection before send a new request.
     // This will free the socket on the WiFi shield
     client.stop();
   } else {
     // if you couldn't make a connection
       Serial.println("connection failed");
-
   }
 }
 
@@ -225,7 +224,16 @@ void UCW_M0::readResponse(String http_header[50], String res_header ){
       }
 }
 
+void UCW_M0::updateBattStatus(){
 
+float measuredvbat = analogRead(VBATPIN);
+measuredvbat *= 2;    // we divided by 2, so multiply back
+measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+measuredvbat /= 4096; // convert to voltage
+Serial.print("VBat: " ); Serial.println(measuredvbat);
+WiFi.lowPowerMode();
+Serial.println();
+}
 
 
 
