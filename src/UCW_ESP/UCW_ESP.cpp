@@ -2,10 +2,14 @@
 #include "UCW_ESP.h"
 #include <ESP8266WiFi.h>
 #include <SPI.h>
-
+#include <EEPROM.h>
 
 #define UCW_API_HOST          "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT          80
+
+#define BATTERY_INTERVAL 5 // how often to report battery level(in minutes)
+
+#define SLEEP_LENGTH 3 // how long to sleep between updates(in seconds)
 
 char ssid[] = "your_SSID";     // your network SSID (name)
 char pass[] = "your_password"; // your network password (use for WPA, or use as key for WEP)
@@ -137,7 +141,7 @@ void UCW_ESP::sendData(String your_deviceID,String your_dataStreamName,String pa
       client.println(apiUri);
       client.print("Host: ");
       client.println(UCW_API_HOST);
-      client.println("User-Agent: Adafruit-Feather-M0-Wifi");
+      client.println("User-Agent: Adafruit-HUZZAH-ESP8266");
       client.println("Connection: close");
       client.println("Content-Type: application/json");
       client.print("Content-Length: ");
@@ -156,6 +160,7 @@ void UCW_ESP::sendData(String your_deviceID,String your_dataStreamName,String pa
         String line [50]= client.readStringUntil('\r');
         readResponse(line,"Content-Type");
         Serial.println(line[16]);
+        updateBattStatus();
       }
       }
     // close any connection before send a new request.
@@ -201,8 +206,42 @@ void UCW_ESP::readResponse(String http_header[50], String res_header ){
       }
 }
 
+void UCW_ESP::updateBattStatus(){
 
+EEPROM.begin(512);
+byte battery_count = EEPROM.read(0);
+ // we only need this to happen once every x minutes,
+  // so we use eeprom to track the count between resets.
+  if(battery_count >= ((BATTERY_INTERVAL * 60) / SLEEP_LENGTH)) {
+    // reset counter
+    battery_count = 0;
+    // report battery level to Adafruit IO
+    battery_level();
+  } else {
+    // increment counter
+    battery_count++;
+  }
 
+  // save the current count
+  EEPROM.write(0, battery_count);
+  EEPROM.commit();
 
+}
+
+void UCW_ESP::battery_level(){
+
+  //read the battery level from the ESP8266 analog in pin.
+  // analog read level is 10 bit 0-1023 (0V-1V).
+  // our 1M & 220K voltage divider takes the max
+  // lipo value of 4.2V and drops it to 0.758V max.
+  // this means our min analog read value should be 580 (3.14V)
+  // and the max analog read value should be 774 (4.2V).
+  int level = analogRead(A0);
+
+  // convert battery level to percent
+  level = map(level, 580, 774, 0, 100);
+  Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
+
+}
 
 
