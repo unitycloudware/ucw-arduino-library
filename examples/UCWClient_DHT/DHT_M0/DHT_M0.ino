@@ -11,10 +11,10 @@
 DHT dht(DHTPIN, DHTTYPE);
 
 UCW_M0 UCW_M0_object; //create an object
-
+ClientConfig Config; //create a struct object
 void setup() {
   
-UCW_M0_object.connect("your_token"); //enter token as string for authorisation
+UCW_M0_object.connect(Config, "your_token"); //enter token as string for authorisation
 UCW_M0_object.setConnectionMode();
 dht.begin();
 }

@@ -9,9 +9,9 @@
 OneWire  ds(10);  // on pin 10 (a 4.7K resistor is necessary)
 
 UCW_M0 UCW_M0_object;
-
+ClientConfig Config; //create a struct object
 void setup() {
-UCW_M0_object.connect("your_token");
+UCW_M0_object.connect(Config, "your_token");
 UCW_M0_object.setConnectionMode();
 }
 

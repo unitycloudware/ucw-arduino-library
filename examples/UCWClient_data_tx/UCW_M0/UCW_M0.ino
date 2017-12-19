@@ -1,10 +1,10 @@
 #include "UCW_M0.h"
 
 UCW_M0 UCW_M0_Object;
-
+ClientConfig Config;
 void setup() {
   // put your setup code here, to run once:
-  UCW_M0_Object.connect("your_token");
+  UCW_M0_Object.connect(Config, "your_token");
   UCW_M0_Object.setConnectionMode();
 }
 

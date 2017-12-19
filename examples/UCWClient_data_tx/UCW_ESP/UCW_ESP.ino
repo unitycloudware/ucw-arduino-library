@@ -1,10 +1,10 @@
 #include "UCW_ESP.h"
 
 UCW_ESP UCW_ESP_Object;
-
+ClientConfig Config;
 void setup() {
   // put your setup code here, to run once:
-  UCW_ESP_Object.connect("your_token");
+  UCW_ESP_Object.connect(Config,"your_token");
   UCW_ESP_Object.setConnectionMode();
 }
 

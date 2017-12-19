@@ -3,6 +3,12 @@
 
 #include <Arduino.h>
 
+struct ClientConfig {
+    String  host;
+    int port;
+    bool isSecuredConnection;
+    String token;
+};
 
 class UCWClient {
 
@@ -10,11 +16,12 @@ class UCWClient {
     UCWClient();
 
     //methods
-    void connect(String token);
+    void connect(ClientConfig& Config, String token);
 
     protected:
     String UCW_API_DEVICE_TOKEN = "your_token";
     bool isTokenValid;
+
 
 };
 
