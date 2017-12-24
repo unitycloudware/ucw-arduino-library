@@ -10,9 +10,9 @@ char pass[] = "your_password"; // your network password (use for WPA, or use as 
 #define mqtt_user "your_username"
 #define mqtt_password "your_password"
 
-#define humidity_topic "sensor/humidity"
-#define temperature_topic "sensor/temperature"
+#define temperature_topic "sensor/temperature_and_humidity"
 #define device_topic "deviceID"
+
 
 #define BATTERY_INTERVAL 5 // how often to report battery level(in minutes)
 #define SLEEP_LENGTH 3 // how long to sleep between updates(in seconds)
@@ -24,11 +24,6 @@ int status = WL_IDLE_STATUS;
 WiFiClient espClient;
 PubSubClient client(espClient);
 IPAddress server;
-
-long lastMsg = 0;
-float temp = 0.0;
-float hum = 0.0;
-float diff = 1.0;
 
 UCW_MQTT_ESP::UCW_MQTT_ESP(){
 ;
@@ -114,43 +109,30 @@ void UCW_MQTT_ESP::printWifiStatus() {
   Serial.println();
 }
 
-void UCW_MQTT_ESP::sendData(String your_deviceID, float payload[2],bool isRetained){
+void UCW_MQTT_ESP::publishData(String your_deviceID, String payload, bool isRetained){
 
-  if (sizeof(payload) < 1) {
+   if (payload.length() < 1) {
     Serial.println("No data to send!");
     return;
   }
 
   if(status == WL_CONNECTED){
-      if (!client.connected()) {
-          reconnect();
-          }
-      client.loop();
-
-      float newTemp_1 = payload[0];
-      float newHum_1 = payload[1];
-
-      if (checkBound(newTemp_1, temp, diff)) {
-          temp = newTemp_1;
-          Serial.print("New temperature:");
-          Serial.println(String(temp).c_str());
-          client.publish(temperature_topic, String(temp).c_str(), isRetained);
+    if (!client.connected()) {
+        reconnect();
         }
+    Serial.print("New temperature and humidity readings:");
+    Serial.println(payload.c_str());
 
-        if (checkBound(newHum_1, hum, diff)) {
-          hum = newHum_1;
-          Serial.print("New humidity:");
-          Serial.println(String(hum).c_str());
-          client.publish(humidity_topic, String(hum).c_str(), isRetained);
+    client.publish(temperature_topic, payload.c_str(), isRetained);
+    client.publish(device_topic, your_deviceID.c_str(), isRetained);
+
+    updateBattStatus();
+
+    } else {
+        Serial.println("WiFi connection failed");
         }
-
-        client.publish(device_topic, your_deviceID.c_str(), isRetained);
-        updateBattStatus();
-
-        } else {
-            Serial.println("WiFi connection failed");
-            }
-  }
+    client.loop();
+}
 
 void UCW_MQTT_ESP::reconnect() {
   // Loop until we're reconnected
@@ -169,11 +151,6 @@ void UCW_MQTT_ESP::reconnect() {
       delay(5000);
     }
   }
-}
-
-bool UCW_MQTT_ESP::checkBound(float newValue, float prevValue, float maxDiff) {
-  return !isnan(newValue) &&
-         (newValue < prevValue - maxDiff || newValue > prevValue + maxDiff);
 }
 
 void UCW_MQTT_ESP::updateBattStatus(){

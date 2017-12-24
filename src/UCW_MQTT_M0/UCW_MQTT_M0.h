@@ -12,16 +12,16 @@ class UCW_MQTT_M0 : public UCWClient
 
     //methods
     void setConnectionMode();
-    void sendData(String your_deviceID, float payload[2], bool isRetained);
+    void publishData(String your_deviceID, String payload, bool isRetained);
 
     protected:
     void setupWifi();
     void resetWifi();
     void printWifiStatus();
     void updateBattStatus();
-    bool checkBound(float newValue, float prevValue, float maxDiff);
     void reconnect();
-  
+
+
 };
 #endif
 
