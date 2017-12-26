@@ -10,6 +10,7 @@ char pass[] = "your_password"; // your network password (use for WPA, or use as 
 #define mqtt_user "your_username"
 #define mqtt_password "your_password"
 
+#define mqtt_server_port 1883
 
 #define temperature_topic "sensor/temperature_and_humidity"
 #define device_topic "deviceID"
@@ -70,7 +71,7 @@ void UCW_MQTT_M0::setupWifi() {
   Serial.println("Connected to WiFi!");
 
   printWifiStatus();
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_server, mqtt_server_port);
 }
 
 void UCW_MQTT_M0::resetWifi() {
