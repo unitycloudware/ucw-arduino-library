@@ -12,8 +12,8 @@ char pass[] = "your_password"; // your network password (use for WPA, or use as 
 
 #define mqtt_server_port 1883
 
-#define temperature_topic "sensor/temperature_and_humidity"
-#define device_topic "deviceID"
+#define data_topic "your_topic/topic"
+#define device_topic "your_deviceID/deviceID"
 
 #define VBATPIN A7
 
@@ -146,7 +146,7 @@ void UCW_MQTT_M0::publishData(String your_deviceID, String payload, bool isRetai
     Serial.print("New temperature and humidity readings:");
     Serial.println(payload.c_str());
 
-    client.publish(temperature_topic, payload.c_str(), isRetained);
+    client.publish(data_topic, payload.c_str(), isRetained);
     client.publish(device_topic, your_deviceID.c_str(), isRetained);
 
     updateBattStatus();
