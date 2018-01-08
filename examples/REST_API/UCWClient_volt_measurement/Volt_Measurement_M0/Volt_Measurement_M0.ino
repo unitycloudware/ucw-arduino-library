@@ -10,12 +10,12 @@ int readValue; //potentiometer volatge between 0-1023V
 float voltage; //voltage between 0-5V
 
 UCW_M0 UCW_M0_object; //create an object
-ClientConfig Config; //create a struct object
+
 void setup() {
 
   pinMode(potPin,INPUT); //set mode for A0 pin
   
-  UCW_M0_object.connect(Config, "your_token"); //enter token as string for authorisation
+  UCW_M0_object.connect({"0",0,false,"your_token"}); //enter token as string for authorisation
   UCW_M0_object.setConnectionMode();
 
 }

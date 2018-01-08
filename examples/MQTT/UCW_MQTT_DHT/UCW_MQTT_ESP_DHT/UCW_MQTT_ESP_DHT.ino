@@ -11,11 +11,10 @@
 DHT dht(DHTPIN, DHTTYPE, 11);
 
 UCW_MQTT_ESP UCW_ESP_object; //create an object
-ClientConfig Config; //create a struct object
 
 void setup() {
   
-  UCW_ESP_object.connect(Config, "your_token"); //enter token as string for authorisation
+  UCW_ESP_object.connect({"0",0,false,"your_token"}); //enter token as string for authorisation
   UCW_ESP_object.setConnectionMode();
   dht.begin();
 

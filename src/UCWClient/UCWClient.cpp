@@ -9,14 +9,11 @@ UCWClient::UCWClient(){
   }
 
 
-
- void UCWClient::connect(ClientConfig& Config, String token){
+ void UCWClient::connect(ClientConfig config){
 
     Serial.begin(9600);
 
-    Config.token = token;
-
-     if (Config.token == UCW_API_DEVICE_TOKEN){
+    if (config.host == "0" && config.port == 0 && config.isSecuredConnection == false && config.token == UCW_API_DEVICE_TOKEN){
       Serial.println("valid token");
         isTokenValid = true;
 
@@ -26,6 +23,5 @@ UCWClient::UCWClient(){
          return;
      }
  }
-
 
 

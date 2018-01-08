@@ -9,9 +9,9 @@
 OneWire  ds(10);  // on pin 10 (a 4.7K resistor is necessary)
 
 UCW_ESP UCW_ESP_object;
-ClientConfig Config; //create a struct object
+
 void setup() {
-UCW_ESP_object.connect(Config, "your_token");
+UCW_ESP_object.connect({"0",0,false,"your_token"});
 UCW_ESP_object.setConnectionMode();
 }
 

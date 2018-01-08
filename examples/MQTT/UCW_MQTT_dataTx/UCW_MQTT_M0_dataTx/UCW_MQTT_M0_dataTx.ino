@@ -4,12 +4,10 @@
 
 UCW_MQTT_M0 myObject_2;
 
-ClientConfig Config;
-
 void setup() {
   
   // put your setup code here, to run once:
-  myObject_2.connect(Config,"ha1mkr4gv5vrbrvnrb5gna9n6o45us2g");
+  myObject_2.connect({"0",0,false,"your_token"});
   myObject_2.setConnectionMode();
  
 }
