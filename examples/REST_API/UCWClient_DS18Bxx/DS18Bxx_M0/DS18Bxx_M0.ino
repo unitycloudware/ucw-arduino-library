@@ -1,8 +1,7 @@
 /* 
-  Data Measurement Firmware
+  Temperature measurements using DS18Bxx sensor
   Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
-
 #include "UCW_M0.h"
 #include <OneWire.h>
 

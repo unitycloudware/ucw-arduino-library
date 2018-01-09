@@ -1,3 +1,8 @@
+/* 
+  Data transfer
+  Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
+
 #include "UCW_ESP.h"
 
 UCW_ESP UCW_ESP_Object;

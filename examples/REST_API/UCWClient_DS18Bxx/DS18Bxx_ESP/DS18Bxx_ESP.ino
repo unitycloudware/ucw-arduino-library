@@ -1,5 +1,5 @@
 /* 
-  Data Measurement Firmware
+  Tempreture measurements using DS18Bxx sensor
   Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 

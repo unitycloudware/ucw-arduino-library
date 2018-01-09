@@ -1,3 +1,9 @@
+
+/* 
+  Data Measurement 
+  Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
+ 
 #include "UCW_MQTT_M0.h"
 
 #define temperature_topic "sensor/temperature_humidity"

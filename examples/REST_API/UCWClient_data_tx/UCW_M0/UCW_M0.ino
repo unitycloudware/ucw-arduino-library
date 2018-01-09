@@ -1,3 +1,9 @@
+
+/* 
+  Data transfer
+  Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
+ 
 #include "UCW_M0.h"
 
 UCW_M0 UCW_M0_Object;

@@ -1,5 +1,5 @@
 /* 
-  Data Measurement Firmware
+  Temperature, and humidity measurements using DHT22 sensor
   Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
