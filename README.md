@@ -62,3 +62,6 @@ FULL EXAMPLE
     You can find the file on DHTxx sensor in File->Examples->UCWClient_DHT->UCWClient_DHT
 
 
+*********************************************************************** NOTE **************************************************************************
+	
+	All examples were implemented using Adafruit M0 feather or ESP Huzzah 8266

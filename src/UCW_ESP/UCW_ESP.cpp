@@ -43,8 +43,8 @@ Serial.println("Please enter valid token");
 
 void UCW_ESP::setupWifi() {
   /*
-   * Adafruit Feather M0 WiFi with ATWINC1500
-   * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
+   * Adafruit HUZZAH ESP8266 breakout
+   * https://learn.adafruit.com/adafruit-huzzah-esp8266-breakout/using-arduino-ide
    */
 
   // check for the presence of the shield:
@@ -211,23 +211,25 @@ void UCW_ESP::readResponse(String http_header[50], String res_header ){
 
 void UCW_ESP::updateBattStatus(){
 
-EEPROM.begin(512);
-byte battery_count = EEPROM.read(0);
- // we only need this to happen once every 100x runtime seconds,
-  // so we use eeprom to track the count between resets.
-  if(battery_count >= ((BATTERY_INTERVAL * 60) / SLEEP_LENGTH)) {
-    // reset counter
-    battery_count = 0;
-    // report battery level to Adafruit IO
-    battery_level();
-  } else {
-    // increment counter
-    battery_count++;
-  }
+    //https://learn.adafruit.com/using-ifttt-with-adafruit-io/arduino-code-1
 
-  // save the current count
-  EEPROM.write(0, battery_count);
-  EEPROM.commit();
+    EEPROM.begin(512);
+    byte battery_count = EEPROM.read(0);
+    // we only need this to happen once every 100x runtime seconds,
+    // so we use eeprom to track the count between resets.
+    if(battery_count >= ((BATTERY_INTERVAL * 60) / SLEEP_LENGTH)) {
+        // reset counter
+        battery_count = 0;
+        // report battery level to Adafruit IO
+        battery_level();
+    } else {
+        // increment counter
+        battery_count++;
+    }
+
+    // save the current count
+    EEPROM.write(0, battery_count);
+    EEPROM.commit();
 
 }
 

@@ -178,6 +178,7 @@ void UCW_MQTT_M0::reconnect() {
 }
 
 void UCW_MQTT_M0::updateBattStatus(){
+
   float measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage

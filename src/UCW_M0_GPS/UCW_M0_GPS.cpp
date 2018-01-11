@@ -43,6 +43,9 @@ void UCW_M0_GPS::setConnectionMode() {
 }
 
 void UCW_M0_GPS::setupGPS() {
+
+  // https://learn.adafruit.com/adafruit-ultimate-gps-featherwing?view=all
+
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
 
@@ -259,17 +262,15 @@ void UCW_M0_GPS::readResponse(String http_header[50], String res_header ){
 }
 
 void UCW_M0_GPS::updateBattStatus(){
+    //https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
 
-float measuredvbat = analogRead(VBATPIN);
-measuredvbat *= 2;    // we divided by 2, so multiply back
-measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
-measuredvbat /= 1024; // convert to voltage
-//Serial.print("VBat: " ); Serial.println(measuredvbat);
+    float measuredvbat = analogRead(VBATPIN);
+    measuredvbat *= 2;    // we divided by 2, so multiply back
+    measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+    measuredvbat /= 1024; // convert to voltage
 
-// convert battery level to percent
-
-
-Serial.println();
+    Serial.print("VBat: " ); Serial.println(measuredvbat);
+    Serial.println();
 }
 
 

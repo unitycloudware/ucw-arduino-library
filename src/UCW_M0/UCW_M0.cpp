@@ -229,12 +229,12 @@ void UCW_M0::readResponse(String http_header[50], String res_header ){
 }
 
 void UCW_M0::updateBattStatus(){
-
-float measuredvbat = analogRead(VBATPIN);
-measuredvbat *= 2;    // we divided by 2, so multiply back
-measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
-measuredvbat /= 1024; // convert to voltage
-Serial.print("VBat: " ); Serial.println(measuredvbat);
+    // https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
+    float measuredvbat = analogRead(VBATPIN);
+    measuredvbat *= 2;    // we divided by 2, so multiply back
+    measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+    measuredvbat /= 1024; // convert to voltage
+    Serial.print("VBat: " ); Serial.println(measuredvbat);
 
 }
 

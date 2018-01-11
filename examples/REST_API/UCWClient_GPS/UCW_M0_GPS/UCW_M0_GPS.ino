@@ -4,7 +4,9 @@
   using Adafruit ultimate GPS FeatherWing 
   Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
- 
+
+//this code was tested using Adafruit M0 feather micro-controller
+
 #include "UCW_M0_GPS.h"
 #include <Adafruit_GPS.h>
 
