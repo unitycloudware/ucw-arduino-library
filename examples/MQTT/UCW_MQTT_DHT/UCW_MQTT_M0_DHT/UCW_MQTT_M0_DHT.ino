@@ -48,7 +48,7 @@ void loop() {
   data.replace("%heat_indexC", String(hic));
   data.replace("%heat_indexF", String(hif));
   
-  UCW_M0_object.publishData("9fe67d17-4e9a-4ca4-8498-08b65f96f8a4",data,true);
+  UCW_M0_object.publishData("your_device_ID",data,true);
   delay(1000);
  
 }

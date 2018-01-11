@@ -3,9 +3,9 @@
 # Synthax Colouring for keywords
 #-----------------------------------
 
-UCW_MQTT_M0 KEYWORD1 
+UCW_M0_GPS KEYWORD1 
 
 
 #Methods
 setConnectionMode KEYWORD2
-publishData KEYWORD2
+sendData KEYWORD2
