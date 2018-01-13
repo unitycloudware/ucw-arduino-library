@@ -32,7 +32,7 @@ void setup(){
 }
 
 void loop() {
- //read data  
+ //read data: http://www.toptechboy.com/arduino/lesson-22-build-an-arduino-gps-tracker/  
   clearGPS();    // clear old and corrupt data
   
   while(!GPS2.newNMEAreceived()) { //Keep reading characters in this loop until a good NMEA sentence is received
