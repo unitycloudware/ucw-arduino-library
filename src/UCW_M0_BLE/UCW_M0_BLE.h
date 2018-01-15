@@ -17,8 +17,9 @@ class UCW_M0_BLE : public UCWClient
     protected:
     void setupBLE();
     void updateBattStatus();
+    void receiveData();
     String inputs;
-    
+
 };
 #endif
 

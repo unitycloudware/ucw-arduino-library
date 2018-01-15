@@ -16,7 +16,7 @@
 #define MODE_LED_BEHAVIOUR          "MODE"
 
 // Create the bluefruit object, either software serial...uncomment these lines
-/*  https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
+/*
 SoftwareSerial bluefruitSS = SoftwareSerial(BLUEFRUIT_SWUART_TXD_PIN, BLUEFRUIT_SWUART_RXD_PIN);
 
 Adafruit_BluefruitLE_UART ble(bluefruitSS, BLUEFRUIT_UART_MODE_PIN,
@@ -34,13 +34,6 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 //                             BLUEFRUIT_SPI_MOSI, BLUEFRUIT_SPI_CS,
 //                             BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
-
-// A small helper
-void error(const __FlashStringHelper*err) {
-  Serial.println(err);
-  while (1);
-}
-
 UCW_M0_BLE::UCW_M0_BLE(){
 analogReadResolution(12);
 }
@@ -55,7 +48,7 @@ void UCW_M0_BLE::setConnectionMode() {
       } else {
           Serial.println("Please enter valid token");
         }
- }
+}
 
 void UCW_M0_BLE::setupBLE() {
 
@@ -75,7 +68,7 @@ void UCW_M0_BLE::setupBLE() {
   Serial.print(F("Initialising the Bluefruit LE module: "));
 
   if ( !ble.begin(VERBOSE_MODE) ){
-    error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
+    Serial.println(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
     }
   Serial.println( F("OK!") );
 
@@ -83,7 +76,7 @@ void UCW_M0_BLE::setupBLE() {
     /* Perform a factory reset to make sure everything is in a known state */
     Serial.println(F("Performing a factory reset: "));
     if ( ! ble.factoryReset() ){
-      error(F("Couldn't factory reset"));
+      Serial.println(F("Couldn't factory reset"));
       }
     }
 
@@ -115,22 +108,23 @@ void UCW_M0_BLE::setupBLE() {
     }
 }
 
-
 void UCW_M0_BLE::sendData(String your_deviceID,String your_dataStreamName,String payload) {
-  if (isTokenValid==false){
-      Serial.println("invalid token, provide a valid token");
-      delay(1000);
-      return;
+
+    if (isTokenValid==false){
+        Serial.println("invalid token, provide a valid token");
+        delay(1000);
+        return;
     }
 
-  if (payload.length() < 1) {
-      Serial.println("No data to send!");
-      delay(1000);
-      return;
+    receiveData();
+
+    if (payload.length() < 1) {
+        Serial.println("No data to send!");
+        delay(1000);
+        return;
     }
 
-  if (payload.length() > 0) {
-    //if (ble.isConnected()){
+    if (payload.length() > 0) {
         String inputs = "{\"deviceID\": \"%ID\",\"dataID\": \"%dataID\",\"Data\": \"%payload\"}";
         inputs.replace("%ID", your_deviceID);
         inputs.replace("%dataID", your_dataStreamName);
@@ -143,22 +137,33 @@ void UCW_M0_BLE::sendData(String your_deviceID,String your_dataStreamName,String
         ble.print("AT+BLEUARTTX=");
         ble.println(inputs);
         updateBattStatus();
+
         delay(2000);
-      }
+    }
 }
 
+void UCW_M0_BLE::receiveData(){
+    // Check for incoming characters from Bluefruit
+    ble.println("AT+BLEUARTRX");
+    ble.readline();
+    if (strcmp(ble.buffer, "OK") == 0) {
+        // no data
+        return;
+    }
+  // Some data was found, its in the buffer
+  Serial.print(F("[Recv] ")); Serial.println(ble.buffer);
+  ble.waitForOK();
+
+}
 
 void UCW_M0_BLE::updateBattStatus(){
-
     //https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
-
     float measuredvbat = analogRead(VBATPIN);
     measuredvbat *= 2;    // we divided by 2, so multiply back
     measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
     measuredvbat /= 1024; // convert to voltage
     Serial.print("VBat: " ); Serial.println(measuredvbat);
     Serial.println();
-
 }
 
 
