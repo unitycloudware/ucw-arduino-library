@@ -12,7 +12,7 @@ class UCW_MQTT_ESP : public UCWClient
 
     //methods
     void setConnectionMode();
-    void publishData(String your_deviceID, String payload, bool isRetained);
+    void publishData(String deviceID, String payload, bool isRetained);
 
     protected:
     void setupWifi();

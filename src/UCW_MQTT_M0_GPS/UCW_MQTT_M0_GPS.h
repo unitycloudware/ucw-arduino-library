@@ -12,7 +12,7 @@ class UCW_MQTT_M0_GPS : public UCWClient
 
     //methods
     void setConnectionMode();
-    void publishData(String your_deviceID, String payload, bool isRetained);
+    void publishData(String deviceID, String payload, bool isRetained);
 
     protected:
     void setupGPS();

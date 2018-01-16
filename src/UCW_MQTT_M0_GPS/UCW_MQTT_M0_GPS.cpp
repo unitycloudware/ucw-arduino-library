@@ -16,11 +16,13 @@ Adafruit_GPS GPS(&GPSSerial);
 #define mqtt_server "YOUR_MQTT_SERVER_HOST"
 #define mqtt_user "your_username"
 #define mqtt_password "your_password"
+#define mqtt_clientID "clientID"
 
 #define mqtt_server_port 1883
 
-#define data_topic "your_topic/topic"
-#define device_topic "your_deviceID/deviceID"
+#define pub_topic "your_publish_topic"
+#define sub_topic "your_subscribed_topic"
+#define device_topic "your_deviceID_topic"
 
 #define VBATPIN A7
 
@@ -28,8 +30,8 @@ int keyIndex = 0;              // your network key Index number (needed only for
 byte mac[6];
 int status = WL_IDLE_STATUS;
 
-WiFiClient espClient;
-PubSubClient client(espClient);
+WiFiClient m0Client;
+PubSubClient client(m0Client);
 IPAddress server;
 
 UCW_MQTT_M0_GPS::UCW_MQTT_M0_GPS(){
@@ -167,22 +169,29 @@ void UCW_MQTT_M0_GPS::printWifiStatus() {
   Serial.println();
 }
 
-void UCW_MQTT_M0_GPS::publishData(String your_deviceID, String payload, bool isRetained){
+void UCW_MQTT_M0_GPS::publishData(String deviceID, String payload, bool isRetained){
+    if (isTokenValid==false){
+        Serial.println("invalid token, provide a valid token");
+        delay(1000);
+        return;
+    }
 
   if (payload.length() < 1) {
     Serial.println("No data to send!");
     return;
   }
 
+  client.subscribe(sub_topic);
+
   if(status == WL_CONNECTED){
     if (!client.connected()) {
         reconnect();
         }
-    Serial.print("New temperature and humidity readings:");
+    Serial.print(pub_topic);
     Serial.println(payload.c_str());
 
-    client.publish(data_topic, payload.c_str(), isRetained);
-    client.publish(device_topic, your_deviceID.c_str(), isRetained);
+    client.publish(pub_topic, payload.c_str(), isRetained);
+    client.publish(device_topic, deviceID.c_str(), isRetained);
 
     updateBattStatus();
 
@@ -199,8 +208,8 @@ void UCW_MQTT_M0_GPS::reconnect() {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     // If you do not want to use a username and password, change next line to
-    // if (client.connect("ESP8266Client")) {
-    if (client.connect("ESP8266Client", mqtt_user, mqtt_password)) {
+    // if (client.connect("mqtt_clientID")) {
+    if (client.connect("mqtt_clientID", mqtt_user, mqtt_password)) {
       Serial.println("connected");
     } else {
       Serial.print("failed, rc=");

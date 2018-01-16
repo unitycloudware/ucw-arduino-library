@@ -12,6 +12,8 @@ const int xInput = A1;      //connect Xout pin of sensor to pin A1
 const int yInput = A2;      //connect Yout pin of sensor to pin A2
 const int zInput = A3;      //connect Zout pin of sensor to pin A3
 
+#define device_ID "your_deviceID"
+
 UCW_MQTT_M0 UCW_M0_object; //create an object
 
 //ClientConfig Config;
@@ -37,12 +39,12 @@ void loop() {
     return;
   }
   
-  String data = "{\"X-Axis\": \"%x-axis\", \"Y-Axis\": \"%y-axis\" \"Z-axis\": \"%z-axis\"}";
+  String data = "{deviceID, \"X-Axis\": \"%x-axis\", \"Y-Axis\": \"%y-axis\" \"Z-axis\": \"%z-axis\"}";
   data.replace("%x-axis", String(x));
   data.replace("%y-axis", String(y));
   data.replace("%z-axis", String(z));
     
-  UCW_M0_object.publishData("your_deviceID","data_stream",data);
+  UCW_M0_object.publishData("your_deviceID",data,true);
   
   delay(1000);
 }
