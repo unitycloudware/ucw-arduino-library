@@ -12,7 +12,7 @@ class UCW_M0_LORA : public UCWClient
 
     //methods
     void setConnectionMode();
-    void sendData(String your_deviceID, String your_dataStreamName, String payload);
+    void sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName,String payload);
 
     protected:
     void setupLORA();

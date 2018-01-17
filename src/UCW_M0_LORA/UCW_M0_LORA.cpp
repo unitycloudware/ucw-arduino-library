@@ -119,7 +119,7 @@ void UCW_M0_LORA::resetLORA() {
   delay(10);
 }
 
-void UCW_M0_LORA::sendData(String your_deviceID,String your_dataStreamName,String payload) {
+void UCW_M0_LORA::sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName,String payload) {
   if (isTokenValid==false){
     Serial.println("invalid token, provide a valid token");
     delay(1000);
@@ -136,19 +136,24 @@ void UCW_M0_LORA::sendData(String your_deviceID,String your_dataStreamName,Strin
   delay(500);
 
   if (payload.length() > 0) {
-      char deviceID[30];char dataStreamName[30];char payload_1[30];
-      your_deviceID.toCharArray(deviceID, your_deviceID.length()+1);
-      your_dataStreamName.toCharArray(dataStreamName, your_dataStreamName.length()+1);
-      payload.toCharArray(payload_1, payload.length()+1);
+
+      char payload_1[RH_RF95_MAX_MESSAGE_LEN];
+      payload.toCharArray(payload_1, RH_RF95_MAX_MESSAGE_LEN);
 
       //send deviceID, data name, payload
-      Serial.println ("Sending deviceID, data-stream name, payload");
-      rf95.send((uint8_t *)deviceID, 30);
+      Serial.println ("Sending deviceID");
+      rf95.send(your_deviceID, sizeof(your_deviceID));
+      delay(10);
       rf95.waitPacketSent();
-      rf95.send((uint8_t *)dataStreamName, 30));
+      Serial.println ("Sending data-stream name");
+      rf95.send(your_dataStreamName, sizeof(your_dataStreamName));
+      delay(10);
       rf95.waitPacketSent();
-      rf95.send((uint8_t *)payload_1, 30));
+      Serial.println ("Sending payload");
+      rf95.send((uint8_t *)payload_1, RH_RF95_MAX_MESSAGE_LEN);
+      delay(10);
       rf95.waitPacketSent();
+
       }
   updateBattStatus();
 }

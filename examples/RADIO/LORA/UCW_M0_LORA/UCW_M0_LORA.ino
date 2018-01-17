@@ -7,6 +7,10 @@
 #include "UCW_M0_LORA.h"
 
 UCW_M0_LORA UCW_M0_Object;
+
+uint8_t deviceID[] = "your_deviceID";
+uint8_t dataStreamName[] = "your_dataStreamName";
+
 void setup() {
   // put your setup code here, to run once:
   UCW_M0_Object.connect({"0",0,false,"your_token"});
@@ -21,7 +25,7 @@ void loop() {
   data.replace("%temperature", String(temperature));
   data.replace("%humidity", String(humidity));
 
-  UCW_M0_Object.sendData("your_deviceID","data_monitoring",data);
+  UCW_M0_Object.sendData(deviceID, dataStreamName, data);
 
   delay(1000);
 }
