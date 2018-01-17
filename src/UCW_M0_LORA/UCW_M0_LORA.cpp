@@ -132,6 +132,9 @@ void UCW_M0_LORA::sendData(String your_deviceID,String your_dataStreamName,Strin
     return;
   }
 
+  receiveData();
+  delay(500);
+
   if (payload.length() > 0) {
       char deviceID[30];char dataStreamName[30];char payload_1[30];
       your_deviceID.toCharArray(deviceID, your_deviceID.length()+1);
@@ -140,14 +143,13 @@ void UCW_M0_LORA::sendData(String your_deviceID,String your_dataStreamName,Strin
 
       //send deviceID, data name, payload
       Serial.println ("Sending deviceID, data-stream name, payload");
-      rf95.send((uint8_t *)deviceID, sizeof(deviceID));
-      rf95.send((uint8_t *)dataStreamName, sizeof(dataStreamName));
-      rf95.send((uint8_t *)payload_1, sizeof(payload_1));
-
+      rf95.send((uint8_t *)deviceID, 30);
+      rf95.waitPacketSent();
+      rf95.send((uint8_t *)dataStreamName, 30));
+      rf95.waitPacketSent();
+      rf95.send((uint8_t *)payload_1, 30));
       rf95.waitPacketSent();
       }
-  delay(500);
-  receiveData();
   updateBattStatus();
 }
 
