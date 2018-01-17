@@ -1,0 +1,11 @@
+
+#------------------------------------
+# Synthax Colouring for keywords
+#-----------------------------------
+
+UCW_M0_LORA KEYWORD1 
+
+
+#Methods
+setConnectionMode KEYWORD2
+sendData KEYWORD2

@@ -19,7 +19,8 @@ class UCWClient {
     void connect(ClientConfig Config);
 
     protected:
-    String UCW_API_DEVICE_TOKEN = "your_token";
+    String UCW_API_DEVICE_TOKEN = "your_API_token";
+    String UCW_CONNECT_DEVICE_TOKEN = "your_connection_token";
     bool isTokenValid;
 
 
