@@ -2,6 +2,7 @@
 #include "UCW_M0_LORA.h"
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <Cape.h>
 
 #define VBATPIN A7
 
@@ -54,6 +55,12 @@
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
+
+// Encryption key (keep private and safe)
+char key[RH_RF95_MAX_MESSAGE_LEN] = "set_your_key_here";
+// Insert secret key and its length
+Cape cape(key, RH_RF95_MAX_MESSAGE_LEN);
+
 
 UCW_M0_LORA::UCW_M0_LORA(){
     analogReadResolution(12);
@@ -120,6 +127,7 @@ void UCW_M0_LORA::resetLORA() {
 }
 
 void UCW_M0_LORA::sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName,String payload) {
+
   if (isTokenValid==false){
     Serial.println("invalid token, provide a valid token");
     delay(1000);
@@ -135,10 +143,16 @@ void UCW_M0_LORA::sendData(const uint8_t* your_deviceID, const uint8_t* your_dat
   receiveData();
   delay(500);
 
-  if (payload.length() > 0) {
+  if (payload.length() > 0 && payload.length() < RH_RF95_MAX_MESSAGE_LEN) {
 
-      char payload_1[RH_RF95_MAX_MESSAGE_LEN];
-      payload.toCharArray(payload_1, RH_RF95_MAX_MESSAGE_LEN);
+      int len = payload.length(); // length of payload data
+
+      char payload_1[len];
+      payload.toCharArray(payload_1, len);
+
+      //encrypted payload
+      char payload_en [len+1] ;
+      cape.encrypt(payload_1, payload_en, len, random(0, 255));
 
       //send deviceID, data name, payload
       Serial.println ("Sending deviceID");
@@ -150,10 +164,12 @@ void UCW_M0_LORA::sendData(const uint8_t* your_deviceID, const uint8_t* your_dat
       delay(10);
       rf95.waitPacketSent();
       Serial.println ("Sending payload");
-      rf95.send((uint8_t *)payload_1, RH_RF95_MAX_MESSAGE_LEN);
+      rf95.send((uint8_t *)payload_en, RH_RF95_MAX_MESSAGE_LEN);
       delay(10);
       rf95.waitPacketSent();
 
+      } else {
+          Serial.println ("Data size is too large!!!");
       }
   updateBattStatus();
 }
@@ -163,11 +179,19 @@ void UCW_M0_LORA::receiveData(){
     // Should be a message for us now
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
+    char payload_dec [RH_RF95_MAX_MESSAGE_LEN-1]; //decrypted payload
+
     if (rf95.recv(buf, &len)){
         digitalWrite(LED, HIGH);
         RH_RF95::printBuffer("Received: ", buf, len);
+
+        char payload_rx[len_1];
+        String buf_1 = (char*)buf;
+        buf_1.toCharArray(payload_rx,len_1);
+        cape.decrypt(payload_rx, payload_dec, len_1); // decryption
+
         Serial.print("Received data: ");
-        Serial.println((char*)buf);
+        Serial.println(payload_dec);
         Serial.print("RSSI: ");
         Serial.println(rf95.lastRssi(), DEC);
         delay(10);
