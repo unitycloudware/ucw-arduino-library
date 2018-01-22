@@ -1,29 +1,56 @@
-
-/* 
+/*
   Data transfer
-  Copyright 2017 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+  Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
- 
-#include "UCW_M0.h"
 
-UCW_M0 UCW_M0_Object;
+ #include "UCW.h"
+
+/*
+  Edit the config.h to configure the connection string to the UCW Platform
+  and any additional configuration needed for WiFi, cellular, or ethernet
+  clients.
+ */
+
+#include "config.h"
+
+#define DEVICE_ID   "your_device_id"
+#define DATA_STREAM "data-test"
 
 void setup() {
-  // put your setup code here, to run once:
-  UCW_M0_Object.connect({"0",0,false,"your_token"});
-  UCW_M0_Object.setConnectionMode();
+  // Start the serial connection
+  Serial.begin(9600);
+
+  while (!Serial) {
+    ; // Wait for serial port to connect. Needed for native USB port only
+  }
+
+  // Connect to UCW IoT Cloud
+  Serial.print("Connecting to UCW IoT Cloud...");
+  ucw.connect();
+
+  // Wait for a connection
+  while (ucw.status() != UCW_NET_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+
+  // We are connected
+  Serial.println(" Connected!");
+  ucw.printNetworkInfo();
 }
 
 void loop() {
+  ucw.sys();
+
   // read data()
   double temperature = 22.00;
   int humidity = 43;
-  
-  String data = "{\"temperature\": \"%temperature\", \"humidity\": \"%humidity\"}";
+
+  String data = "{\"temperature\": %temperature, \"humidity\": %humidity}";
   data.replace("%temperature", String(temperature));
   data.replace("%humidity", String(humidity));
-  
-  UCW_M0_Object.sendData("your_deviceID","data_monitoring",data);
-  
+
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
+
   delay(1000);
 }
