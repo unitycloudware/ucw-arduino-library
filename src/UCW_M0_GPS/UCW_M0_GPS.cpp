@@ -1,8 +1,6 @@
+#if defined(UCW_GPS_SUPPORT)
 
 #include "UCW_M0_GPS.h"
-#include <WiFi101.h>
-#include <SPI.h>
-#include <Adafruit_GPS.h>
 
 #define UCW_API_HOST          "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT          80
@@ -273,7 +271,4 @@ void UCW_M0_GPS::updateBattStatus(){
     Serial.println();
 }
 
-
-
-
-
+#endif // UCW_GPS_SUPPORT

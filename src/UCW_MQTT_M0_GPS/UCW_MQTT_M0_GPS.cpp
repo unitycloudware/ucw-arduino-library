@@ -1,8 +1,6 @@
+#if defined(UCW_GPS_SUPPORT)
 
-#include <PubSubClient.h>
-#include <WiFi101.h>
 #include "UCW_MQTT_M0_GPS.h"
-#include <Adafruit_GPS.h>
 
 char ssid[] = "your_SSID";     // your network SSID (name)
 char pass[] = "your_password"; // your network password (use for WPA, or use as key for WEP)
@@ -229,6 +227,4 @@ void UCW_MQTT_M0_GPS::updateBattStatus(){
   Serial.print("VBat: " ); Serial.println(measuredvbat);
 }
 
-
-
-
+#endif // UCW_GPS_SUPPORT

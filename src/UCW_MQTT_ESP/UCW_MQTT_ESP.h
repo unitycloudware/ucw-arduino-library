@@ -1,9 +1,10 @@
 #ifndef UCWMQTTESP_H
 #define UCWMQTTESP_H
 
+#ifdef ESP8266
+
 #include <Arduino.h>
 #include "UCWClient.h"
-
 
 class UCW_MQTT_ESP : public UCWClient
 {
@@ -22,7 +23,7 @@ class UCW_MQTT_ESP : public UCWClient
     void reconnect();
 
 };
+
+#endif //ESP8266
+
 #endif
-
-
-

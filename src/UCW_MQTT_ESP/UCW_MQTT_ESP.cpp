@@ -1,3 +1,5 @@
+#ifdef ESP8266
+
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <EEPROM.h>
@@ -207,3 +209,5 @@ void UCW_MQTT_ESP::battery_level(){
   Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
 
 }
+
+#endif // ESP8266

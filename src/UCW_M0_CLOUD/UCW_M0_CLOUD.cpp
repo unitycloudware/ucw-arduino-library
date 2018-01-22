@@ -1,9 +1,6 @@
+#if defined(UCW_CLOUD_SUPPORT)
 
 #include "UCW_M0_CLOUD.h"
-#include <WiFi101.h>
-#include <SPI.h>
-#include <aREST.h>
-
 
 #define UCW_API_HOST          "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT          80
@@ -174,7 +171,4 @@ void UCW_M0_CLOUD::updateBattStatus(){
 
 }
 
-
-
-
-
+#endif // UCW_CLOUD_SUPPORT
