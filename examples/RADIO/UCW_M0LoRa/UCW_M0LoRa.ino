@@ -1,3 +1,4 @@
+
 /*
   Data transfer
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
@@ -13,8 +14,8 @@
 
 #include "config.h"
 
-#define DEVICE_ID   "your_device_id"
-#define DATA_STREAM "data-test"
+uint8_t deviceID[] = "your_deviceID";
+uint8_t dataStreamName[] = "data_monitoring";
 
 void setup() {
   // Start the serial connection
@@ -27,16 +28,6 @@ void setup() {
   // Connect to UCW IoT Cloud
   Serial.print("Connecting to UCW IoT Cloud...");
   ucw.connect();
-
-  // Wait for a connection
-  while (ucw.status() != UCW_NET_CONNECTED) {
-    Serial.print(".");
-    delay(500);
-  }
-
-  // We are connected
-  Serial.println(" Connected!");
-  ucw.printNetworkInfo();
 }
 
 void loop() {
@@ -50,7 +41,7 @@ void loop() {
   data.replace("%temperature", String(temperature));
   data.replace("%humidity", String(humidity));
 
-  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
+  ucw.txData(deviceID, dataStreamName, data);
 
   delay(1000);
 }

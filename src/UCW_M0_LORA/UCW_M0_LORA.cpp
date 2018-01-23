@@ -1,8 +1,6 @@
+#if defined(UCW_LORA_SUPPORT)
 
 #include "UCW_M0_LORA.h"
-#include <SPI.h>
-#include <RH_RF95.h>
-#include <Cape.h>
 
 #define VBATPIN A7
 
@@ -213,7 +211,4 @@ void UCW_M0_LORA::updateBattStatus(){
 
 }
 
-
-
-
-
+#endif // UCW_LORA_SUPPORT

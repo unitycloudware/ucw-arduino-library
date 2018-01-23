@@ -1,6 +1,5 @@
+#if defined(UCW_MQTT_SUPPORT)
 
-#include <PubSubClient.h>
-#include <WiFi101.h>
 #include "UCW_MQTT_M0.h"
 
 char ssid[] = "your_SSID";     // your network SSID (name)
@@ -195,5 +194,4 @@ void UCW_MQTT_M0::updateBattStatus(){
   Serial.print("VBat: " ); Serial.println(measuredvbat);
 }
 
-
-
+#endif // UCW_MQTT_SUPPORT

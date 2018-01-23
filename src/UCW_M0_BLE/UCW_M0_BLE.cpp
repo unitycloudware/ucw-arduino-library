@@ -1,14 +1,6 @@
+#if defined(UCW_BLE_SUPPORT)
 
 #include "UCW_M0_BLE.h"
-#include <SPI.h>
-#include "Adafruit_BLE.h"
-#include "Adafruit_BluefruitLE_SPI.h"
-#include "Adafruit_BluefruitLE_UART.h"
-#include "BluefruitConfig.h"
-
-#if SOFTWARE_SERIAL_AVAILABLE
-  #include <SoftwareSerial.h>
-#endif
 
 #define VBATPIN A7
 #define FACTORYRESET_ENABLE         1
@@ -166,7 +158,4 @@ void UCW_M0_BLE::updateBattStatus(){
     Serial.println();
 }
 
-
-
-
-
+#endif // UCW_BLE_SUPPORT
