@@ -37,6 +37,7 @@ UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 // uncomment the following two lines for ethernet,
 //#include "UCW_Ethernet.h"
 //UCW_Ethernet ucw(cfg);
+
 /**************************** LoRa ************************************/
 
 /*
@@ -46,4 +47,6 @@ UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 // uncomment the following two lines for LoRa,
 //#include "UCW_LoRa.h"
-//UCW_LoRa ucw(cfg);
+//UCW_LoRa ucw(&cfg);
+
+
