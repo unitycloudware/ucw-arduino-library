@@ -3,15 +3,16 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#ifndef UCW_WINC1500_H
-#define UCW_WINC1500_H
+#ifndef UCW_MQTTM0_H
+#define UCW_MQTTM0_H
 
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 #include <Arduino.h>
 #include <SPI.h>
 #include <WiFi101.h>
-#include <UCW.h>
+#include "UCW_MQTT.h"
+
 
 // Adafruit Feather M0 WiFi
 #define WINC_CS   8
@@ -20,16 +21,26 @@
 #define WINC_EN   2
 #define VBATPIN   A7
 
-class UCW_WINC1500 : public UCW {
+#define mqtt_server "your_mqtt_server_host"
+#define mqtt_user "your_username"
+#define mqtt_password "your_password"
+
+#define payload_topic "your_payload_topic"
+#define device_topic "your_device_topic"
+#define dataStream_topic "your_dataStream_topic"
+#define sub_topic "your_subscription_topic"
+
+
+class UCW_MQTTM0 : public UCW_MQTT {
 
   public:
-    UCW_WINC1500(UCWConfig *config, const char *ssid, const char *pass);
-    ~UCW_WINC1500();
+    UCW_MQTTM0(UCWConfig *config, const char *ssid, const char *pass);
+    ~UCW_MQTTM0();
 
     ucw_status_t networkStatus();
     void printNetworkInfo();
     String connectionType();
-    bool sendData(String deviceID, String dataStreamName, String payload);
+    bool sendData(String deviceID, String dataStreamName, String payload, bool isRetained);
 
   protected:
     void _connect();
@@ -37,13 +48,13 @@ class UCW_WINC1500 : public UCW {
     const char *_ssid;
     const char *_pass;
 
-    WiFiClient *_httpClient;
-
     void resetConnection();
+    void reconnect();
     void printConnectionStatus();
     void updateBatteryStatus();
 };
 
 #endif // ARDUINO_ARCH_SAMD
 
-#endif // UCW_WINC1500_H
+#endif // UCW_MQTTM0_H
+

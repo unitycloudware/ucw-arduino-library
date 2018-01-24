@@ -20,12 +20,12 @@ static UCWConfig cfg = {
     - Feather WICED -> https://www.adafruit.com/products/3056
 */
 
-//#define WIFI_SSID       "your_ssid"
-//#define WIFI_PASS       "your_pass"
+#define WIFI_SSID       "your_ssid"
+#define WIFI_PASS       "your_pass"
 
 // comment out the following two lines if you are using WiFi
-//#include "UCW_WiFi.h"
-//UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
+#include "UCW_WiFi.h"
+UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 /**************************** Ethernet ************************************/
 
@@ -46,6 +46,7 @@ static UCWConfig cfg = {
  */
 
 // uncomment the following two lines for LoRa,
-#include "UCW_LoRa.h"
-UCW_LoRa ucw(&cfg);
+//#include "UCW_LoRa.h"
+//UCW_LoRa ucw(&cfg);
+
 

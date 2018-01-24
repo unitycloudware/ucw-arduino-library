@@ -18,8 +18,8 @@
 
 #elif defined(ESP8266)
 
-  //#include "wifi/UCW_ESP8266.h"
-  //typedef UCW_ESP8266 UCW_WiFi;
+  #include "wifi/UCW_ESP8266.h"
+  typedef UCW_ESP8266 UCW_WiFi;
 
 #endif
 

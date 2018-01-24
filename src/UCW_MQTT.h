@@ -3,18 +3,18 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#ifndef UCW_H
-#define UCW_H
+#ifndef UCWMQTT_H
+#define UCWMQTT_H
 
 #include <Arduino.h>
-#include <ArduinoHttpClient.h>
-#include <UCW_System.h>
+#include <PubSubClient.h>
+#include "UCW_MQTTSYS.h"
 
-class UCW {
+class UCW_MQTT {
 
   public:
-    UCW(UCWConfig *config);
-    virtual ~UCW();
+    UCW_MQTT(UCWConfig *config);
+    virtual ~UCW_MQTT();
 
     void connect();
     ucw_status_t status();
@@ -25,7 +25,6 @@ class UCW {
     void sys();
     String version();
     String userAgent();
-    String apiUrl();
 
   protected:
     virtual void _connect() = 0;
@@ -34,14 +33,16 @@ class UCW {
     char *_version;
     ucw_status_t _status = UCW_IDLE;
     UCWConfig *_config;
-    String _host = UCW_API_HOST;
+    String _host = UCW_MQTT_HOST;
     IPAddress _hostIP;
-    uint16_t _httpPort = UCW_API_PORT;
-    HttpClient *_http;
+    uint16_t _mqttPort = UCW_MQTT_PORT;
+    PubSubClient client;
     String _userAgent;
 
+
   private:
-    void _init();
+    //void _init();
 };
 
 #endif // UCW_H
+

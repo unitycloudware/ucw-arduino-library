@@ -31,7 +31,7 @@ class UCW_M0LoRa : public UCW {
     ucw_status_t networkStatus();
     void printNetworkInfo();
     String connectionType();
-    bool txData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
+    bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
 
   protected:
     void _connect();

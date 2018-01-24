@@ -23,6 +23,7 @@ class UCW_ESP8266 : public UCW {
     ucw_status_t networkStatus();
     void printNetworkInfo();
     String connectionType();
+    bool sendData(String deviceID, String dataStreamName, String payload);
 
   protected:
     void _connect();

@@ -5,23 +5,20 @@
 
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
-#include "UCW_WINC1500.h"
+#include "UCW_MQTTM0.h"
 
-UCW_WINC1500::UCW_WINC1500(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
+UCW_MQTTM0::UCW_MQTTM0(UCWConfig *config, const char *ssid, const char *pass) : UCW_MQTT(config) {
   _ssid = ssid;
   _pass = pass;
-  _httpClient = new WiFiClient();
-
+  WiFiClient wifiClient;
+  PubSubClient client(wifiClient);
   analogReadResolution(12);
 }
 
-UCW_WINC1500::~UCW_WINC1500() {
-  if (_httpClient) {
-    delete _httpClient;
-  }
+UCW_MQTTM0::~UCW_MQTTM0() {
 }
 
-void UCW_WINC1500::_connect() {
+void UCW_MQTTM0::_connect() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
@@ -39,27 +36,25 @@ void UCW_WINC1500::_connect() {
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   WiFi.begin(_ssid, _pass);
   _status = UCW_NET_DISCONNECTED;
+  client.setServer(UCW_MQTT_HOST, UCW_MQTT_PORT);
 }
 
-void UCW_WINC1500::_sys() {
+void UCW_MQTTM0::_sys() {
   if (networkStatus() == UCW_NET_DISCONNECTED) {
     UCW_LOG_PRINTLN("Trying to reconnect device...");
     resetConnection();
-    delay(1000);
+    while(1);
   }
 
-  if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
-    if (WiFi.hostByName(_host.c_str(), _hostIP)) {
-      _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
-      _status = UCW_CONNECTED;
-
+  if ((!client.connected()) && (networkStatus() == UCW_NET_CONNECTED)) {
+    reconnect();
     } else {
       UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
     }
   }
-}
 
-ucw_status_t UCW_WINC1500::networkStatus() {
+
+ucw_status_t UCW_MQTTM0::networkStatus() {
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return UCW_NET_CONNECTED;
@@ -75,7 +70,7 @@ ucw_status_t UCW_WINC1500::networkStatus() {
   }
 }
 
-void UCW_WINC1500::printNetworkInfo() {
+void UCW_MQTTM0::printNetworkInfo() {
   if (networkStatus() != UCW_NET_CONNECTED) {
     UCW_LOG_PRINTLN("Device is not connected!");
     return;
@@ -84,11 +79,11 @@ void UCW_WINC1500::printNetworkInfo() {
   printConnectionStatus();
 }
 
-String UCW_WINC1500::connectionType() {
+String UCW_MQTTM0::connectionType() {
   return "winc1500";
 }
 
-void UCW_WINC1500::resetConnection() {
+void UCW_MQTTM0::resetConnection() {
   UCW_LOG_PRINTLN();
   UCW_LOG_PRINTLN("*** Reseting device...");
   UCW_LOG_PRINTLN();
@@ -104,16 +99,9 @@ void UCW_WINC1500::resetConnection() {
   delay(10);
   digitalWrite(A0, HIGH);
   WiFi.begin(_ssid, _pass);
-
-  if (_http) {
-    delete _http;
-    _http = 0;
-  }
-
-  _status = UCW_NET_DISCONNECTED;
 }
 
-void UCW_WINC1500::printConnectionStatus() {
+void UCW_MQTTM0::printConnectionStatus() {
   UCW_LOG_PRINTLN();
 
   // Print the SSID of the network you're attached to:
@@ -151,69 +139,56 @@ void UCW_WINC1500::printConnectionStatus() {
   UCW_LOG_PRINTLN();
 }
 
-bool UCW_WINC1500::sendData(String deviceID, String dataStreamName, String payload) {
-  if (status() != UCW_CONNECTED) {
-    UCW_LOG_PRINTLN("Device is not connected!");
-    return false;
-  }
-
+bool UCW_MQTTM0::sendData(String deviceID, String dataStreamName, String payload, bool isRetained) {
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");
     return false;
   }
 
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Request:");
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Sending payload: " + payload);
-  UCW_LOG_PRINT("Payload length: ");
-  UCW_LOG_PRINT(payload.length());
-  UCW_LOG_PRINTLN(" byte(s)");
+  if(_status == WL_CONNECTED){
+    if (!client.connected()) {
+        reconnect();
+        }
+    UCW_LOG_PRINT("Publishing new data:");
+    UCW_LOG_PRINTLN(payload.c_str());
 
-  String apiUri = apiUrl() + "/data-streams/%dataStreamName/messages/%deviceId";
-  apiUri.replace("%deviceId", deviceID);
-  apiUri.replace("%dataStreamName", dataStreamName);
+    client.publish(device_topic, deviceID.c_str(), isRetained);
+    client.publish(dataStream_topic, dataStreamName.c_str(), isRetained);
+    client.publish(payload_topic, payload.c_str(), isRetained);
 
-  UCW_LOG_PRINTLN("API URI: " + apiUri);
+    updateBatteryStatus();
 
-  _http->beginRequest();
-  _http->post(apiUri);
+    } else {
+        UCW_LOG_PRINTLN("WiFi connection failed");
+        return false;
+        resetConnection();
+        }
+   client.loop();
 
-  _http->sendHeader("Host", _config->host);
-  //_http->sendHeader("User-Agent", "Adafruit-Feather-M0-Wifi");
-  _http->sendHeader("User-Agent", userAgent());
-  _http->sendHeader("Authorization", "Bearer " + _config->token);
-  _http->sendHeader("Content-Type", "application/json");
-  _http->sendHeader("Content-Length", payload.length());
-
-  _http->beginBody();
-  _http->print(payload);
-  _http->endRequest();
-
-  int statusCode = _http->responseStatusCode();
-  String response = _http->responseBody();
-
-  if (statusCode == HTTP_ERROR_TIMED_OUT) {
-    UCW_LOG_PRINTLN();
-    UCW_LOG_PRINTLN("Unable connect to the server!");
-    return false;
-  }
-
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Response:");
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINT("Status Code = ");
-  UCW_LOG_PRINTLN(statusCode);
-  UCW_LOG_PRINTLN();
-
-  UCW_LOG_PRINTLN(response);
-
-  return statusCode == 201;
-  updateBatteryStatus();
+  client.subscribe(sub_topic);
+  return true;
 }
 
+void UCW_MQTTM0::reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    // If you do not want to use a username and password, change next line to
+    // if (client.connect("mqtt_clientID")) {
+    if (client.connect("mqtt_clientID", mqtt_user, mqtt_password)) {
+      Serial.println("connected");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
 
-void UCW_WINC1500::updateBatteryStatus() {
+void UCW_MQTTM0::updateBatteryStatus() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
@@ -228,3 +203,4 @@ void UCW_WINC1500::updateBatteryStatus() {
 }
 
 #endif // ARDUINO_ARCH_SAMD
+

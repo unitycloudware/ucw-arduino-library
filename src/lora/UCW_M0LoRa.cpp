@@ -102,7 +102,7 @@ void UCW_M0LoRa::resetConnection() {
   delay(10);
 }
 
-bool UCW_M0LoRa::txData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName,String payload) {
+bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName,String payload) {
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");
     delay(1000);

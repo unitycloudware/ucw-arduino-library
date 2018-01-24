@@ -5,26 +5,26 @@
 
 #if defined(ESP8266)
 
-#include "UCW_ESP8266.h"
-#include <EEPROM.h>
+#include "UCW_MQTTESP.h"
 
-UCW_ESP8266::UCW_ESP8266(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
+UCW_MQTTESP::UCW_MQTTESP(UCWConfig *config, const char *ssid, const char *pass) : UCW_MQTT(config) {
   _ssid = ssid;
   _pass = pass;
-  _httpClient = new WiFiClient();
+  WiFiClient wifiClient;
+  PubSubClient client(wifiClient);
 }
 
-UCW_ESP8266::~UCW_ESP8266() {
-  if (_httpClient) {
-    delete _httpClient;
-  }
+UCW_MQTTESP::~UCW_MQTTESP() {
 }
 
-void UCW_ESP8266::_connect() {
+void UCW_MQTTESP::_connect() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
    */
+
+  // Configure pins for Adafruit ATWINC1500 Feather
+  WiFi.setPins(WINC_CS, WINC_IRQ, WINC_RST, WINC_EN);
 
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
@@ -35,27 +35,25 @@ void UCW_ESP8266::_connect() {
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   WiFi.begin(_ssid, _pass);
   _status = UCW_NET_DISCONNECTED;
+  client.setServer(UCW_MQTT_HOST, UCW_MQTT_PORT);
 }
 
-void UCW_ESP8266::_sys() {
+void UCW_MQTTESP::_sys() {
   if (networkStatus() == UCW_NET_DISCONNECTED) {
     UCW_LOG_PRINTLN("Trying to reconnect device...");
-    resetConnection();
-    delay(1000);
+    delay(100);
+    while(1);
   }
 
-  if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
-    if (WiFi.hostByName(_host.c_str(), _hostIP)) {
-      _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
-      _status = UCW_CONNECTED;
-
+  if ((!client.connected()) && (networkStatus() == UCW_NET_CONNECTED)) {
+    reconnect();
     } else {
       UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
     }
   }
-}
 
-ucw_status_t UCW_ESP8266::networkStatus() {
+
+ucw_status_t UCW_MQTTESP::networkStatus() {
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return UCW_NET_CONNECTED;
@@ -71,7 +69,7 @@ ucw_status_t UCW_ESP8266::networkStatus() {
   }
 }
 
-void UCW_ESP8266::printNetworkInfo() {
+void UCW_MQTTESP::printNetworkInfo() {
   if (networkStatus() != UCW_NET_CONNECTED) {
     UCW_LOG_PRINTLN("Device is not connected!");
     return;
@@ -80,12 +78,12 @@ void UCW_ESP8266::printNetworkInfo() {
   printConnectionStatus();
 }
 
-String UCW_ESP8266::connectionType() {
+String UCW_MQTTESP::connectionType() {
   return "esp8266";
 }
 
 
-void UCW_ESP8266::printConnectionStatus() {
+void UCW_MQTTESP::printConnectionStatus() {
   UCW_LOG_PRINTLN();
 
   // Print the SSID of the network you're attached to:
@@ -118,72 +116,59 @@ void UCW_ESP8266::printConnectionStatus() {
   UCW_LOG_PRINT(rssi);
   UCW_LOG_PRINTLN(" dBm");
 
+  UCW_LOG_PRINTLN();
 }
 
-bool UCW_ESP8266::sendData(String deviceID, String dataStreamName, String payload) {
-  if (status() != UCW_CONNECTED) {
-    UCW_LOG_PRINTLN("Device is not connected!");
-    return false;
-  }
-
+bool UCW_MQTTESP::sendData(String deviceID, String dataStreamName, String payload, bool isRetained) {
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");
     return false;
   }
 
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Request:");
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Sending payload: " + payload);
-  UCW_LOG_PRINT("Payload length: ");
-  UCW_LOG_PRINT(payload.length());
-  UCW_LOG_PRINTLN(" byte(s)");
+  if(_status == WL_CONNECTED){
+    if (!client.connected()) {
+        reconnect();
+        }
+    UCW_LOG_PRINT("Publishing new data:");
+    UCW_LOG_PRINTLN(payload.c_str());
 
-  String apiUri = apiUrl() + "/data-streams/%dataStreamName/messages/%deviceId";
-  apiUri.replace("%deviceId", deviceID);
-  apiUri.replace("%dataStreamName", dataStreamName);
+    client.publish(device_topic, deviceID.c_str(), isRetained);
+    client.publish(dataStream_topic, dataStreamName.c_str(), isRetained);
+    client.publish(payload_topic, payload.c_str(), isRetained);
 
-  UCW_LOG_PRINTLN("API URI: " + apiUri);
+    updateBatteryStatus();
 
-  _http->beginRequest();
-  _http->post(apiUri);
+    } else {
+        UCW_LOG_PRINTLN("WiFi connection failed");
+        return false;
+        }
+   client.loop();
 
-  _http->sendHeader("Host", _config->host);
-  //_http->sendHeader("User-Agent", "Adafruit-Feather-M0-Wifi");
-  _http->sendHeader("User-Agent", userAgent());
-  _http->sendHeader("Authorization", "Bearer " + _config->token);
-  _http->sendHeader("Content-Type", "application/json");
-  _http->sendHeader("Content-Length", payload.length());
-
-  _http->beginBody();
-  _http->print(payload);
-  _http->endRequest();
-
-  int statusCode = _http->responseStatusCode();
-  String response = _http->responseBody();
-
-  if (statusCode == HTTP_ERROR_TIMED_OUT) {
-    UCW_LOG_PRINTLN();
-    UCW_LOG_PRINTLN("Unable connect to the server!");
-    return false;
-  }
-
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Response:");
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINT("Status Code = ");
-  UCW_LOG_PRINTLN(statusCode);
-  UCW_LOG_PRINTLN();
-
-  UCW_LOG_PRINTLN(response);
-
-  return statusCode == 201;
-  updateBatteryStatus();
+  client.subscribe(sub_topic);
+  return true;
 }
 
-void UCW_ESP8266::updateBattStatus(){
+void UCW_MQTTESP::reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    // If you do not want to use a username and password, change next line to
+    // if (client.connect("mqtt_clientID")) {
+    if (client.connect("mqtt_clientID", mqtt_user, mqtt_password)) {
+      Serial.println("connected");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
 
-    //https://learn.adafruit.com/using-ifttt-with-adafruit-io/arduino-code-1
+void UCW_MQTTESP::updateBatteryStatus() {
+  //https://learn.adafruit.com/using-ifttt-with-adafruit-io/arduino-code-1
 
     EEPROM.begin(512);
     byte battery_count = EEPROM.read(0);
@@ -202,10 +187,9 @@ void UCW_ESP8266::updateBattStatus(){
     // save the current count
     EEPROM.write(0, battery_count);
     EEPROM.commit();
-
 }
 
-void UCW_ESP8266::battery_level(){
+void UCW_MQTTESP::battery_level(){
 
   //read the battery level from the ESP8266 analog in pin.
   // analog read level is 10 bit 0-1023 (0V-1V).
@@ -221,7 +205,6 @@ void UCW_ESP8266::battery_level(){
 
 }
 
+#endif // ARDUINO_ARCH_SAMD
 
-
-#endif // ESP8266
 

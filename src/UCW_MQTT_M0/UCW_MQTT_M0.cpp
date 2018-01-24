@@ -5,7 +5,7 @@
 char ssid[] = "your_SSID";     // your network SSID (name)
 char pass[] = "your_password"; // your network password (use for WPA, or use as key for WEP)
 
-#define mqtt_server "YOUR_MQTT_SERVER_HOST"
+#define mqtt_server "your_mqtt_server_host"
 #define mqtt_user "your_username"
 #define mqtt_password "your_password"
 #define mqtt_clientID "clientID"
