@@ -3,25 +3,40 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#ifndef UCW_LoRa_H
-#define UCW_LoRa_H
+#ifndef UCWLORA_H
+#define UCWLORA_H
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
+#include <Arduino.h>
+#include <UCW_System.h>
 
-  #include "lora/UCW_M0LoRa.h"
-  typedef UCW_M0LoRa UCW_LoRa;
+class UCW_LoRa {
 
-//#elif defined(ARDUINO_ARCH_ESP32)
-//
-//  //#include "lora/UCW_ESP32.h"
-//  //typedef UCW_ESP32 UCW_WiFi;
-//
-//#elif defined(ESP8266)
-//
-//  //#include "lora/UCW_ESP8266.h"
-//  //typedef UCW_ESP8266 UCW_WiFi;
+  public:
+    UCW_LoRa(UCWConfig_Lora *config);
+    virtual ~UCW_LoRa();
 
-#endif
+    void connect();
+    virtual ucw_status_t Operatingfreq() = 0;
+    virtual String connectionType() = 0;
 
-#endif // UCW_LoRa_H
+    void sys();
+    String version();
+    String userAgent();
+
+
+  protected:
+    virtual void _connect() = 0;
+    virtual void _sys() = 0;
+
+    char *_version;
+    //ucw_status_t _status = UCW_IDLE;
+    UCWConfig_Lora *_config;
+    int _freq = RF95_FREQ;
+    String _userAgent;
+
+  private:
+    void _init();
+};
+
+#endif // UCWLORA_H
 

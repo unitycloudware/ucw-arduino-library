@@ -8,7 +8,6 @@
 #include <PubSubClient.h>
 #include <Adafruit_GPS.h>
 #include "UCWClient.h"
-#include "UCW_MQTT_M0_GPS.h"
 
 class UCW_MQTT_M0_GPS : public UCWClient {
   public:

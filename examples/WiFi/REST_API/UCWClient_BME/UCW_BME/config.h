@@ -27,6 +27,22 @@ static UCWConfig cfg = {
 #include "UCW_WiFi.h"
 UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
+/*******************************WiFi/ MQTT **************************************/
+/*
+  The UCW_MQTT_SUPPORT client will work with the following boards:
+    - Feather M0 WiFi -> https://www.adafruit.com/products/3010
+    - Feather HUZZAH ESP8266 -> https://www.adafruit.com/products/2821
+    - HUZZAH ESP8266 Breakout -> https://www.adafruit.com/products/2471
+    - Feather WICED -> https://www.adafruit.com/products/3056
+*/
+
+//#define WIFI_SSID       "your_ssid"
+//#define WIFI_PASS       "your_pass"
+
+//comment this line if you are using restAPI
+//#include "UCW_MQTT_SUPPORT.h"
+//UCW_MQTT_SUPPORT ucw(&cfg, WIFI_SSID, WIFI_PASS);
+
 /**************************** Ethernet ************************************/
 
 /*

@@ -8,7 +8,7 @@
 
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
-  #include "UCW_MQTTM0.h"
+  #include "wifi/MQTT/UCW_MQTTM0.h"
   typedef UCW_MQTTM0 UCW_MQTT_SUPPORT;
 
 #elif defined(ARDUINO_ARCH_ESP32)
@@ -18,7 +18,7 @@
 
 #elif defined(ESP8266)
 
-  #include "UCW_MQTTESP.h"
+  #include "wifi/MQTT/UCW_MQTTESP.h"
   typedef UCW_MQTTESP UCW_MQTT_SUPPORT;
 
 #endif

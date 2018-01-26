@@ -16,6 +16,13 @@
 #define UCW_API_PORT  80
 #define UCW_API_PATH  "/api/ucw/v1"
 
+// for MQTT
+#define UCW_MQTT_HOST  "cloud.dev.unitycloudware.com"
+#define UCW_MQTT_PORT  1883
+
+//for LoRa
+#define RF95_FREQ 915
+
 // uncomment / comment to turn on/off error output
 #define UCW_ERROR
 
@@ -45,6 +52,11 @@ struct UCWConfig {
     String host;
     int port;
     bool isSecuredConnection;
+    String token;
+};
+
+struct UCWConfig_Lora {
+    int freq;
     String token;
 };
 

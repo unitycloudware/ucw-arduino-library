@@ -4,7 +4,7 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
- #include "UCW.h"
+ #include "config.h"
 
 /*
   Edit the config.h to configure the connection string to the UCW Platform
@@ -12,10 +12,8 @@
   clients.
  */
 
-#include "config.h"
-
-uint8_t deviceID[] = "your_deviceID";
-uint8_t dataStreamName[] = "data_monitoring";
+uint8_t DEVICE_ID[] = "your_device_id";
+uint8_t DATA_STREAM[] = "data_test";
 
 void setup() {
   // Start the serial connection
@@ -25,8 +23,8 @@ void setup() {
     ; // Wait for serial port to connect. Needed for native USB port only
   }
 
-  // Connect to UCW IoT Cloud
-  Serial.print("Connecting to UCW IoT Cloud...");
+  // Connect to desired freq
+  Serial.print("Desired operating freq set");
   ucw.connect();
 }
 
@@ -41,7 +39,7 @@ void loop() {
   data.replace("%temperature", String(temperature));
   data.replace("%humidity", String(humidity));
 
-  ucw.sendData(deviceID, dataStreamName, data);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
 
   delay(1000);
 }

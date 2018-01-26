@@ -10,7 +10,7 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-#include <UCW.h>
+#include <UCW_LoRa.h>
 #include <RH_RF95.h>
 #include <Cape.h>
 
@@ -22,14 +22,13 @@
 #define WINC_EN   2
 #define VBATPIN   A7
 
-class UCW_M0LoRa : public UCW {
+class UCW_M0LoRa : public UCW_LoRa {
 
   public:
     UCW_M0LoRa(UCWConfig *config);
     ~UCW_M0LoRa();
 
-    ucw_status_t networkStatus();
-    void printNetworkInfo();
+    ucw_status_t Operatingfreq();
     String connectionType();
     bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
 

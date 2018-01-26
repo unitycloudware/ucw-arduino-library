@@ -3,7 +3,7 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
+//#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 #include "UCW_M0LoRa.h"
 
@@ -28,7 +28,7 @@ char key[RH_RF95_MAX_MESSAGE_LEN] = "set_your_key_here";
 Cape cape(key, RH_RF95_MAX_MESSAGE_LEN);
 
 
-UCW_M0LoRa::UCW_M0LoRa(UCWConfig *config): UCW(config) {
+UCW_M0LoRa::UCW_M0LoRa(UCWConfig *config): UCW_LoRa(config) {
   analogReadResolution(12);
 }
 
@@ -58,7 +58,7 @@ void UCW_M0LoRa::_connect() {
 
 void UCW_M0LoRa::_sys() {
   // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
-    if (networkStatus()==UCW_NET_DISCONNECTED) {
+    if (Operatingfreq()==UCW_NET_DISCONNECTED) {
         UCW_LOG_PRINTLN("setFrequency failed");
         resetConnection();
         while (1);
@@ -66,16 +66,12 @@ void UCW_M0LoRa::_sys() {
     Serial.print("Operating Freq is: "); Serial.println(RF95_FREQ);
 }
 
-ucw_status_t UCW_M0LoRa::networkStatus() {
+ucw_status_t UCW_M0LoRa::Operatingfreq() {
   if (rf95.setFrequency(RF95_FREQ)) {
     return UCW_NET_CONNECTED;
   } else {
     return UCW_NET_DISCONNECTED;
     }
-}
-
-void UCW_M0LoRa::printNetworkInfo() {
-    ;
 }
 
 String UCW_M0LoRa::connectionType() {

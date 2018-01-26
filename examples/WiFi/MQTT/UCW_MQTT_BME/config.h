@@ -1,4 +1,4 @@
-#include "UCW_MQTTSYS.h"
+#include "UCW_System.h"
 
 /************************ UCW Platform Config *******************************/
 
@@ -62,8 +62,8 @@ UCW_MQTT_SUPPORT ucw(&cfg, WIFI_SSID, WIFI_PASS);
  */
 
 // uncomment the following two lines for LoRa,
-//#include "UCW_LoRa.h"
-//UCW_LoRa ucw(&cfg);
+//#include "UCW_LoRa_SUPPORT.h"
+//UCW_LoRa_SUPPORT ucw(&cfg);
 
 
 
