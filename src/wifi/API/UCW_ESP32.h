@@ -3,27 +3,28 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#ifndef UCW_ESP8266_H
-#define UCW_ESP8266_H
+#ifndef UCW_ESP32_H
+#define UCW_ESP32_H
 
-#if defined(ESP8266)
+#if defined(ARDUINO_ARCH_ESP32)
 
 #include <Arduino.h>
 #include <SPI.h>
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <UCW.h>
 
+#define VBATPIN A13
 
-class UCW_ESP8266 : public UCW {
+class UCW_ESP32 : public UCW {
 
   public:
-    UCW_ESP8266(UCWConfig *config, const char *ssid, const char *pass);
-    ~UCW_ESP8266();
+    UCW_ESP32(UCWConfig *config, const char *ssid, const char *pass);
+    ~UCW_ESP32();
 
     ucw_status_t networkStatus();
     void printNetworkInfo();
     String connectionType();
-
+    
   protected:
     void _connect();
     void _sys();
@@ -34,10 +35,9 @@ class UCW_ESP8266 : public UCW {
 
     void printConnectionStatus();
     void updateBatteryStatus();
-    void battery_level();
 };
 
-#endif // ESP8266
+#endif // ARDUINO_ARCH_ESP32
 
-#endif // UCW_ESP8266_H
+#endif // UCW_ESP32_H
 

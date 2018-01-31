@@ -6,7 +6,7 @@ This sends sensor data to the gateway.
 */
 
 
-#include "UCW_M0_BLE.h"
+#include "config.h"
 #include "DHT.h"
 
 #define DHTPIN 10
@@ -19,7 +19,7 @@ UCW_M0_BLE UCW_M0_Object;
 
 void setup() {
   // put your setup code here, to run once:
-  UCW_M0_Object.connect({"0",0,false,"your_token"});
+  UCW_M0_Object.connect("your_token");
   UCW_M0_Object.setConnectionMode();
   dht.begin();
 

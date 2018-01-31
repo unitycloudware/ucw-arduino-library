@@ -1,5 +1,5 @@
 
-#include <UCW_System.h>
+//#include <UCW_System.h>
 
 /************************ UCW Platform Config *******************************/
 
@@ -13,12 +13,12 @@
 //};
 
 //for WiFi MQTT connection only
-static UCWConfig cfg = {
-  .host = UCW_MQTT_HOST,
-  .port = UCW_MQTT_PORT,
-  .isSecuredConnection = false,
-  .token = "your_token"
-};
+//static UCWConfig cfg = {
+//  .host = UCW_MQTT_HOST,
+//  .port = UCW_MQTT_PORT,
+//  .isSecuredConnection = false,
+//  .token = "your_token"
+//};
 
 //for LoRa connection only
 //static UCWConfig_Lora cfg = {
@@ -44,8 +44,8 @@ static UCWConfig cfg = {
 //UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 //un-comment these lines if you are using MQTT
-#include "UCW_MQTT_SUPPORT.h"
-UCW_MQTT_SUPPORT ucw(&cfg, WIFI_SSID, WIFI_PASS);
+//#include "UCW_MQTT_SUPPORT.h"
+//UCW_MQTT_SUPPORT ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 /**************************** Ethernet ************************************/
 
@@ -77,4 +77,4 @@ UCW_MQTT_SUPPORT ucw(&cfg, WIFI_SSID, WIFI_PASS);
  */
 
 // uncomment the following two lines for BLE,
-//#include "UCW_M0_BLE.h"
+#include "UCW_M0_BLE.h"

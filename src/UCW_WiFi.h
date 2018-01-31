@@ -13,8 +13,8 @@
 
 #elif defined(ARDUINO_ARCH_ESP32)
 
-  //#include "wifi/UCW_ESP32.h"
-  //typedef UCW_ESP32 UCW_WiFi;
+  #include "wifi/UCW_ESP32.h"
+  typedef UCW_ESP32 UCW_WiFi;
 
 #elif defined(ESP8266)
 

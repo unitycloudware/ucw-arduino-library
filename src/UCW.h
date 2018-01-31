@@ -10,6 +10,13 @@
 #include <ArduinoHttpClient.h>
 #include <UCW_System.h>
 
+
+// what's the name of the hardware serial port?
+#define GPSSerial Serial1
+
+// Connect to the GPS on the hardware port
+Adafruit_GPS GPS(&GPSSerial);
+
 class UCW {
 
   public:
@@ -26,10 +33,18 @@ class UCW {
     String version();
     String userAgent();
     String apiUrl();
+    bool sendData(String deviceID, String dataStreamName, String payload);
+
+    #if defined(GPS_SUPPORT_H) // for M0 boards
+    void setupGPS();
+    #endif // defined
 
   protected:
     virtual void _connect() = 0;
     virtual void _sys() = 0;
+    virtual void updateBatteryStatus() = 0;
+    void clearGPS();
+    void readGPS();
 
     char *_version;
     ucw_status_t _status = UCW_IDLE;

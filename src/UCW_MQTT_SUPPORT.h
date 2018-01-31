@@ -13,8 +13,8 @@
 
 #elif defined(ARDUINO_ARCH_ESP32)
 
-  //#include "UCW_MQTT_ESP32.h"
-  //typedef UCW_MQTT_ESP32 UCW_MQTT_SUPPORT;
+  #include "UCW_MQTTESP32.h"
+  typedef UCW_MQTTESP32 UCW_MQTT_SUPPORT;
 
 #elif defined(ESP8266)
 

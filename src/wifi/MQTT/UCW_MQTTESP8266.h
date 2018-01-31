@@ -3,22 +3,26 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#ifndef UCW_ESP8266_H
-#define UCW_ESP8266_H
+#ifndef UCW_MQTTESP8266_H
+#define UCW_MQTTESP8266_H
 
 #if defined(ESP8266)
 
 #include <Arduino.h>
 #include <SPI.h>
 #include <ESP8266WiFi.h>
-#include <UCW.h>
+#include <EEPROM.h>
+#include "UCW_MQTT.h"
 
+#define BATTERY_INTERVAL 5 // how often to report battery level(in minutes)
 
-class UCW_ESP8266 : public UCW {
+#define SLEEP_LENGTH 1 // how long to sleep between updates(in seconds)
+
+class UCW_MQTTESP8266 : public UCW_MQTT {
 
   public:
-    UCW_ESP8266(UCWConfig *config, const char *ssid, const char *pass);
-    ~UCW_ESP8266();
+    UCW_MQTTESP8266(UCWConfig *config, const char *ssid, const char *pass);
+    ~UCW_MQTTESP8266();
 
     ucw_status_t networkStatus();
     void printNetworkInfo();
@@ -29,9 +33,7 @@ class UCW_ESP8266 : public UCW {
     void _sys();
     const char *_ssid;
     const char *_pass;
-
-    WiFiClient *_httpClient;
-
+    void resetConnection();
     void printConnectionStatus();
     void updateBatteryStatus();
     void battery_level();
@@ -39,5 +41,6 @@ class UCW_ESP8266 : public UCW {
 
 #endif // ESP8266
 
-#endif // UCW_ESP8266_H
+#endif // UCW_MQTTESP8266_H
+
 

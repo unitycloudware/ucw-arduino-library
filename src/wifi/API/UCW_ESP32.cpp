@@ -3,29 +3,26 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if defined(ESP8266)
+#if defined(ARDUINO_ARCH_ESP32)
 
-#include "UCW_ESP8266.h"
-#include <EEPROM.h>
+#include "UCW_ESP32.h"
 
-UCW_ESP8266::UCW_ESP8266(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
+
+UCW_ESP32::UCW_ESP32(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
   _ssid = ssid;
   _pass = pass;
   _httpClient = new WiFiClient();
+
+  analogReadResolution(12);
 }
 
-UCW_ESP8266::~UCW_ESP8266() {
+UCW_ESP32::~UCW_ESP32() {
   if (_httpClient) {
     delete _httpClient;
   }
 }
 
-void UCW_ESP8266::_connect() {
-  /*
-   * Adafruit Feather M0 WiFi with ATWINC1500
-   * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
-   */
-
+void UCW_ESP32::_connect() {
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     UCW_LOG_PRINTLN("WiFi shield not present!");
@@ -37,10 +34,9 @@ void UCW_ESP8266::_connect() {
   _status = UCW_NET_DISCONNECTED;
 }
 
-void UCW_ESP8266::_sys() {
+void UCW_ESP32::_sys() {
   if (networkStatus() == UCW_NET_DISCONNECTED) {
     UCW_LOG_PRINTLN("Trying to reconnect device...");
-    resetConnection();
     delay(1000);
   }
 
@@ -55,7 +51,7 @@ void UCW_ESP8266::_sys() {
   }
 }
 
-ucw_status_t UCW_ESP8266::networkStatus() {
+ucw_status_t UCW_ESP32::networkStatus() {
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return UCW_NET_CONNECTED;
@@ -71,7 +67,7 @@ ucw_status_t UCW_ESP8266::networkStatus() {
   }
 }
 
-void UCW_ESP8266::printNetworkInfo() {
+void UCW_ESP32::printNetworkInfo() {
   if (networkStatus() != UCW_NET_CONNECTED) {
     UCW_LOG_PRINTLN("Device is not connected!");
     return;
@@ -80,12 +76,11 @@ void UCW_ESP8266::printNetworkInfo() {
   printConnectionStatus();
 }
 
-String UCW_ESP8266::connectionType() {
-  return "esp8266";
+String UCW_ESP32::connectionType() {
+  return "esp32";
 }
 
-
-void UCW_ESP8266::printConnectionStatus() {
+void UCW_ESP32::printConnectionStatus() {
   UCW_LOG_PRINTLN();
 
   // Print the SSID of the network you're attached to:
@@ -117,50 +112,21 @@ void UCW_ESP8266::printConnectionStatus() {
   UCW_LOG_PRINT("Signal strength (RSSI): ");
   UCW_LOG_PRINT(rssi);
   UCW_LOG_PRINTLN(" dBm");
-
 }
 
-void UCW_ESP8266::updateBattStatus(){
+void UCW_ESP32::updateBatteryStatus() {
+  /*
+   * Adafruit Feather M0 WiFi with ATWINC1500
+   * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
+   */
 
-    //https://learn.adafruit.com/using-ifttt-with-adafruit-io/arduino-code-1
-
-    EEPROM.begin(512);
-    byte battery_count = EEPROM.read(0);
-    // we only need this to happen once every 100x runtime seconds,
-    // so we use eeprom to track the count between resets.
-    if(battery_count >= ((BATTERY_INTERVAL * 60) / SLEEP_LENGTH)) {
-        // reset counter
-        battery_count = 0;
-        // report battery level to Adafruit IO
-        battery_level();
-    } else {
-        // increment counter
-        battery_count++;
-    }
-
-    // save the current count
-    EEPROM.write(0, battery_count);
-    EEPROM.commit();
-
+  float measuredvbat = analogRead(VBATPIN);
+  measuredvbat *= 2;    // we divided by 2, so multiply back
+  measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+  measuredvbat /= 1024; // convert to voltage
+  UCW_LOG_PRINT("VBat: ");
+  UCW_LOG_PRINTLN(measuredvbat);
 }
 
-void UCW_ESP8266::battery_level(){
-
-  //read the battery level from the ESP8266 analog in pin.
-  // analog read level is 10 bit 0-1023 (0V-1V).
-  // use 1M & 220K voltage divider takes the max
-  // lipo value of 4.2V and drops it to 0.758V max.
-  // this means our min analog read value should be 580 (3.14V)
-  // and the max analog read value should be 774 (4.2V).
-  int level = analogRead(A0);
-
-  // convert battery level to percent
-  level = map(level, 580, 774, 0, 100);
-  Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
-
-}
-
-
-
-#endif // ESP8266
+#endif // ARDUINO_ARCH_ESP32
 

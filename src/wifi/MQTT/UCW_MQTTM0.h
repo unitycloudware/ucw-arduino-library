@@ -40,7 +40,6 @@ class UCW_MQTTM0 : public UCW_MQTT {
     ucw_status_t networkStatus();
     void printNetworkInfo();
     String connectionType();
-    bool sendData(String deviceID, String dataStreamName, String payload, bool isRetained);
 
   protected:
     void _connect();
@@ -49,7 +48,6 @@ class UCW_MQTTM0 : public UCW_MQTT {
     const char *_pass;
 
     void resetConnection();
-    void reconnect();
     void printConnectionStatus();
     void updateBatteryStatus();
 };

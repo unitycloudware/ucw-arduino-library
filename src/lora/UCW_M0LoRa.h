@@ -25,18 +25,16 @@
 class UCW_M0LoRa : public UCW_LoRa {
 
   public:
-    UCW_M0LoRa(UCWConfig *config);
+    UCW_M0LoRa(UCWConfig_Lora *config);
     ~UCW_M0LoRa();
 
     ucw_status_t Operatingfreq();
     String connectionType();
-    bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
 
   protected:
     void _connect();
     void _sys();
     void resetConnection();
-    bool receiveData();
     void updateBatteryStatus();
 };
 

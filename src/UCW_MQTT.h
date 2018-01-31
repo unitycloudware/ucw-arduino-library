@@ -8,7 +8,16 @@
 
 #include <Arduino.h>
 #include <PubSubClient.h>
-#include "UCW_MQTTSYS.h"
+#include "UCW_System.h"
+
+#define mqtt_server "your_mqtt_server_host"
+#define mqtt_user "your_username"
+#define mqtt_password "your_password"
+
+#define payload_topic "your_payload_topic"
+#define device_topic "your_device_topic"
+#define dataStream_topic "your_dataStream_topic"
+#define sub_topic "your_subscription_topic"
 
 class UCW_MQTT {
 
@@ -21,6 +30,11 @@ class UCW_MQTT {
     virtual ucw_status_t networkStatus() = 0;
     virtual void printNetworkInfo() = 0;
     virtual String connectionType() = 0;
+    bool sendData(String deviceID, String dataStreamName, String payload, bool isRetained);
+
+    #if defined(GPS_SUPPORT_H) // for M0 boards
+    void setupGPS();
+    #endif // defined
 
     void sys();
     String version();
@@ -29,6 +43,11 @@ class UCW_MQTT {
   protected:
     virtual void _connect() = 0;
     virtual void _sys() = 0;
+    void reconnect();
+    virtual void resetConnection() = 0;
+    virtual void updateBatteryStatus() = 0;
+    void clearGPS();
+    void readGPS();
 
     char *_version;
     ucw_status_t _status = UCW_IDLE;
@@ -39,9 +58,6 @@ class UCW_MQTT {
     PubSubClient client;
     String _userAgent;
 
-
-  private:
-    //void _init();
 };
 
 #endif // UCW_H
