@@ -169,7 +169,7 @@ bool UCW::sendData(String deviceID, String dataStreamName, String payload) {
 
   if (statusCode == HTTP_ERROR_TIMED_OUT) {
     UCW_LOG_PRINTLN();
-    UCW_LOG_PRINTLN("Unable connect to the server!");
+    UCW_LOG_PRINTLN("Unable to connect to the server!");
     return false;
   }
 
@@ -182,6 +182,7 @@ bool UCW::sendData(String deviceID, String dataStreamName, String payload) {
 
   UCW_LOG_PRINTLN(response);
 
-  return statusCode == 201;
   updateBatteryStatus();
+  return statusCode == 201;
+
 }

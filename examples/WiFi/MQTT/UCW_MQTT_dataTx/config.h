@@ -9,7 +9,7 @@
 //  .host = UCW_API_HOST,
 //  .port = UCW_API_PORT,
 //  .isSecuredConnection = false,
-//  .token = "your_token"
+//  .token = "ha1mkr4gv5vrbrvnrb5gna9n6o45us2g"
 //};
 
 //for WiFi MQTT connection only
@@ -36,8 +36,8 @@ static UCWConfig cfg = {
     - Feather WICED -> https://www.adafruit.com/products/3056
 */
 
-//#define WIFI_SSID       "your_ssid"
-//#define WIFI_PASS       "your_pass"
+#define WIFI_SSID       "SHAW-65F4D0"
+#define WIFI_PASS       "251169048389"
 
 // un-comment out the following two lines if you are using REST API
 //#include "UCW_WiFi.h"

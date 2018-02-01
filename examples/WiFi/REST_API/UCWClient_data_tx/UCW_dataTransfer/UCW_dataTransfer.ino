@@ -27,7 +27,7 @@ void setup() {
   Serial.print("Connecting to UCW IoT Cloud...");
   ucw.connect();
 
-  // Wait for a connection
+   Wait for a connection
   while (ucw.status() != UCW_NET_CONNECTED) {
     Serial.print(".");
     delay(500);

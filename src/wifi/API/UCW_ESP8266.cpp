@@ -21,10 +21,6 @@ UCW_ESP8266::~UCW_ESP8266() {
 }
 
 void UCW_ESP8266::_connect() {
-  /*
-   * Adafruit Feather M0 WiFi with ATWINC1500
-   * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
-   */
 
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
@@ -40,7 +36,6 @@ void UCW_ESP8266::_connect() {
 void UCW_ESP8266::_sys() {
   if (networkStatus() == UCW_NET_DISCONNECTED) {
     UCW_LOG_PRINTLN("Trying to reconnect device...");
-    resetConnection();
     delay(1000);
   }
 
@@ -120,7 +115,7 @@ void UCW_ESP8266::printConnectionStatus() {
 
 }
 
-void UCW_ESP8266::updateBattStatus(){
+void UCW_ESP8266::updateBatteryStatus(){
 
     //https://learn.adafruit.com/using-ifttt-with-adafruit-io/arduino-code-1
 

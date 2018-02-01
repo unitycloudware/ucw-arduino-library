@@ -5,23 +5,20 @@
 
 #if defined(ARDUINO_ARCH_ESP32)
 
-#include "UCW_ESP32.h"
+#include "UCW_MQTTESP32.h"
 
-
-UCW_ESP32::UCW_ESP32(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
+UCW_MQTTESP32::UCW_MQTTESP32(UCWConfig *config, const char *ssid, const char *pass) : UCW_MQTT(config) {
   _ssid = ssid;
   _pass = pass;
-  _httpClient = new WiFiClient();
-
+  WiFiClient wifiClient;
+  PubSubClient client(wifiClient);
 }
 
-UCW_ESP32::~UCW_ESP32() {
-  if (_httpClient) {
-    delete _httpClient;
-  }
+UCW_MQTTESP32::~UCW_MQTTESP32() {
 }
 
-void UCW_ESP32::_connect() {
+void UCW_MQTTESP32::_connect() {
+
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     UCW_LOG_PRINTLN("WiFi shield not present!");
@@ -31,26 +28,25 @@ void UCW_ESP32::_connect() {
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   WiFi.begin(_ssid, _pass);
   _status = UCW_NET_DISCONNECTED;
+  client.setServer(UCW_MQTT_HOST, UCW_MQTT_PORT);
 }
 
-void UCW_ESP32::_sys() {
+void UCW_MQTTESP32::_sys() {
   if (networkStatus() == UCW_NET_DISCONNECTED) {
     UCW_LOG_PRINTLN("Trying to reconnect device...");
-    delay(1000);
+    delay(100);
+    while(1);
   }
 
-  if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
-    if (WiFi.hostByName(_host.c_str(), _hostIP)) {
-      _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
-      _status = UCW_CONNECTED;
-
+  if ((!client.connected()) && (networkStatus() == UCW_NET_CONNECTED)) {
+    reconnect();
     } else {
       UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
     }
   }
-}
 
-ucw_status_t UCW_ESP32::networkStatus() {
+
+ucw_status_t UCW_MQTTESP32::networkStatus() {
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return UCW_NET_CONNECTED;
@@ -66,7 +62,7 @@ ucw_status_t UCW_ESP32::networkStatus() {
   }
 }
 
-void UCW_ESP32::printNetworkInfo() {
+void UCW_MQTTESP32::printNetworkInfo() {
   if (networkStatus() != UCW_NET_CONNECTED) {
     UCW_LOG_PRINTLN("Device is not connected!");
     return;
@@ -75,11 +71,12 @@ void UCW_ESP32::printNetworkInfo() {
   printConnectionStatus();
 }
 
-String UCW_ESP32::connectionType() {
-  return "esp32";
+String UCW_MQTTESP32::connectionType() {
+  return "esp8266";
 }
 
-void UCW_ESP32::printConnectionStatus() {
+
+void UCW_MQTTESP32::printConnectionStatus() {
   UCW_LOG_PRINTLN();
 
   // Print the SSID of the network you're attached to:
@@ -112,9 +109,10 @@ void UCW_ESP32::printConnectionStatus() {
   UCW_LOG_PRINT(rssi);
   UCW_LOG_PRINTLN(" dBm");
 
+  UCW_LOG_PRINTLN();
 }
 
-void UCW_ESP32::updateBatteryStatus() {
+void UCW_MQTTESP32::updateBatteryStatus() {
   float measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
@@ -123,5 +121,10 @@ void UCW_ESP32::updateBatteryStatus() {
   UCW_LOG_PRINTLN(measuredvbat);
 }
 
-#endif // ARDUINO_ARCH_ESP32
+void UCW_MQTTESP32::resetConnection(){
+;
+}
+#endif // ESP8266
+
+
 

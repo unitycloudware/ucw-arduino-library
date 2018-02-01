@@ -18,7 +18,6 @@
 
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "GPS info using RMC and GGA"
-String gpsData; //JSON for GPS data
 
 UCW_GPS ucw_gps;
 
@@ -51,9 +50,9 @@ void setup(){
 
 void loop() {
   ucw.sys();
-  ucw_gps.readGPS(); // read GPS info
+  String data = ucw_gps.readGPS(); // read GPS info
 
-  ucw.sendData(DEVICE_ID, DATA_STREAM, gpsData, true);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data, true);
   
   delay(1000);
 }

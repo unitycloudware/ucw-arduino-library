@@ -36,8 +36,8 @@ static UCWConfig cfg = {
     - Feather WICED -> https://www.adafruit.com/products/3056
 */
 
-//#define WIFI_SSID       "your_ssid"
-//#define WIFI_PASS       "your_pass"
+#define WIFI_SSID       "your_ssid"
+#define WIFI_PASS       "your_pass"
 
 // un-comment out the following two lines if you are using REST API
 //#include "UCW_WiFi.h"

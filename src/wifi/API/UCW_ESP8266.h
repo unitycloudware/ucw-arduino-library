@@ -13,6 +13,9 @@
 #include <ESP8266WiFi.h>
 #include <UCW.h>
 
+#define BATTERY_INTERVAL 5 // how often to report battery level(in minutes)
+
+#define SLEEP_LENGTH 1 // how long to sleep between updates(in seconds)
 
 class UCW_ESP8266 : public UCW {
 
