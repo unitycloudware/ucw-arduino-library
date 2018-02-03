@@ -36,8 +36,8 @@ static UCWConfig cfg = {
     - Feather WICED -> https://www.adafruit.com/products/3056
 */
 
-#define WIFI_SSID       "SHAW-65F4D0"
-#define WIFI_PASS       "251169048389"
+#define WIFI_SSID       "your_SSID"
+#define WIFI_PASS       "your_password"
 
 // un-comment out the following two lines if you are using REST API
 //#include "UCW_WiFi.h"

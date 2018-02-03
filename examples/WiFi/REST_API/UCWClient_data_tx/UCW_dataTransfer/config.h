@@ -9,7 +9,7 @@ static UCWConfig cfg = {
   .host = UCW_API_HOST,
   .port = UCW_API_PORT,
   .isSecuredConnection = false,
-  .token = "ha1mkr4gv5vrbrvnrb5gna9n6o45us2g"
+  .token = "your_token"
 };
 
 //for WiFi MQTT connection only
@@ -41,6 +41,7 @@ static UCWConfig cfg = {
 
 // un-comment out the following two lines if you are using REST API
 #include "UCW_WiFi.h"
+
 UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 //un-comment these lines if you are using MQTT
