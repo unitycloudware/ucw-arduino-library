@@ -34,6 +34,7 @@ void setup() {
   ucw_rest.advertVar('temperature',temperature); // variable
   ucw_rest.advertVar('humidity',humidity);       //variable
   ucw_rest.advertVar('data_name',DATA_STREAM);   //datastream name
+  ucw_rest.advertVar('battery',updateBatteryStatus);   //datastream name
   
   ucw_rest.advertDev("001","your_device_name");
 
