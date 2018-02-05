@@ -7,7 +7,6 @@
 
 #include "UCW_WINC1500.h"
 
-
 UCW_WINC1500::UCW_WINC1500(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
   _ssid = ssid;
   _pass = pass;
@@ -51,7 +50,15 @@ void UCW_WINC1500::_sys() {
 
   if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
     if (WiFi.hostByName(_host.c_str(), _hostIP)) {
-      _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
+      if (_config->useMqtt) {
+        //_mqttClient = ...
+        _api = new UCW_API_MQTT(config, _mqttClient);
+
+      } else {
+        _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
+        _api = new UCW_API_REST(config, _http);
+      }
+
       _status = UCW_CONNECTED;
 
     } else {

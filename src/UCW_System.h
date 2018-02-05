@@ -52,6 +52,7 @@ struct UCWConfig {
     String host;
     int port;
     bool isSecuredConnection;
+    bool useMqtt;
     String token;
 };
 

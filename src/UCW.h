@@ -10,7 +10,6 @@
 #include <ArduinoHttpClient.h>
 #include <UCW_System.h>
 
-
 // what's the name of the hardware serial port?
 #define GPSSerial Serial1
 
@@ -33,7 +32,9 @@ class UCW {
     String version();
     String userAgent();
     String apiUrl();
-    bool sendData(String deviceID, String dataStreamName, String payload);
+    UCW_API api();
+
+    //bool sendData(String deviceID, String dataStreamName, String payload);
 
     #if defined(GPS_SUPPORT_H) // for M0 boards
     void setupGPS();
@@ -53,7 +54,9 @@ class UCW {
     IPAddress _hostIP;
     uint16_t _httpPort = UCW_API_PORT;
     HttpClient *_http;
+    PubSubClient *mqttClient;
     String _userAgent;
+    UCW_API *_api;
 
   private:
     void _init();

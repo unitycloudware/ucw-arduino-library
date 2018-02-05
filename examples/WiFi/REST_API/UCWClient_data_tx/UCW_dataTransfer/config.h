@@ -9,6 +9,7 @@ static UCWConfig cfg = {
   .host = UCW_API_HOST,
   .port = UCW_API_PORT,
   .isSecuredConnection = false,
+  .useMqtt = false,
   .token = "your_token"
 };
 

@@ -5,12 +5,13 @@
 
 #include "UCW.h"
 
-
 UCW::UCW(UCWConfig *config) {
   _config = config;
   _host = _config->host;
   _httpPort = _config->port;
   _http = 0;
+  _mqttClient = 0;
+  _api = 0;
 }
 
 UCW::~UCW() {
@@ -61,6 +62,10 @@ String UCW::userAgent() {
 
 String UCW::apiUrl() {
   return (_config->isSecuredConnection ? "https://" : "http://" ) + _config->host + UCW_API_PATH;
+}
+
+UCW_API UCW::api() {
+  return _api;
 }
 
 void UCW::setupGPS(){
@@ -123,66 +128,4 @@ void UCW::readGPS(){
   data1.replace("%NMEA1", NMEA1);
   String data2 = "{\"GPS\": \"%NMEA2\"}";
   data2.replace("%NMEA2", NMEA2);
-}
-
-bool UCW::sendData(String deviceID, String dataStreamName, String payload) {
-  if (status() != UCW_CONNECTED) {
-    UCW_LOG_PRINTLN("Device is not connected!");
-    return false;
-  }
-
-  if (payload.length() < 1) {
-    UCW_LOG_PRINTLN("No data to send!");
-    return false;
-  }
-
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Request:");
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Sending payload: " + payload);
-  UCW_LOG_PRINT("Payload length: ");
-  UCW_LOG_PRINT(payload.length());
-  UCW_LOG_PRINTLN(" byte(s)");
-
-  String apiUri = apiUrl() + "/data-streams/%dataStreamName/messages/%deviceId";
-  apiUri.replace("%deviceId", deviceID);
-  apiUri.replace("%dataStreamName", dataStreamName);
-
-  UCW_LOG_PRINTLN("API URI: " + apiUri);
-
-  _http->beginRequest();
-  _http->post(apiUri);
-
-  _http->sendHeader("Host", _config->host);
-  //_http->sendHeader("User-Agent", "Adafruit-Feather-M0-Wifi");
-  _http->sendHeader("User-Agent", userAgent());
-  _http->sendHeader("Authorization", "Bearer " + _config->token);
-  _http->sendHeader("Content-Type", "application/json");
-  _http->sendHeader("Content-Length", payload.length());
-
-  _http->beginBody();
-  _http->print(payload);
-  _http->endRequest();
-
-  int statusCode = _http->responseStatusCode();
-  String response = _http->responseBody();
-
-  if (statusCode == HTTP_ERROR_TIMED_OUT) {
-    UCW_LOG_PRINTLN();
-    UCW_LOG_PRINTLN("Unable to connect to the server!");
-    return false;
-  }
-
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Response:");
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINT("Status Code = ");
-  UCW_LOG_PRINTLN(statusCode);
-  UCW_LOG_PRINTLN();
-
-  UCW_LOG_PRINTLN(response);
-
-  updateBatteryStatus();
-  return statusCode == 201;
-
 }
