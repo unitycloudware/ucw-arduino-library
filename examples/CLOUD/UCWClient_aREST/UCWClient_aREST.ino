@@ -12,59 +12,64 @@
   clients.
  */
 
-#define DEVICE_ID   'your_device_id'
-#define DATA_STREAM "data-test"
+#include <UCW_REST.h>
+#include <aREST.h>
 
-//create objects
+//create object
+UCW_REST ucw_rest;
 aREST rest1 = aREST();
 
-//initialise variables for storing sensor data
-int temperature = 23;
-int humidity = 44;
+// Create an instance of the server
+WiFiServer server(80);
+
+//variables to be advertised
+int temperature ;
+int humidity;
   
 void setup() {
   // Start the serial connection
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   while (!Serial) {
     ; // Wait for serial port to connect. Needed for native USB port only
   }
-
-  //advertise variables to server
-  ucw_rest.advertVar('temperature',temperature); // variable
-  ucw_rest.advertVar('humidity',humidity);       //variable
-  ucw_rest.advertVar('data_name',DATA_STREAM);   //datastream name
-  ucw_rest.advertVar('battery',updateBatteryStatus);   //datastream name
   
-  ucw_rest.advertDev("001","your_device_name");
+  //initialise variables
+  temperature = 33.0;
+  humidity = 12;
+  
+  //advertise variables
+  ucw_rest.advertVar('temperature',temperature);
+  ucw_rest.advertVar('humidity',humidity);
+  ucw_rest.advertDev("1","your_device_id" );
 
   // Connect to UCW IoT Cloud
   Serial.print("Connecting to UCW IoT Cloud...");
-  ucw_rest.connect();
+  ucw.connect();
 
    //Wait for a connection
-  while (ucw_rest.status() != UCW_NET_CONNECTED) {
+  while (ucw.status() != UCW_NET_CONNECTED) {
     Serial.print(".");
     delay(500);
   }
 
   // We are connected
   Serial.println(" Connected!");
-  ucw_rest.printNetworkInfo();
+  ucw.printNetworkInfo();
   
-  server.begin(); // start server
+  server.begin(); //Start server
   
 }
 
 void loop() {
-  ucw_rest.sys();
+  ucw.sys(); //optional. ensure connection to server
 
   // read data()
   temperature++;
   humidity++;
-
- WiFiClient client = server.available();
- rest1.handle(&client);
- delay(1000);
- 
+  
+  WiFiClient client = server.available();
+  rest1.handle(client);
+  
+  delay(1000);
 }

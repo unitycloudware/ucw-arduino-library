@@ -20,15 +20,17 @@
     #include <WiFi.h>
 #endif
 
-#define mqtt_server "your_mqtt_server_host"
-#define mqtt_user "your_username"
-#define mqtt_password "your_password"
+#define MQTT_user "your_username"
+#define MQTT_password "your_password"
 
 //define topics
 #define payload_topic "your_payload_topic"
 #define device_topic "your_device_topic"
 #define dataStream_topic "your_dataStream_topic"
 #define sub_topic "your_subscription_topic"
+
+//client ID
+#define MQTT_clientID "your_client_ID"
 
 =======
 #include <WiFi101.h>

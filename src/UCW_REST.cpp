@@ -6,36 +6,13 @@
 #include <UCW_REST.h>
 
 aREST rest = aREST();
-WiFiClient client;
 
-UCW_REST::UCW_REST(UCWConfig *config) {
-    _config = config;
-  _host = _config->host;
-  _serverPort = _config->port;
-
+UCW_REST::UCW_REST() {
+;
 }
 
 UCW_REST::~UCW_REST() {
 ;
-}
-
-void UCW_REST::connect() {
-  _connect();
-}
-
-ucw_status_t UCW_REST::status() {
-  ucw_status_t netStatus = networkStatus();
-
-  // If we aren't connected, return network status.
-  if (netStatus != UCW_NET_CONNECTED) {
-    _status = netStatus;
-  }
-
-   return _status;
-}
-
-void UCW_REST::sys() {
-  _sys();
 }
 
 void UCW_REST::advertVar(const char varName, int var) {
