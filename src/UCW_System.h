@@ -52,6 +52,7 @@ struct UCWConfig {
     String host;
     int port;
     bool isSecuredConnection;
+    bool useMqtt;
     String token;
 };
 
@@ -78,5 +79,6 @@ typedef enum {
     UCW_AUTH_FAILED             = 22,
 
 } ucw_status_t;
+
 
 #endif // UCW_SYSTEM_H

@@ -5,19 +5,19 @@
 
 // Configuration of the connection string to the UCW Platform.
 //for WiFi API connection only
-//static UCWConfig cfg = {
-//  .host = UCW_API_HOST,
-//  .port = UCW_API_PORT,
-//  .isSecuredConnection = false,
-//  .useMqtt = false,
-//  .token = "your_token"
-//};
-
-//for LoRa connection only
-static UCWConfig_Lora cfg = {
-  .freq = RF95_FREQ,
+static UCWConfig cfg = {
+  .host = UCW_API_HOST,
+  .port = UCW_API_PORT,
+  .isSecuredConnection = false,
+  .useMqtt = false,
   .token = "your_token"
 };
+
+//for LoRa connection only
+//static UCWConfig_Lora cfg = {
+//  .freq = RF95_FREQ,
+//  .token = "your_token"
+//};
 
 /******************************* WiFi **************************************/
 
@@ -29,12 +29,11 @@ static UCWConfig_Lora cfg = {
     - Feather WICED -> https://www.adafruit.com/products/3056
 */
 
-//#define WIFI_SSID       "your_ssid"
-//#define WIFI_PASS       "your_pass"
+#define WIFI_SSID       "your_ssid"
+#define WIFI_PASS       "your_pass"
 
-// un-comment out the following two lines if you are using REST API
-//#include "UCW_WiFi.h"
-//UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
+#include "UCW_WiFi.h"
+UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 /**************************** Ethernet ************************************/
 
@@ -55,8 +54,8 @@ static UCWConfig_Lora cfg = {
  */
 
 // uncomment the following two lines for LoRa,
-#include "UCW_LoRa.h"
-UCW_LoRa ucw(&cfg);
+//#include "UCW_LoRa.h"
+//UCW_LoRa ucw(&cfg);
 
 /**************************** BLE ************************************/
 

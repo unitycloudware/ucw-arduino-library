@@ -9,14 +9,7 @@
 //  .host = UCW_API_HOST,
 //  .port = UCW_API_PORT,
 //  .isSecuredConnection = false,
-//  .token = "your_token"
-//};
-
-//for WiFi MQTT connection only
-//static UCWConfig cfg = {
-//  .host = UCW_MQTT_HOST,
-//  .port = UCW_MQTT_PORT,
-//  .isSecuredConnection = false,
+//  .useMqtt = false,
 //  .token = "your_token"
 //};
 
@@ -42,10 +35,6 @@ static UCWConfig_Lora cfg = {
 // un-comment out the following two lines if you are using REST API
 //#include "UCW_WiFi.h"
 //UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
-
-//un-comment these lines if you are using MQTT
-//#include "UCW_MQTT_SUPPORT.h"
-//UCW_MQTT_SUPPORT ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 /**************************** Ethernet ************************************/
 

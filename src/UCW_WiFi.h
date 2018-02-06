@@ -8,7 +8,7 @@
 
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
-  #include "wifi/API/UCW_WINC1500.h"
+  #include "wifi/UCW_WINC1500.h"
   typedef UCW_WINC1500 UCW_WiFi;
 
 #elif defined(ARDUINO_ARCH_ESP32)
@@ -18,7 +18,7 @@
 
 #elif defined(ESP8266)
 
-  #include "wifi/API/UCW_ESP8266.h"
+  #include "wifi/UCW_ESP8266.h"
   typedef UCW_ESP8266 UCW_WiFi;
 
 #endif
