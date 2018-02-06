@@ -8,6 +8,7 @@
 
 #include <Arduino.h>
 #include <SPI.h>
+<<<<<<< HEAD
 #include <PubSubClient.h>
 #include <UCW_API.h>
 
@@ -29,11 +30,17 @@
 #define dataStream_topic "your_dataStream_topic"
 #define sub_topic "your_subscription_topic"
 
+=======
+#include <WiFi101.h>
+#include <UCW_API.h>
+
+>>>>>>> 152bfe44904665276f91064c2112ffb325094b57
 class UCW_API_MQTT : public UCW_API {
 
   public:
     UCW_API_MQTT(UCWConfig *config, PubSubClient *mqttClient);
     ~UCW_API_MQTT();
+<<<<<<< HEAD
     bool sendData(String deviceID, String dataStreamName, String payload);
 
   protected:
@@ -41,6 +48,13 @@ class UCW_API_MQTT : public UCW_API {
     void resetConnection();
     PubSubClient *_mqttClient;
     bool isRetained = false;
+=======
+
+    bool sendData(String deviceID, String dataStreamName, String payload);
+
+  protected:
+    PubSubClient *_mqttClient;
+>>>>>>> 152bfe44904665276f91064c2112ffb325094b57
 
 };
 

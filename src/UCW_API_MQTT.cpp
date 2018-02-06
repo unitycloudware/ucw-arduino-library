@@ -16,6 +16,7 @@ UCW_API_MQTT::~UCW_API_MQTT() {
 }
 
 bool UCW_API_MQTT::sendData(String deviceID, String dataStreamName, String payload) {
+<<<<<<< HEAD
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");
     return false;
@@ -62,3 +63,7 @@ void UCW_API_MQTT::reconnect() {
   }
 }
 
+=======
+  return 0;
+}
+>>>>>>> 152bfe44904665276f91064c2112ffb325094b57

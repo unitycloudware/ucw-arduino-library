@@ -48,6 +48,7 @@ void UCW_ESP8266::_sys() {
     delay(1000);
   }
 
+<<<<<<< HEAD:src/wifi/UCW_ESP8266.cpp
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
        if (WiFi.hostByName(_mhost, _mhostIP)){
@@ -62,6 +63,19 @@ void UCW_ESP8266::_sys() {
         _http = new HttpClient(*_Client, _hostIP, _httpPort);
         _api = new UCW_API_REST(_config, _http);
 
+=======
+  if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
+    if (WiFi.hostByName(_host.c_str(), _hostIP)) {
+      if (_config->useMqtt) {
+        //_mqttClient = ...
+        _api = new UCW_API_MQTT(config, _mqttClient);
+
+      } else {
+        _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
+        _api = new UCW_API_REST(config, _http);
+      }
+      
+>>>>>>> 152bfe44904665276f91064c2112ffb325094b57:src/wifi/API/UCW_ESP8266.cpp
       _status = UCW_CONNECTED;
 
     } else {
@@ -183,4 +197,3 @@ void UCW_ESP8266::battery_level(){
 }
 
 #endif // ESP8266
-

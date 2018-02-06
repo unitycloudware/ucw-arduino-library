@@ -15,9 +15,14 @@ UCW_API_REST::~UCW_API_REST() {
   }
 }
 
+<<<<<<< HEAD
 bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String payload) {
 
   if (WiFi.status() != UCW_CONNECTED) {
+=======
+bool UCW::sendData(String deviceID, String dataStreamName, String payload) {
+  if (status() != UCW_CONNECTED) {
+>>>>>>> 152bfe44904665276f91064c2112ffb325094b57
     UCW_LOG_PRINTLN("Device is not connected!");
     return false;
   }
@@ -45,6 +50,10 @@ bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String paylo
   _http->post(apiUri);
 
   _http->sendHeader("Host", _config->host);
+<<<<<<< HEAD
+=======
+  //_http->sendHeader("User-Agent", "Adafruit-Feather-M0-Wifi");
+>>>>>>> 152bfe44904665276f91064c2112ffb325094b57
   _http->sendHeader("User-Agent", userAgent());
   _http->sendHeader("Authorization", "Bearer " + _config->token);
   _http->sendHeader("Content-Type", "application/json");
@@ -72,6 +81,12 @@ bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String paylo
 
   UCW_LOG_PRINTLN(response);
 
+<<<<<<< HEAD
   return statusCode == 201;
 }
 
+=======
+  updateBatteryStatus();
+  return statusCode == 201;
+}
+>>>>>>> 152bfe44904665276f91064c2112ffb325094b57
