@@ -5,7 +5,7 @@
 
 #include <UCW_REST.h>
 
-aREST rest = aREST();
+aREST rest = aREST(UCW_API_HOST, UCW_API_PORT);
 
 UCW_REST::UCW_REST() {
 ;

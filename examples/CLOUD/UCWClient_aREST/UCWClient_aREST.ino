@@ -17,7 +17,7 @@
 
 //create object
 UCW_REST ucw_rest;
-aREST rest1 = aREST();
+aREST rest1 = aREST(UCW_API_HOST, UCW_API_PORT);
 
 // Create an instance of the server
 WiFiServer server(80);
