@@ -21,7 +21,7 @@ bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String paylo
   if (WiFi.status() != UCW_CONNECTED) {
 =======
 bool UCW::sendData(String deviceID, String dataStreamName, String payload) {
-  if (status() != UCW_CONNECTED) {
+  if (status() != UCW_NET_CONNECTED) {
 >>>>>>> 152bfe44904665276f91064c2112ffb325094b57
     UCW_LOG_PRINTLN("Device is not connected!");
     return false;
