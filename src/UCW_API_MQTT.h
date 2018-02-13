@@ -45,10 +45,6 @@ class UCW_API_MQTT : public UCW_API {
     PubSubClient *_mqttClient;
     bool isRetained = false;
 
-  protected:
-    PubSubClient *_mqttClient;
-
-
 };
 
 #endif // UCW_API_MQTT_H

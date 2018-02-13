@@ -57,7 +57,6 @@ void UCW_WINC1500::_sys() {
     delay(1000);
   }
 
-<<<<<<< HEAD:src/wifi/UCW_WINC1500.cpp
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
        if (WiFi.hostByName(_mhost, _mhostIP)){

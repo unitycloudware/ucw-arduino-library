@@ -18,11 +18,7 @@ UCW_API_REST::~UCW_API_REST() {
 
 bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String payload) {
 
-  if (WiFi.status() != UCW_CONNECTED) {
-=======
-bool UCW::sendData(String deviceID, String dataStreamName, String payload) {
-  if (status() != UCW_NET_CONNECTED) {
-
+  if (WiFi.status() != WL_CONNECTED) {
     UCW_LOG_PRINTLN("Device is not connected!");
     return false;
   }
@@ -80,5 +76,4 @@ bool UCW::sendData(String deviceID, String dataStreamName, String payload) {
   return statusCode == 201;
 }
 
-  return statusCode == 201;
-}
+
