@@ -15,8 +15,6 @@ class UCW_API {
   public:
     UCW_API(UCWConfig *config);
     virtual ~UCW_API();
-
-<<<<<<< HEAD
     virtual bool sendData(String deviceID, String dataStreamName, String payload) = 0;
 
   protected:
@@ -26,11 +24,9 @@ class UCW_API {
 
     char *_version;
     String _userAgent;
-=======
-    virtual bool sendData(String deviceID, String dataStreamName, String payload);
+
 
   protected:
->>>>>>> 152bfe44904665276f91064c2112ffb325094b57
     UCWConfig *_config;
 
 };

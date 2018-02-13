@@ -3,7 +3,7 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if defined(ARDUINO_ARCH_ESP32)
+//#if defined(ARDUINO_ARCH_ESP32)
 
 #include "UCW_ESP32.h"
 
@@ -45,7 +45,6 @@ void UCW_ESP32::_sys() {
     delay(1000);
   }
 
-<<<<<<< HEAD:src/wifi/UCW_ESP32.cpp
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
        if (WiFi.hostByName(_mhost, _mhostIP)){
@@ -59,7 +58,7 @@ void UCW_ESP32::_sys() {
         if (WiFi.hostByName(_host.c_str(), _hostIP)){
         _http = new HttpClient(*_Client, _hostIP, _httpPort);
         _api = new UCW_API_REST(_config, _http);
-=======
+
   if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
     if (WiFi.hostByName(_host.c_str(), _hostIP)) {
       if (_config->useMqtt) {
@@ -70,7 +69,6 @@ void UCW_ESP32::_sys() {
         _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
         _api = new UCW_API_REST(config, _http);
       }
->>>>>>> 152bfe44904665276f91064c2112ffb325094b57:src/wifi/API/UCW_ESP32.cpp
 
       _status = UCW_CONNECTED;
 
@@ -78,6 +76,8 @@ void UCW_ESP32::_sys() {
       UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
     }
   }
+}
+}
 }
 
 ucw_status_t UCW_ESP32::networkStatus() {
