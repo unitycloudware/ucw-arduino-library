@@ -71,7 +71,7 @@ void UCW_WINC1500::_sys() {
         if (WiFi.hostByName(_host.c_str(), _hostIP)){
         _http = new HttpClient(*_Client, _hostIP, _httpPort);
         _api = new UCW_API_REST(_config, _http);
-=======
+
   if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
     if (WiFi.hostByName(_host.c_str(), _hostIP)) {
       if (_config->useMqtt) {
@@ -82,7 +82,6 @@ void UCW_WINC1500::_sys() {
         _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
         _api = new UCW_API_REST(config, _http);
       }
->>>>>>> 152bfe44904665276f91064c2112ffb325094b57:src/wifi/API/UCW_WINC1500.cpp
 
       _status = UCW_CONNECTED;
 
@@ -91,7 +90,8 @@ void UCW_WINC1500::_sys() {
     }
   }
 }
-
+}
+}
 
 ucw_status_t UCW_WINC1500::networkStatus() {
   switch(WiFi.status()) {
