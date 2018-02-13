@@ -14,8 +14,8 @@ class UCWClient {
     protected:
     String UCW_AUTH_TOKEN = "ha1mkr4gv5vrbrvnrb5gna9n6o45us2g";
     bool isTokenValid;
+    int statusCode = 0;
 
 };
 
 #endif
-
