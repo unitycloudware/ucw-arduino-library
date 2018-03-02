@@ -19,10 +19,14 @@ class UCW_GPS {
      void setupGPS();
      String readGPS();
   protected:
-    void clearGPS();
     char c;
-    String NMEA1;
-    String NMEA2;
+    String Time;
+    String Date;
+    String Longitude;
+    String Latitude;
+    String Speed;
+    String Altitude;
+    String timeStamp;
 
 };
 
