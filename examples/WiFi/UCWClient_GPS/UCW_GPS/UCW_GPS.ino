@@ -23,12 +23,12 @@
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "GPS info using RMC and GGA"
 
-UCW_GPS ucw_gps;
+UCW_GPS ucw_gps; //create GPS object
 
 void setup(){
   
   // Start the serial connection
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   while (!Serial) {
     ; // Wait for serial port to connect. Needed for native USB port only
