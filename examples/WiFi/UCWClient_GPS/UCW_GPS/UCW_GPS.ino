@@ -54,9 +54,17 @@ void setup(){
 
 void loop() {
   ucw.sys();
-  String data = ucw_gps.readGPS(); // read GPS info
+  gpsParams data = ucw_gps.readGPS(); // read GPS info
+  String Time = String(data.Hour) + ":" + String(data.Min) + ":" + String(data.Sec) + "." + String(data.millisec);
+  String Date = "20" + String(data.Year) + "-" + String(data.Month) + "-" + String(data.Day);
+  String timeStamp = Date + " " + Time;
+
+  String gpsData = "{\"Latitude\": \"%lat\",\"Longitude\": \"%long\",\"Timestamp\": \"%tStamp\"}";
+  gpsData.replace("%lat", String(data.Latitude));
+  gpsData.replace("%long", String(data.Longitude));
+  gpsData.replace("%tStamp", timeStamp);
   
-  ucw_api.sendData(DEVICE_ID, DATA_STREAM, data);
+  ucw_api.sendData(DEVICE_ID, DATA_STREAM, gpsData);
   
   delay(1000);
 }

@@ -10,24 +10,17 @@
 #include <Adafruit_GPS.h>
 #include <SPI.h>
 #include <Arduino.h>
-
+#include <UCW_System.h>
 
 class UCW_GPS {
   public:
     UCW_GPS();
     ~UCW_GPS();
      void setupGPS();
-     String readGPS();
+     gpsParams readGPS();
   protected:
     char c;
-    String Time;
-    String Date;
-    String Longitude;
-    String Latitude;
-    String Speed;
-    String Altitude;
-    String timeStamp;
-
+    gpsParams gpsInfo;
 };
 
 #endif
