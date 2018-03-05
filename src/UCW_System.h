@@ -80,5 +80,23 @@ typedef enum {
 
 } ucw_status_t;
 
+ typedef struct gps {
+   float Latitude;
+   float Longitude;
+   double Speed;
+   double Angle;
+   double Altitude;
+   int Satelite;
+   int Fix;
+   int Hour;
+   int Min;
+   int Sec;
+   long millisec;
+   int Year;
+   int Month;
+   int Day;
+   int Quality;
+
+}gpsParams;
 
 #endif // UCW_SYSTEM_H
