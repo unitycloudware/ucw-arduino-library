@@ -81,8 +81,8 @@ typedef enum {
 } ucw_status_t;
 
  typedef struct gps {
-   float Latitude;
-   float Longitude;
+   double Latitude;
+   double Longitude;
    double Speed;
    double Angle;
    double Altitude;
@@ -98,5 +98,14 @@ typedef enum {
    int Quality;
 
 }gpsParams;
+
+typedef enum {
+   // water severity level
+    UCW_STATIC          = 0,
+    UCW_LOW             = 50,
+    UCW_MODERATE        = 100,
+    UCW_HIGH            = 150,
+
+}moistureStatus;
 
 #endif // UCW_SYSTEM_H
