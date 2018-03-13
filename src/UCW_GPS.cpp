@@ -76,8 +76,8 @@ gpsParams UCW_GPS::readGPS(){
   if (millis() - timer > 2000) {
     timer = millis(); // reset the timer
     gpsParams gpsInfo = {
-    .Latitude = (GPS.latitude, 4),
-    .Longitude = (GPS.longitude, 4),
+    .Latitude = (GPS.latitude, 12),
+    .Longitude = (GPS.longitude, 12),
     .Speed = GPS.speed * 1.852,
     .Angle = GPS.angle,
     .Altitude = GPS.altitude,
