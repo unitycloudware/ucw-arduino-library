@@ -79,11 +79,11 @@ void loop() {
 
   // check if the sensor beam is broken. If it is, the sensorState is LOW:
   if (sensorState == LOW) {
-    String data = "{\"Latitude\": \"%lat\",\"Longitude\": \"%long\"}";
-    data.replace("%lat", String(Latitude));
-    data.replace("%long", String(Longitude));
+    String location = "{\"Latitude\": \"%lat\",\"Longitude\": \"%long\"}";
+    location.replace("%lat", String(Latitude));
+    location.replace("%long", String(Longitude));
         
-    ucw_api.sendData(DEVICE_ID, DATA_STREAM, data); 
+    ucw_api.sendData(DEVICE_ID, DATA_STREAM, location); 
   } else {
     Watchdog.sleep(10000); //sleep for 10 seconds if car is parked in this slot
     }
