@@ -30,12 +30,14 @@ class UCW_M0LoRa : public UCW_LoRa {
 
     ucw_status_t Operatingfreq();
     String connectionType();
+    bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
 
   protected:
     void _connect();
     void _sys();
     void resetConnection();
     void updateBatteryStatus();
+    bool receiveData();
 };
 
 #endif // ARDUINO_ARCH_SAMD

@@ -18,7 +18,7 @@ class UCW_LoRa {
     void connect();
     virtual ucw_status_t Operatingfreq() = 0;
     virtual String connectionType() = 0;
-    bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
+    virtual bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload) = 0;
 
     void sys();
     String version();
@@ -28,11 +28,9 @@ class UCW_LoRa {
   protected:
     virtual void _connect() = 0;
     virtual void _sys() = 0;
-    bool receiveData();
-    virtual void updateBatteryStatus() = 0;
+    virtual bool receiveData() = 0;
 
     char *_version;
-    //ucw_status_t _status = UCW_IDLE;
     UCWConfig_Lora *_config;
     int _freq = RF95_FREQ;
     String _userAgent;

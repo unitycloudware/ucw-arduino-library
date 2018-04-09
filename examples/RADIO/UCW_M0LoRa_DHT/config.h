@@ -55,8 +55,8 @@ static UCWConfig_Lora cfg = {
  */
 
 // uncomment the following two lines for LoRa,
-#include "UCW_LoRa.h"
-UCW_LoRa ucw(&cfg);
+#include "UCW_LoRa_SUPPORT.h"
+UCW_LoRa_SUPPORT ucw(&cfg);
 
 /**************************** BLE ************************************/
 
