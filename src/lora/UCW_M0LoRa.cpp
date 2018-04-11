@@ -27,6 +27,7 @@ char key[RH_RF95_MAX_MESSAGE_LEN] = "set_your_key_here";
 // Insert secret key and its length in Cape object
 Cape cape(key, RH_RF95_MAX_MESSAGE_LEN);
 
+String receivedMessage;
 
 UCW_M0LoRa::UCW_M0LoRa(UCWConfig_Lora *config): UCW_LoRa(config) {
   analogReadResolution(12);
@@ -184,13 +185,18 @@ bool UCW_M0LoRa::receiveData(){
             UCW_LOG_PRINTLN(rf95.lastRssi(), DEC);
             delay(10);
             digitalWrite(LED, LOW);
+            receivedMessage = String(payload_dec);
             } else {
             UCW_LOG_PRINTLN("Data reception failed");
-            return false;
+            receivedMessage = "Data reception failed";
             }
         }
     UCW_LOG_PRINTLN("No data received");
-    return false;
+    receivedMessage = "No data received";
+}
+
+String UCW_M0LoRa::recMsgUpdate(){
+return receivedMessage;
 }
 
 #endif // ARDUINO_ARCH_SAMD

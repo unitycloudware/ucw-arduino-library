@@ -28,7 +28,7 @@ class UCW_LoRa {
   protected:
     virtual void _connect() = 0;
     virtual void _sys() = 0;
-    virtual bool receiveData() = 0;
+    virtual void receiveData() = 0;
 
     char *_version;
     UCWConfig_Lora *_config;
