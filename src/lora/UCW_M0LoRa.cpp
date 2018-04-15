@@ -188,11 +188,10 @@ bool UCW_M0LoRa::receiveData(){
             receivedMessage = String(payload_dec);
             } else {
             UCW_LOG_PRINTLN("Data reception failed");
-            receivedMessage = "Data reception failed";
             }
         }
     UCW_LOG_PRINTLN("No data received");
-    receivedMessage = "No data received";
+
 }
 
 String UCW_M0LoRa::recMsgUpdate(){
