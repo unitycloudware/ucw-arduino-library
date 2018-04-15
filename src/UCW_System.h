@@ -108,4 +108,13 @@ typedef enum {
 
 }moistureStatus;
 
+typedef enum {
+   // received  command
+    UCW_GEN_TRACKER     = 1,
+    UCW_KEY_FINDER      = 2,
+    UCW_ANIMAL_TRACKER  = 3,
+    UCW_ACCESS_CONTROL  = 4,
+
+}recCommand;
+
 #endif // UCW_SYSTEM_H
