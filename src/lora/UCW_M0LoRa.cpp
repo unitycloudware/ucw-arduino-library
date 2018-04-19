@@ -125,8 +125,8 @@ bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_data
 
       int len = payload.length(); // length of payload data
 
-      char payload_1[len];
-      payload.toCharArray(payload_1, len);
+      char payload_1[len+1];
+      payload.toCharArray(payload_1, len+1);
 
       //encrypted payload
       char payload_en [len+1] ;
@@ -157,7 +157,6 @@ bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_data
       }
 
   delay(50);
-  receiveData();
   updateBatteryStatus();
 
 }
@@ -174,10 +173,11 @@ bool UCW_M0LoRa::receiveData(){
             digitalWrite(LED, HIGH);
             RH_RF95::printBuffer("Received: ", buf, len_1);
 
-            char payload_rx[len_1];
             String buf_1 = (char*)buf;
-            buf_1.toCharArray(payload_rx,len_1);
-            cape.decrypt(payload_rx, payload_dec, len_1); // decryption
+            int lenRex = buf_1.length();            // length of received data
+            char payload_rx[lenRex+1];
+            buf_1.toCharArray(payload_rx,lenRex+1);
+            cape.decrypt(payload_rx, payload_dec, lenRex+1); // decryption
 
             UCW_LOG_PRINT("Received data: ");
             UCW_LOG_PRINTLN(payload_dec);
