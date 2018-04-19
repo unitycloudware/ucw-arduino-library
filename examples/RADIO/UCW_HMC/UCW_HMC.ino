@@ -113,7 +113,7 @@ void loop() {
     i=0;
     }
     
-  if (i==2){
+  if (i==3){
     aveHeading = totalHeading/3;
     i=0;
     }
