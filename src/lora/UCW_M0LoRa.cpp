@@ -144,7 +144,7 @@ bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_data
       rf95.waitPacketSent();
 
       UCW_LOG_PRINT("Sending payload: ");
-      UCW_LOG_PRINTLN(payload_1);
+      //UCW_LOG_PRINTLN(payload_1);
       rf95.send((uint8_t*)payload_en, len+1);
       delay(10);
       rf95.waitPacketSent();
