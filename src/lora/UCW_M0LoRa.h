@@ -33,12 +33,12 @@ class UCW_M0LoRa : public UCW_LoRa {
     String recMsgUpdate();
     bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
     void receiveData();
+    float updateBatteryStatus();
 
   protected:
     void _connect();
     void _sys();
     void resetConnection();
-    void updateBatteryStatus();
     String receivedMessage;
 };
 

@@ -99,7 +99,7 @@ void UCW_M0LoRa::resetConnection() {
   delay(10);
 }
 
-void UCW_M0LoRa::updateBatteryStatus() {
+float UCW_M0LoRa::updateBatteryStatus() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
@@ -111,6 +111,7 @@ void UCW_M0LoRa::updateBatteryStatus() {
   measuredvbat /= 1024; // convert to voltage
   UCW_LOG_PRINT("VBat: ");
   UCW_LOG_PRINTLN(measuredvbat);
+  return measuredvbat;
 }
 
 bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName,String payload) {
@@ -157,7 +158,6 @@ bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_data
       }
 
   delay(50);
-  updateBatteryStatus();
 
 }
 
