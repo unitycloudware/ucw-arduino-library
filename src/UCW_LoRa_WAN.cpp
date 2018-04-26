@@ -87,7 +87,7 @@ void UCW_LoRa_WAN::loraWanSetup(){
 }
 
 void UCW_LoRa_WAN::setConfig(){
-  #ifdef VCC_ENABLE
+   #ifdef VCC_ENABLE
   // For Pinoccio Scout boards
   pinMode(VCC_ENABLE, OUTPUT);
   digitalWrite(VCC_ENABLE, HIGH);
@@ -96,7 +96,6 @@ void UCW_LoRa_WAN::setConfig(){
 
   // Set static session parameters. Instead of dynamically establishing a session
   // by joining the network, precomputed session parameters are be provided.
-
   #ifdef PROGMEM
   // On AVR, these values are stored in flash and only copied to RAM
   // once. Copy them to a temporary buffer here, LMIC_setSession will
@@ -110,7 +109,6 @@ void UCW_LoRa_WAN::setConfig(){
   // If not running an AVR with PROGMEM, just use the arrays directly
   LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
   #endif
-
   #if defined(CFG_eu868)
   // Set up the channels used by the Things Network, which corresponds
   // to the defaults of most gateways. Without this, only three base
@@ -142,6 +140,10 @@ void UCW_LoRa_WAN::setConfig(){
   LMIC_selectSubBand(1);
   #endif
 
+  //comment for multichannel gateway
+  for (int i = 1; i<= 71; i++) {
+    LMIC_disableChannel(i);
+  }
 }
 
 void UCW_LoRa_WAN::sleep_mode() {
