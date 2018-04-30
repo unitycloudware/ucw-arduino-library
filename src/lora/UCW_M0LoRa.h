@@ -34,6 +34,8 @@ class UCW_M0LoRa : public UCW_LoRa {
     bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
     void receiveData();
     float updateBatteryStatus();
+    String encryptData(String data);
+    String decryptData(String data);
 
   protected:
     void _connect();

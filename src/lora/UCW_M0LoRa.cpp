@@ -124,15 +124,6 @@ bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_data
   if (payload.length() > 0 && payload.length() < RH_RF95_MAX_MESSAGE_LEN) {
       rf95.waitPacketSent();
 
-      int len = payload.length(); // length of payload data
-
-      char payload_1[len+1];
-      payload.toCharArray(payload_1, len+1);
-
-      //encrypted payload
-      char payload_en [len+1] ;
-      cape.encrypt(payload_1, payload_en, len, random(0, 255));
-
       //send deviceID, data name, payload
       UCW_LOG_PRINTLN ("Sending deviceID");
       rf95.send(your_deviceID, sizeof(your_deviceID));
@@ -146,7 +137,12 @@ bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_data
 
       UCW_LOG_PRINT("Sending payload: ");
       //UCW_LOG_PRINTLN(payload_1);
-      rf95.send((uint8_t*)payload_en, len+1);
+
+      String newData = encryptData(payload); //encrypt data
+      char newPayload[newData.length()+1];
+      newData.toCharArray(newPayload, newData.length()+1);
+      rf95.send((uint8_t*)newPayload, sizeof(newPayload));
+
       delay(10);
       rf95.waitPacketSent();
 
@@ -167,35 +163,54 @@ bool UCW_M0LoRa::receiveData(){
         // Should be a message for us now
         uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
         uint8_t len_1 = sizeof(buf);
-        char payload_dec [RH_RF95_MAX_MESSAGE_LEN-1]; //decrypted payload
+        char payload_dec [RH_RF95_MAX_MESSAGE_LEN]; //decrypted payload
 
         if (rf95.recv(buf, &len_1)){
             digitalWrite(LED, HIGH);
             RH_RF95::printBuffer("Received: ", buf, len_1);
 
             String buf_1 = (char*)buf;
-            int lenRex = buf_1.length();            // length of received data
-            char payload_rx[lenRex+1];
-            buf_1.toCharArray(payload_rx,lenRex+1);
-            cape.decrypt(payload_rx, payload_dec, lenRex+1); // decryption
-
-            UCW_LOG_PRINT("Received data: ");
-            UCW_LOG_PRINTLN(payload_dec);
-            UCW_LOG_PRINT("RSSI: ");
-            UCW_LOG_PRINTLN(rf95.lastRssi(), DEC);
-            delay(10);
-            digitalWrite(LED, LOW);
-            receivedMessage = String(payload_dec);
-            } else {
-            UCW_LOG_PRINTLN("Data reception failed");
-            }
+            receivedMessage = decryptData(buf_1);
+        } else {
+            UCW_LOG_PRINTLN("No data received");
         }
-    UCW_LOG_PRINTLN("No data received");
+    }
 
 }
 
 String UCW_M0LoRa::recMsgUpdate(){
 return receivedMessage;
+}
+
+String UCW_M0LoRa::encryptData(String data){
+    int len = data.length(); // length of data
+
+    char payload_1[len+1];
+    data.toCharArray(payload_1, len+1);
+
+    //encrypt data
+    char payload_en [len+1] ;
+    cape.encrypt(payload_1, payload_en, len, random(0, 255));
+    return String(payload_en);
+
+
+}
+
+String UCW_M0LoRa::decryptData(String data){
+
+    int lenRex = data.length();                  // length of received data
+    char payload_rx[lenRex+1];
+    data.toCharArray(payload_rx,lenRex+1);        //convert string to char array
+    char payload_dec [RH_RF95_MAX_MESSAGE_LEN];   //decrypted payload buffer
+    cape.decrypt(payload_rx, payload_dec, lenRex+1); // decryption
+
+    UCW_LOG_PRINT("Received data: ");
+    UCW_LOG_PRINTLN(payload_dec);
+    UCW_LOG_PRINT("RSSI: ");
+    UCW_LOG_PRINTLN(rf95.lastRssi(), DEC);
+    delay(10);
+    return String(payload_dec);
+
 }
 
 #endif // ARDUINO_ARCH_SAMD
