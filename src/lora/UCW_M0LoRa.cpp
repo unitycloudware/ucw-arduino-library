@@ -166,7 +166,6 @@ bool UCW_M0LoRa::receiveData(){
         char payload_dec [RH_RF95_MAX_MESSAGE_LEN]; //decrypted payload
 
         if (rf95.recv(buf, &len_1)){
-            digitalWrite(LED, HIGH);
             RH_RF95::printBuffer("Received: ", buf, len_1);
 
             String buf_1 = (char*)buf;
