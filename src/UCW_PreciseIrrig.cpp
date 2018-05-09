@@ -27,6 +27,43 @@ UCW_PreciseIrrig::~UCW_PreciseIrrig() {
 ;
 }
 
+void UCW_PreciseIrrig::checkMoistureLevel(int t, double lat, double lng){
+  float lat1 = lat;
+  float lng1 = lng;
+
+  if (t <= m_threshold_1){
+    if (m_status != UCW_HIGH){
+      i = 0;
+      m_status = UCW_HIGH;
+      }
+    i++;
+  if (i == irr_time_high){
+      startIrrigation(m_status, lat1, lng1);
+      i = 0;
+      }
+  } else if ((t < m_threshold_2 )&&(t >= m_threshold_1)){
+      if (m_status != UCW_MODERATE){
+        i = 0;
+        m_status = UCW_MODERATE;
+        }
+      i++;
+      if (i == irr_time_mod){
+        startIrrigation(m_status, lat1, lng1);
+        i = 0;
+        }
+  } else if ((t >= m_threshold_2 ) && (t < m_threshold_3) ){
+     if (m_status != UCW_LOW){
+        i = 0;
+        m_status = UCW_LOW;
+        }
+      i++;
+      if (i == irr_time_low){
+        startIrrigation(m_status, lat1, lng1);
+        i = 0;
+        }
+      }
+}
+
 void UCW_PreciseIrrig::checkMoistureLevel(float t, float h,double lat, double lng){
   float lat1 = lat;
   float lng1 = lng;
