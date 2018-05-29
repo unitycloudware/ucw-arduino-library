@@ -99,6 +99,16 @@ typedef enum {
 
 }gpsParams;
 
+typedef struct gas {
+   float smoke;
+   float nat_gas;
+   float hydro_gas;
+   float CO;
+   float h_sulph;
+   float ammonia;
+   float ECO2;
+}gasLevel;
+
 typedef enum {
    // water severity level
     UCW_STATIC          = 0,

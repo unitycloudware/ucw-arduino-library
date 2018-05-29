@@ -10,12 +10,11 @@ Adafruit_CCS811 ccs;
 
 //pins of sensor
 const int sensorA0 = A0; // MQ2 (smoke, methane,LPG)
-const int sensorA1 = A1; // MQ4 (CNG, methane)
-const int sensorA2 = A2; // MQ5 (Natural gas)
-const int sensorA3 = A3; // MQ8 (Hydrogen gas)
-const int sensorA4 = A4; // MQ7 (CO)
-const int sensorA5 = A5; // MQ136 (Hydrogen Sulphide)
-const int sensorA7 = A7; // MQ137 (Ammonia)
+const int sensorA1 = A1; // MQ5 (Natural gas)
+const int sensorA2 = A2; // MQ8 (Hydrogen gas)
+const int sensorA3 = A3; // MQ7 (CO)
+const int sensorA4 = A4; // MQ136 (Hydrogen Sulphide)
+const int sensorA5 = A5; // MQ137 (Ammonia)
 
 uint32_t Timer = millis(); //timer
 float CO2;  // equivalent calculated carbon-dioxide
@@ -36,7 +35,6 @@ pinMode(sensorA2, INPUT);
 pinMode(sensorA3, INPUT);
 pinMode(sensorA4, INPUT);
 pinMode(sensorA5, INPUT);
-pinMode(sensorA7, INPUT);
 
   }
 
@@ -49,12 +47,11 @@ gasLevel UCW_GAS::readGas(){
     Timer = millis(); // reset
     gasLevel gasInfo = {
       .smoke = analogRead(sensorA0),
-      .methane = analogRead(sensorA1),
-      .nat_gas = analogRead(sensorA2),
-      .hydro_gas = analogRead(sensorA3),
-      .CO = analogRead(sensorA4),
-      .h_sulph = analogRead(sensorA5),
-      .ammonia = analogRead(sensorA7),
+      .nat_gas = analogRead(sensorA1),
+      .hydro_gas = analogRead(sensorA2),
+      .CO = analogRead(sensorA3),
+      .h_sulph = analogRead(sensorA4),
+      .ammonia = analogRead(sensorA5),
       .ECO2 = getECO2()
   };
   }
@@ -70,3 +67,4 @@ float UCW_GAS::getECO2(){
   }
   return CO2;
 }
+
