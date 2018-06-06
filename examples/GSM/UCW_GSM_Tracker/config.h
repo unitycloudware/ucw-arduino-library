@@ -48,14 +48,16 @@ static UCWConfig cfg = {
 //#include "UCW_Ethernet.h"
 //UCW_Ethernet ucw(&cfg);
 
-/**************************** Cellular/Mobile ************************************/
+/**************************** Cellular/GSM ************************************/
 
 /*
-  The UCW_Ethernet client will work with the following boards:
-    - Ethernet FeatherWing -> https://www.adafruit.com/products/3201
+  The UCW_Mobile client will work with the following boards:
+    - Feather 32u4 FONA -> https://www.adafruit.com/products/3027
+    - FONA mini Cellular GSM Breakout uFL -> https://www.adafruit.com/products/1946
+    - FONA mini Cellular GSM Breakout SMA -> https://www.adafruit.com/products/1963
  */
 
-// uncomment the following two lines for ethernet,
+// uncomment the following two lines for GSM,
 #include "UCW_Mobile.h"
 UCW_Mobile ucw(&cfg);
 
