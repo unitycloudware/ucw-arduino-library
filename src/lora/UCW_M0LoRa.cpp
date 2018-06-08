@@ -28,6 +28,7 @@ char key[RH_RF95_MAX_MESSAGE_LEN] = "set_your_key_here";
 Cape cape(key, RH_RF95_MAX_MESSAGE_LEN);
 
 String receivedMessage;
+bool isRec = false;
 
 UCW_M0LoRa::UCW_M0LoRa(UCWConfig_Lora *config): UCW_LoRa(config) {
   analogReadResolution(12);
@@ -99,13 +100,13 @@ void UCW_M0LoRa::resetConnection() {
   delay(10);
 }
 
-float UCW_M0LoRa::updateBatteryStatus() {
+double UCW_M0LoRa::updateBatteryStatus() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
    */
 
-  float measuredvbat = analogRead(VBATPIN);
+  double measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage
@@ -157,10 +158,11 @@ bool UCW_M0LoRa::sendData(const uint8_t* your_deviceID, const uint8_t* your_data
 
 }
 
-bool UCW_M0LoRa::receiveData(){
+void UCW_M0LoRa::receiveData(){
 
     if (rf95.available()){
         // Should be a message for us now
+        isRec = true;
         uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
         uint8_t len_1 = sizeof(buf);
         char payload_dec [RH_RF95_MAX_MESSAGE_LEN]; //decrypted payload
@@ -171,14 +173,21 @@ bool UCW_M0LoRa::receiveData(){
             String buf_1 = (char*)buf;
             receivedMessage = decryptData(buf_1);
         } else {
+            isRec = false;
             UCW_LOG_PRINTLN("No data received");
         }
     }
-
+    isRec = false;
 }
 
 String UCW_M0LoRa::recMsgUpdate(){
 return receivedMessage;
+}
+
+bool UCW_M0LoRa::isReceived(){
+
+return isRec;
+
 }
 
 String UCW_M0LoRa::encryptData(String data){

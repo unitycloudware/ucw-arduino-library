@@ -33,15 +33,17 @@ class UCW_M0LoRa : public UCW_LoRa {
     String recMsgUpdate();
     bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
     void receiveData();
-    float updateBatteryStatus();
+    double updateBatteryStatus();
     String encryptData(String data);
     String decryptData(String data);
+    bool isReceived();
 
   protected:
     void _connect();
     void _sys();
     void resetConnection();
     String receivedMessage;
+    bool isRec;
 };
 
 #endif // ARDUINO_ARCH_SAMD
