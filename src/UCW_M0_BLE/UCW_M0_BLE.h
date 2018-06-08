@@ -20,14 +20,14 @@ class UCW_M0_BLE : public UCWClient {
     UCW_M0_BLE();
 
     //methods
-    void setConnectionMode();
-    void sendData(String your_deviceID, String your_dataStreamName, String payload);
+    void setupBLE();
+    void sendData(String payload);
+    double updateBattStatus();
+    String receiveData();
 
     protected:
-    void setupBLE();
-    void updateBattStatus();
-    void receiveData();
-    String inputs;
+    String input;
+    String output;
 
 };
 

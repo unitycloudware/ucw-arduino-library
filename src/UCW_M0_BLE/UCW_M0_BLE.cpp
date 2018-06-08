@@ -100,15 +100,7 @@ void UCW_M0_BLE::setupBLE() {
     }
 }
 
-void UCW_M0_BLE::sendData(String your_deviceID,String your_dataStreamName,String payload) {
-
-    if (isTokenValid==false){
-        Serial.println("invalid token, provide a valid token");
-        delay(1000);
-        return;
-    }
-
-    receiveData();
+void UCW_M0_BLE::sendData(String payload) {
 
     if (payload.length() < 1) {
         Serial.println("No data to send!");
@@ -117,17 +109,15 @@ void UCW_M0_BLE::sendData(String your_deviceID,String your_dataStreamName,String
     }
 
     if (payload.length() > 0) {
-        String inputs = "{\"deviceID\": \"%ID\",\"dataID\": \"%dataID\",\"Data\": \"%payload\"}";
-        inputs.replace("%ID", your_deviceID);
-        inputs.replace("%dataID", your_dataStreamName);
-        inputs.replace("%payload", payload);
+        String input = "{\"Data\": \"%payload\"}";
+        input.replace("%payload", payload);
 
         // Send characters to Bluefruit
         Serial.print("[Send] ");
-        Serial.println(inputs);
+        Serial.println(input);
 
         ble.print("AT+BLEUARTTX=");
-        ble.println(inputs);
+        ble.println(input);
         updateBattStatus();
 
         delay(2000);
@@ -143,14 +133,16 @@ void UCW_M0_BLE::receiveData(){
         return;
     }
   // Some data was found, its in the buffer
+  output = ble.buffer;
   Serial.print(F("[Recv] ")); Serial.println(ble.buffer);
   ble.waitForOK();
 
+  return output;
 }
 
-void UCW_M0_BLE::updateBattStatus(){
+double UCW_M0_BLE::updateBattStatus(){
     //https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
-    float measuredvbat = analogRead(VBATPIN);
+    double measuredvbat = analogRead(VBATPIN);
     measuredvbat *= 2;    // we divided by 2, so multiply back
     measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
     measuredvbat /= 1024; // convert to voltage
