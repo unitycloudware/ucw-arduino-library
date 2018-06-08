@@ -55,6 +55,7 @@ static UCWConfig cfg = {
     - Feather 32u4 FONA -> https://www.adafruit.com/products/3027
     - FONA mini Cellular GSM Breakout uFL -> https://www.adafruit.com/products/1946
     - FONA mini Cellular GSM Breakout SMA -> https://www.adafruit.com/products/1963
+    - FONA mini Cellular GPS Breakout -> https://www.adafruit.com/products/2542
  */
 
 // uncomment the following two lines for GSM,
