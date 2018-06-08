@@ -11,6 +11,8 @@ static const u1_t PROGMEM APPSKEY[16] = { 0xE1, 0x05, 0x7C, 0x8C, 0xFC, 0xF6, 0x
 // LoRaWAN end-device address (DevAddr)
 static const u4_t DEVADDR = 0x26011885; // <-- Change this address for every node!
 
+String s_DEVADDR = String (DEVADDR);
+
 //Uncomment for OTTA
 //static const u1_t PROGMEM APPEUI[8] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x00, 0xBE, 0x71 };
 //void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
@@ -154,5 +156,9 @@ void UCW_LoRa_WAN::sleep_mode() {
 
 void UCW_LoRa_WAN::wake_mode() {
   Serial.write(0x01);
+}
+
+String UCW_LoRa_WAN::isDevice() {
+  return s_DEVADDR;
 }
 

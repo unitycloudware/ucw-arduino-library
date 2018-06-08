@@ -21,6 +21,7 @@ class UCW_LoRa_WAN{
     void setConfig();
     void wake_mode();
     void sleep_mode();
+    String isDevice();
 
 };
 
