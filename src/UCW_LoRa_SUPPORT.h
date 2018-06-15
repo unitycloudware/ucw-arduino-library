@@ -6,7 +6,7 @@
 #ifndef UCW_LoRaSUPPORT_H
 #define UCW_LoRaSUPPORT_H
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD) && defined (UCW_RADIO_LORA)
 
   #include "lora/UCW_M0LoRa.h"
   typedef UCW_M0LoRa UCW_LoRa_SUPPORT;
@@ -20,6 +20,7 @@
 //
 //  //#include "lora/UCW_ESP8266.h"
 //  //typedef UCW_ESP8266 UCW_LoRa_SUPPORT;
+
 
 #endif
 
