@@ -99,6 +99,15 @@ typedef enum {
 
 }gpsParams;
 
+ typedef struct gps_m {
+   float Latitude;
+   float Longitude;
+   float Speed;
+   float Altitude;
+   float Heading;
+
+}m_gpsParams;
+
 typedef struct gas {
    float smoke;
    float nat_gas;
