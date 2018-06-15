@@ -48,6 +48,14 @@
   #define UCW_LOG_PRINTLN(...) {}
 #endif
 
+#ifdef UCW_IRRIGATE
+  #define UCW_IRRIGATE_PRINT(...) { UCW_PRINTER.print(__VA_ARGS__); }
+  #define UCW_IRRIGATE_PRINTLN(...) { UCW_PRINTER.println(__VA_ARGS__); }
+#else
+  #define UCW_IRRIGATE_PRINT(...) {}
+  #define UCW_IRRIGATE_PRINTLN(...) {}
+#endif
+
 struct UCWConfig {
     String host;
     int port;
