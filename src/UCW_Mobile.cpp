@@ -3,6 +3,8 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
+#if defined(UCW_GSM_FONA)
+
 #include "UCW_Mobile.h"
 
 #define FONA_RX 9
@@ -314,3 +316,4 @@ String UCW_Mobile::version() {
   return _version;
 }
 
+#endif  //defined

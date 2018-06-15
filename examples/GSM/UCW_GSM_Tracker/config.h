@@ -58,6 +58,8 @@ static UCWConfig cfg = {
     - FONA mini Cellular GPS Breakout -> https://www.adafruit.com/products/2542
  */
 
+#define UCW_GSM_FONA
+
 // uncomment the following two lines for GSM,
 #include "UCW_Mobile.h"
 UCW_Mobile ucw(&cfg);

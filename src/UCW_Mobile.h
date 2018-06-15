@@ -6,6 +6,8 @@
 #ifndef UCWMOBILE_H
 #define UCWMOBILE_H
 
+#if defined(UCW_GSM_FONA)
+
 #include <Arduino.h>
 #include <UCW_System.h>
 #include "Adafruit_FONA.h"
@@ -41,6 +43,8 @@ class UCW_Mobile {
     UCWConfig *_config;
 
 };
+
+#endif  //defined
 
 #endif
 
