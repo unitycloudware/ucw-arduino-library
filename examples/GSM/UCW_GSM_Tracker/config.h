@@ -71,7 +71,7 @@ UCW_Mobile ucw(&cfg);
     - Feather M0 WiFi -> https://www.adafruit.com/products/3010
  */
 
-#define UCW_RADIO_LORA
+//#define UCW_RADIO_LORA
 
 // uncomment the following two lines for LoRa,
 //#include "UCW_LoRa_SUPPORT.h"
