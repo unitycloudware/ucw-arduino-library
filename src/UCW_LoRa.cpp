@@ -3,6 +3,8 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
+#if defined (UCW_RADIO_LORA)
+
 #include "UCW_LoRa.h"
 
 UCW_LoRa::UCW_LoRa(UCWConfig_Lora *config) {
@@ -11,7 +13,6 @@ UCW_LoRa::UCW_LoRa(UCWConfig_Lora *config) {
 }
 
 UCW_LoRa::~UCW_LoRa() {
- ;
 }
 
 void UCW_LoRa::connect() {
@@ -38,3 +39,4 @@ String UCW_LoRa::userAgent() {
   return _userAgent;
 }
 
+#endif // UCW_RADIO_LORA

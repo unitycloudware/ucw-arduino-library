@@ -6,6 +6,8 @@
 #ifndef UCWLORA_H
 #define UCWLORA_H
 
+#if defined (UCW_RADIO_LORA)
+
 #include <Arduino.h>
 #include <UCW_System.h>
 
@@ -39,5 +41,5 @@ class UCW_LoRa {
     void _init();
 };
 
+#endif // UCW_RADIO_LORA
 #endif // UCWLORA_H
-

@@ -1,3 +1,4 @@
+#if defined (UCW_RADIO_LORA)
 
 #include <UCW_LoRa_WAN.h>
 
@@ -162,3 +163,4 @@ String UCW_LoRa_WAN::isDevice() {
   return s_DEVADDR;
 }
 
+#endif // UCW_RADIO_LORA
