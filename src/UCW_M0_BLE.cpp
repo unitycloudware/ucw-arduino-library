@@ -118,13 +118,13 @@ void UCW_M0_BLE::sendData(String payload) {
     }
 }
 
-void UCW_M0_BLE::receiveData(){
+String UCW_M0_BLE::receiveData(){
     // Check for incoming characters from Bluefruit
     ble.println("AT+BLEUARTRX");
     ble.readline();
     if (strcmp(ble.buffer, "OK") == 0) {
         // no data
-        return;
+        return "";
     }
   // Some data was found, its in the buffer
   output = ble.buffer;
