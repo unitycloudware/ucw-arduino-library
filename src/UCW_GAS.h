@@ -1,10 +1,13 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino library for Gas station.
+  This is to be used with LoRaWAN library to send gas data to UCW platform
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
 #ifndef UCWGAS_H
 #define UCWGAS_H
+
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 #include <SPI.h>
 #include <Arduino.h>
@@ -25,6 +28,7 @@ class UCW_GAS {
 };
 
 #endif
+#endif // UCWGAS_H
 
 
 

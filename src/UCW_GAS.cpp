@@ -1,9 +1,12 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino library for Gas station.
+  This is to be used with LoRaWAN library to send gas data to UCW platform
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
 #include "UCW_GAS.h"
+
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 //create CCS811 object
 Adafruit_CCS811 ccs;
@@ -68,3 +71,4 @@ float UCW_GAS::getECO2(){
   return CO2;
 }
 
+#endif // M0 LoRa
