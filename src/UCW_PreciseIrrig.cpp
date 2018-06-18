@@ -112,10 +112,10 @@ void UCW_PreciseIrrig::startIrrigation(moistureStatus newStatus, double Lat, dou
     }
 
   if (Lat == plantLat && Lng == plantLng){
-    UCW_IRRIGATE_PRINTLN("Irrigate plant");
+    UCW_LOG_PRINTLN("Irrigate plant");
     isIrrig = true;
     } else {
-      UCW_IRRIGATE_PRINTLN("This is a new plant");
+      UCW_LOG_PRINTLN("This is a new plant");
       Status = UCW_STATIC;
       }
 }
