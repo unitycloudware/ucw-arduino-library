@@ -75,11 +75,11 @@ void UCW_WINC1500::_sys() {
     if (WiFi.hostByName(_host.c_str(), _hostIP)) {
       if (_config->useMqtt) {
         //_mqttClient = ...
-        _api = new UCW_API_MQTT(config, _mqttClient);
+        _api_m = new UCW_API_MQTT(_config, _mqttClient);
 
       } else {
-        _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
-        _api = new UCW_API_REST(config, _http);
+        _http = new HttpClient(*_Client, _hostIP, _httpPort);
+        _api = new UCW_API_REST(_config, _http);
       }
 
       _status = UCW_CONNECTED;
