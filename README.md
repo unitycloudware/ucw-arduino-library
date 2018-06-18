@@ -109,7 +109,7 @@ READING THE DATA
 	Read and collect data from the sensor or any device as defined by the user
 	The data should be saved in a string variable
 
-	An example of this step is on reading data from DHTxx sensor is shown in File->examples->UCWClient_DHT->UCWClient_DHT
+	An example of this step is on reading data from DHTxx sensor is shown in File->examples->UCW Platform Arduino->WiFi->UCWClient_DHT->UCW_DHT
 
 RECONFIRM CONNECTION
 
