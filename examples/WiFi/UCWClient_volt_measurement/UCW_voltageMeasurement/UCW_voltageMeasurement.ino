@@ -18,6 +18,9 @@
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "Voltage measurement"
 
+//potentiometer pin
+int potPin = 12;
+
 void setup() {
   // Start the serial connection
   Serial.begin(9600);
@@ -45,9 +48,9 @@ void loop() {
   ucw.sys();
 
   //save potentiometer readings to readValue variable
-  readValue = analogRead(potPin);
+  double readValue = analogRead(potPin);
   // Scale voltage reading between 0-5V
-  voltage = (5./1023.)*readValue;
+  double voltage = (5./1023.)*readValue;
   //Check if any reads failed and exit early (to try again).
   if (isnan(readValue)) {
     Serial.println("Failed to read from potentiometer!");

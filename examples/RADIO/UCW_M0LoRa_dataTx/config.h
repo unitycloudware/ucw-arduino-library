@@ -4,7 +4,7 @@
 /************************ UCW Platform Config *******************************/
 
 // Configuration of the connection string to the UCW Platform.
-//for WiFi API connection only
+//for WiFi/GSM connections only
 //static UCWConfig cfg = {
 //  .host = UCW_API_HOST,
 //  .port = UCW_API_PORT,
@@ -31,8 +31,7 @@ static UCWConfig_Lora cfg = {
 
 //#define WIFI_SSID       "your_ssid"
 //#define WIFI_PASS       "your_pass"
-
-// un-comment out the following two lines if you are using REST API
+//
 //#include "UCW_WiFi.h"
 //UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
@@ -47,21 +46,33 @@ static UCWConfig_Lora cfg = {
 //#include "UCW_Ethernet.h"
 //UCW_Ethernet ucw(&cfg);
 
+/**************************** GSM ************************************/
+
+/*
+  The UCW_Mobile client will work with the following boards:
+    - Adafruit Feather 32u4 FONA -> https://www.adafruit.com/products/3027
+ */
+
+// uncomment the following two lines for GSM,
+//#include "UCW_Mobile.h"
+//UCW_Mobile ucw(&cfg);
+
 /**************************** LoRa ************************************/
 
 /*
   The UCW_LoRa client will work with the following boards:
-    - Feather M0 WiFi -> https://www.adafruit.com/products/3010
+    - Feather M0 RFM95 LoRa -> https://www.adafruit.com/products/3178
  */
 
 // uncomment the following two lines for LoRa,
 #include "UCW_LoRa_SUPPORT.h"
 UCW_LoRa_SUPPORT ucw(&cfg);
+
 /**************************** BLE ************************************/
 
 /*
   The UCW_LoRa client will work with the following boards:
-    - Feather M0 WiFi -> https://www.adafruit.com/products/3010
+    - Feather M0 BLE -> https://www.adafruit.com/products/2995
  */
 
 // uncomment the following two lines for BLE,

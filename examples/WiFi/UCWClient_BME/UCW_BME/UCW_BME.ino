@@ -85,7 +85,7 @@ void loop() {
     }
     
  //Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t) || isnan(f)) {
+  if (isnan(h) || isnan(t) || isnan(p)) {
     Serial.println("Failed to read from BME sensor!");
     return;
   }

@@ -19,8 +19,8 @@ UCW_M0_BLE UCW_M0_Object;
 
 void setup() {
   // put your setup code here, to run once:
-  UCW_M0_Object.connect("your_token");
-  UCW_M0_Object.setConnectionMode();
+  UCW_M0_Object.setupBLE();
+
   dht.begin();
 
 }
@@ -54,7 +54,7 @@ void loop() {
   data.replace("%heat_indexC", String(hic));
   data.replace("%heat_indexF", String(hif));
 
-  UCW_M0_Object.sendData("your_deviceID", "Temperature and Humidity Measurements", data);
+  UCW_M0_Object.sendData(data);
 
   delay(1000);
 }
