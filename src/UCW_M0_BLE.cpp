@@ -1,4 +1,10 @@
-#if defined(UCW_BLE_SUPPORT)
+/*
+  Arduino BLE library using Adafruit M0 BLE
+  Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
+
+//M0 boards only
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 #include "UCW_M0_BLE.h"
 
@@ -28,18 +34,6 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 
 UCW_M0_BLE::UCW_M0_BLE(){
 analogReadResolution(12);
-}
-
-void UCW_M0_BLE::setConnectionMode() {
-
-    if (isTokenValid){
-      setupBLE();
-      while (!Serial) {
-          ; // wait for serial port to connect. Needed for native USB port only
-        }
-      } else {
-          Serial.println("Please enter valid token");
-        }
 }
 
 void UCW_M0_BLE::setupBLE() {
@@ -150,4 +144,4 @@ double UCW_M0_BLE::updateBattStatus(){
     Serial.println();
 }
 
-#endif // UCW_BLE_SUPPORT
+#endif // SAMD

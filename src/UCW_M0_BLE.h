@@ -1,7 +1,12 @@
+/*
+  Arduino BLE library using Adafruit M0 BLE
+  Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
+
 #ifndef UCWM0_BLE_H
 #define UCWM0_BLE_H
 
-#if defined(UCW_BLE_SUPPORT)
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -9,13 +14,12 @@
 #include <Adafruit_BluefruitLE_SPI.h>
 #include <Adafruit_BluefruitLE_UART.h>
 #include <BluefruitConfig.h>
-#include "UCWClient.h"
 
 #if SOFTWARE_SERIAL_AVAILABLE
   #include <SoftwareSerial.h>
 #endif
 
-class UCW_M0_BLE : public UCWClient {
+class UCW_M0_BLE {
   public:
     UCW_M0_BLE();
 
@@ -31,6 +35,6 @@ class UCW_M0_BLE : public UCWClient {
 
 };
 
-#endif // UCW_BLE_SUPPORT
+#endif //
 
-#endif
+#endif // UCWM0_BLE_H
