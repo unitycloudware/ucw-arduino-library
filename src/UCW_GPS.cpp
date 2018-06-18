@@ -6,11 +6,18 @@
 
 #include "UCW_GPS.h"
 
+#if defined(ARDUINO_ARCH_ESP32)
+HardwareSerial mySerial(2);    //set hardware serial pin
+Adafruit_GPS GPS(&mySerial);
+
+#else
 // what's the name of the hardware serial port?
 #define GPSSerial Serial1
 
 // Connect to the GPS on the hardware port
 Adafruit_GPS GPS(&GPSSerial);
+
+#endif // defined
 
 uint32_t timer = millis();
 
