@@ -1,5 +1,8 @@
 #include <UCW_smart_knob.h>
 
+//The servo library does not support ESP32
+#if defined(ESP8266) || (!defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD))
+
 //Declaring some global variables
 int gyro_x, gyro_y, gyro_z;
 long gyro_x_cal, gyro_y_cal, gyro_z_cal;
@@ -149,3 +152,4 @@ Wire.beginTransmission(0x68);                                        //Start com
   gyro_z = Wire.read()<<8|Wire.read();
 }
 
+#endif

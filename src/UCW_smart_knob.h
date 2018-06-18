@@ -1,10 +1,13 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino library for knob of smart stove
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
 #ifndef UCWSKNOB_H
 #define UCWSKNOB_H
+
+//The servo library does not support ESP32
+#if defined(ESP8266) || (!defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD))
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -44,6 +47,7 @@ class UCW_smart_knob {
       float newAngle;
 };
 
-#endif // UCWSTRACKER_H
+#endif //
+#endif // UCWSKNOB_H
 
 
