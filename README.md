@@ -26,18 +26,18 @@ LIBRARIES
 		
 		#2 Contributed libraries:
 		
-			> Adafruit_CCS811    (https://github.com/adafruit/Adafruit_CCS811)
-			> Adafruit_Sensor    (https://github.com/adafruit/Adafruit_Sensor)
-			> Adafruit_BME280    (https://github.com/adafruit/Adafruit_BME280)
-			> Adafruit_SleepyDog (https://github.com/adafruit/Adafruit_SleepyDog)
-			> Adafruit_FONA      (https://github.com/adafruit/Adafruit_FONA)
-			> Adafruit_GPS       (https://github.com/adafruit/Adafruit_GPS)
-			> DHT           	 (https://github.com/adafruit/DHT-sensor-library)
-			> PubSubClient  	 (https://github.com/knolleary/pubsubclient)
-			> lmic           	 (https://github.com/matthijskooijman/arduino-lmic)
-			> RH_RF95      		 (https://github.com/PaulStoffregen/RadioHead)
-			> Cape         		 (https://github.com/gioblu/Cape)
-			> Adafruit BluefruitLE nRF51 (https://github.com/adafruit/Adafruit_BluefruitLE_nRF51)
+			> [Adafruit_CCS811]  (https://github.com/adafruit/Adafruit_CCS811)
+			> [Adafruit_Sensor]  (https://github.com/adafruit/Adafruit_Sensor)
+			> [Adafruit_BME280]    (https://github.com/adafruit/Adafruit_BME280)
+			> [Adafruit_SleepyDog] (https://github.com/adafruit/Adafruit_SleepyDog)
+			> [Adafruit_FONA]      (https://github.com/adafruit/Adafruit_FONA)
+			> [Adafruit_GPS]       (https://github.com/adafruit/Adafruit_GPS)
+			> [DHT]           	 (https://github.com/adafruit/DHT-sensor-library)
+			> [PubSubClient]  	 (https://github.com/knolleary/pubsubclient)
+			> [lmic]           	 (https://github.com/matthijskooijman/arduino-lmic)
+			> [RH_RF95]      		 (https://github.com/PaulStoffregen/RadioHead)
+			> [Cape]         		 (https://github.com/gioblu/Cape)
+			> [Adafruit BluefruitLE nRF51] (https://github.com/adafruit/Adafruit_BluefruitLE_nRF51)
 	
 			by taking the steps below:
 				> download the libraires using the links provided
@@ -137,7 +137,7 @@ SENDING DATA TO UCW SERVER
  
 FULL EXAMPLE
 
-    Examples implementing this library can be found at https://gitlab.unitycloudware.com/ucw-labs/ucw-arduino-library/examples.
+    Examples implementing this library can be found [here] (https://gitlab.unitycloudware.com/ucw-labs/ucw-arduino-library/examples)
 
 
 *********************************************************************** NOTE **************************************************************************
