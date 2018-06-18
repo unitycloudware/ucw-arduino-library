@@ -1,12 +1,12 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino GSM library to access UCW Platform
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
 #ifndef UCWMOBILE_H
 #define UCWMOBILE_H
 
-#if defined(UCW_GSM_FONA)
+#if !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
 
 #include <Arduino.h>
 #include <UCW_System.h>
@@ -18,7 +18,7 @@ class UCW_Mobile {
     ~UCW_Mobile();
 
     //methods
-    void mobileSetup();
+    void connect();
     uint8_t deviceType();
     void battLevel();
     m_gpsParams readGPS();
@@ -44,9 +44,8 @@ class UCW_Mobile {
 
 };
 
-#endif  //defined
-
 #endif
+#endif //UCWMOBILE_H
 
 
 

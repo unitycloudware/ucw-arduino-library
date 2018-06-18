@@ -1,9 +1,9 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino GSM library to access UCW Platform
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if defined(UCW_GSM_FONA)
+#if !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
 
 #include "UCW_Mobile.h"
 
@@ -49,7 +49,7 @@ UCW_Mobile::~UCW_Mobile() {
 ;
 }
 
-void UCW_Mobile::mobileSetup(){
+void UCW_Mobile::connect(){
   while (!Serial);
 
   Serial.println(F("FONA basic test"));
@@ -74,9 +74,6 @@ void UCW_Mobile::mobileSetup(){
   // Optionally configure HTTP gets to follow redirects over SSL. Uncomment the line below to achieve this
   //fona.setHTTPSRedirect(true);
 
-  //Enable GPS
-  Serial.println(F("Enabling GPS..."));
-  fona.enableGPS(true);
 
   readNwkStatus();
 
@@ -181,7 +178,7 @@ void UCW_Mobile::readNwkStatus(){
 
 void UCW_Mobile::sys(){
     if (fona.getNetworkStatus() != 1){
-        mobileSetup();
+        connect();
     }
 }
 
@@ -316,4 +313,4 @@ String UCW_Mobile::version() {
   return _version;
 }
 
-#endif  //defined
+#endif
