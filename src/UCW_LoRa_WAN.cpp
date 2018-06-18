@@ -1,4 +1,10 @@
-#if defined (UCW_RADIO_LORA)
+/*
+  Arduino library for LoRa WAN access UCW Platform
+  This library uses TTN infrastructure to create LoRa WAN
+  Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
+
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)  //Adafruit Feather M0 LoRa RFM 95
 
 #include <UCW_LoRa_WAN.h>
 
@@ -163,4 +169,4 @@ String UCW_LoRa_WAN::isDevice() {
   return s_DEVADDR;
 }
 
-#endif // UCW_RADIO_LORA
+#endif //
