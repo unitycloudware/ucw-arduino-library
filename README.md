@@ -26,7 +26,7 @@ LIBRARIES
 		
 		#2 Contributed libraries:
 		
-			> [Adafruit_CCS811](https://github.com/adafruit/Adafruit_CCS811)
+			 [Adafruit_CCS811](https://github.com/adafruit/Adafruit_CCS811)
 			> [Adafruit_Sensor](https://github.com/adafruit/Adafruit_Sensor)
 			> [Adafruit_BME280](https://github.com/adafruit/Adafruit_BME280)
 			> [Adafruit_SleepyDog](https://github.com/adafruit/Adafruit_SleepyDog)
