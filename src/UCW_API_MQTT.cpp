@@ -22,7 +22,6 @@ bool UCW_API_MQTT::sendData(String deviceID, String dataStreamName, String paylo
     return false;
   }
 
-  if(WiFi.status() == UCW_NET_CONNECTED){
     if (!_mqttClient->connected()) {
         reconnect();
         }
@@ -33,11 +32,6 @@ bool UCW_API_MQTT::sendData(String deviceID, String dataStreamName, String paylo
     _mqttClient->publish(dataStream_topic, dataStreamName.c_str(), isRetained);
     _mqttClient->publish(payload_topic, payload.c_str(), isRetained);
 
-    } else {
-        UCW_LOG_PRINTLN("WiFi connection failed");
-        return false;
-
-        }
    _mqttClient->loop();
 
   _mqttClient->subscribe(sub_topic);

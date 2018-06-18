@@ -18,11 +18,6 @@ UCW_API_REST::~UCW_API_REST() {
 
 bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String payload) {
 
-  if (WiFi.status() != WL_CONNECTED) {
-    UCW_LOG_PRINTLN("Device is not connected!");
-    return false;
-  }
-
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");
     return false;
