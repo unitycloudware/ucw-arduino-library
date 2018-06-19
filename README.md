@@ -43,7 +43,7 @@ by taking the steps below:
 * place this renamed folder in your \Arduino\libraries folder
 				
 
-##EDIT THE CONFIG FILE
+## EDIT THE CONFIG FILE
 	
 Include UCW_System file
 ```	
@@ -102,13 +102,13 @@ UCW_Mobile ucw(&cfg);
 ```
   
   
-##INCLUDE THE CONFIG FILE
+## INCLUDE THE CONFIG FILE
 ```
 #include "config.h"
 ```
   
     
-##WIFI....REST OR MQTT?
+## WIFI....REST OR MQTT?
   
 When using WiFi connection, indicate if communication protocol will be REST-API or MQTT
 ```
@@ -118,7 +118,7 @@ When using WiFi connection, indicate if communication protocol will be REST-API 
 ```
   
   	
-##CONNECT TO THE NETWORK
+## CONNECT TO THE NETWORK
   
 Connect the device to the desired network.
 ```
@@ -126,7 +126,7 @@ Connect the device to the desired network.
 ```
   	
   
-##READING THE DATA
+## READING THE DATA
   
 Read and collect data from the sensor or any device as defined by the user
 The data should be saved in a string variable
@@ -134,7 +134,7 @@ The data should be saved in a string variable
 An example of this step is on reading data from DHTxx sensor is shown in File->examples->UCW Platform Arduino->WiFi->UCWClient_DHT->UCW_DHT
   
   
-##RECONFIRM CONNECTION
+## RECONFIRM CONNECTION
   
 Device connection is reconfirmed before sending data to UCW platform
 ```
@@ -142,7 +142,7 @@ ucw.sys();
 ```
   	
   
-##SENDING DATA TO UCW SERVER
+## SENDING DATA TO UCW SERVER
   
 Collected data is sent to the server using the method below:
   
@@ -160,11 +160,11 @@ ucw.sendData(deviceID, dataStreamName, payload);
 ```
   	
    
-##FULL EXAMPLE
+## FULL EXAMPLE
   
 Examples implementing this library can be found [here](https://gitlab.unitycloudware.com/ucw-labs/ucw-arduino-library/examples)
   
   
-*********************************************************************** NOTE **************************************************************************
+## NOTE 
   	
 All examples were implemented using Adafruit M0 feather, ESP Huzzah 8266, ESP 32, Feather M0 LoRa RFM95, Feather 32u4 FONA
