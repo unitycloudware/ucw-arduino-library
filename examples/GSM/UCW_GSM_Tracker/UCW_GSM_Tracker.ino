@@ -35,7 +35,7 @@ void setup() {
   while (! Serial);
   Serial.begin(115200);
 
-  ucw.mobileSetup();
+  ucw.connect();
   ucw.deviceType();
 
   //initialise DHT sensor
