@@ -1,2 +1,4 @@
 .DS_Store
 *.gch
+.idea/
+ucw-arduino-library.iml
