@@ -51,6 +51,10 @@ static UCWConfig cfg = {
 /*
   The UCW_Mobile client will work with the following boards:
     - Adafruit Feather 32u4 FONA -> https://www.adafruit.com/products/3027
+    - Adafruit FONA - Mini Cellular GSM Breakout uFL Version---> http://www.adafruit.com/products/1946
+    - Adafruit FONA - Mini Cellular GSM Breakout-SMA Version-v1--> http://www.adafruit.com/products/1963
+    - Adafruit FONA 800 Shield - Voice/Data Cellular GSM for Arduino---> http://www.adafruit.com/products/2468
+    - Adafruit FONA 808 - Mini Cellular GSM + GPS Breakout---> http://www.adafruit.com/products/2542
  */
 
 // uncomment the following two lines for GSM,
