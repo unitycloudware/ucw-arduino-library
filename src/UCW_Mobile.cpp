@@ -24,12 +24,12 @@ char url[] = "cloud.dev.unitycloudware.com/api/ucw/v1";
 // (because softserial isnt supported) comment out the following three lines
 // and uncomment the HardwareSerial line
 
-//#include <SoftwareSerial.h>
-//SoftwareSerial fonaSS = SoftwareSerial(FONA_TX, FONA_RX);
-//SoftwareSerial *fonaSerial = &fonaSS;
+#include <SoftwareSerial.h>
+SoftwareSerial fonaSS = SoftwareSerial(FONA_TX, FONA_RX);
+SoftwareSerial *fonaSerial = &fonaSS;
 
 // Hardware serial is also possible!
-  HardwareSerial *fonaSerial = &Serial1;
+//HardwareSerial *fonaSerial = &Serial1;
 
 // Use this for FONA 800 and 808s
 Adafruit_FONA fona = Adafruit_FONA(FONA_RST);
