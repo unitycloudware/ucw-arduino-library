@@ -4,6 +4,7 @@
  */
 
 #if !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
+#if defined(ARDUINO_SAMD_MKR1000) && !defined(ARDUINO_ARCH_SAMD)
 
 #include "UCW_Mobile.h"
 
@@ -313,4 +314,6 @@ String UCW_Mobile::version() {
   return _version;
 }
 
-#endif
+#endif //M0
+
+#endif // ESP8266 ESP32
