@@ -4,7 +4,7 @@
  */
 
 #if !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
-#if defined(ARDUINO_SAMD_MKR1000) && !defined(ARDUINO_ARCH_SAMD)
+#if !defined(ARDUINO_ARCH_SAMD)
 
 #include "UCW_Mobile.h"
 
@@ -126,7 +126,9 @@ uint8_t UCW_Mobile::deviceType(){
 void UCW_Mobile::readNwkStatus(){
 
   // read the network/cellular status
-  while (fona.getNetworkStatus() != 1){
+  uint8_t net = fona.getNetworkStatus();
+
+  while (net != 1 && net !=5 ){
 
     uint8_t net = fona.getNetworkStatus();
     switch (net) {
@@ -138,12 +140,16 @@ void UCW_Mobile::readNwkStatus(){
       Serial.println(F("Denied")); break;
     case 4:
       Serial.println(F("Unknown")); break;
-    case 5:
-      Serial.println(F("Registered roaming")); break;
     }
+    net = fona.getNetworkStatus();
   }
 
-  Serial.println(F("Registered (home)"));
+  if (net == 1){
+    Serial.println(F("Registered (home)"));
+
+  } else {
+      Serial.println(F("Registered (roaming)"));
+  }
 
   //wait for 8 seconds
   delay(8000);
@@ -178,7 +184,7 @@ void UCW_Mobile::readNwkStatus(){
 }
 
 void UCW_Mobile::sys(){
-    if (fona.getNetworkStatus() != 1){
+    if (fona.getNetworkStatus() != 1 && fona.getNetworkStatus() != 5){
         connect();
     }
 }
@@ -223,8 +229,7 @@ m_gpsParams UCW_Mobile::readGPS(){
             .Altitude = altitude,
             .Heading = heading
             };
-          }
-        } else {
+          } else {
             m_gpsParams gpsInfo = {
             .Latitude = 0,
             .Longitude = 0,
@@ -232,14 +237,14 @@ m_gpsParams UCW_Mobile::readGPS(){
             .Altitude = 0,
             .Heading = 0
             };
-            if (stat == 0){
-              Serial.println(F("GPS off"));
-            } else if (stat == 1){
-                Serial.println(F("No fix"));
-              } else if (stat < 0){
-                  Serial.println(F("Failed to query"));
-                  }
-            }
+        }
+      } else if (stat == 0){
+       Serial.println(F("GPS off"));
+       } else if (stat == 1){
+          Serial.println(F("No fix"));
+           } else if (stat < 0){
+             Serial.println(F("Failed to query"));
+             }
 
   return gpsInfo;
 }
@@ -312,6 +317,60 @@ String UCW_Mobile::apiUrl() {
 String UCW_Mobile::version() {
   sprintf(_version, "%d.%d.%d", UCW_VERSION_MAJOR, UCW_VERSION_MINOR, UCW_VERSION_PATCH);
   return _version;
+}
+
+bool UCW_Mobile::sendSMS(char sendto[21], char message[141]) {
+  if (!fona.sendSMS(sendto, message)) {
+        Serial.println(F("Failed"));
+        return false;
+        } else {
+          Serial.println(F("Sent!"));
+          return true;
+          }
+}
+
+void UCW_Mobile::readAllSMS() {
+  int8_t smsnum = fona.getNumSMS();
+        uint16_t smslen;
+        int8_t smsn;
+
+        if ( (type == FONA3G_A) || (type == FONA3G_E) ) {
+          smsn = 0; // zero indexed
+          smsnum--;
+        } else {
+          smsn = 1;  // 1 indexed
+        }
+
+        for ( ; smsn <= smsnum; smsn++) {
+          Serial.print(F("\n\rReading SMS #")); Serial.println(smsn);
+          if (!fona.readSMS(smsn, replybuffer, 250, &smslen)) {  // pass in buffer and max len!
+            Serial.println(F("Failed!"));
+            break;
+          }
+          // if the length is zero, its a special case where the index number is higher
+          // so increase the max we'll look at!
+          if (smslen == 0) {
+            Serial.println(F("[empty slot]"));
+            smsnum++;
+            continue;
+          }
+
+          Serial.print(F("***** SMS #")); Serial.print(smsn);
+          Serial.print(" ("); Serial.print(smslen); Serial.println(F(") bytes *****"));
+          Serial.println(replybuffer);
+          Serial.println(F("*****"));
+        }
+}
+
+bool UCW_Mobile::deleteSMS(int num) {
+  if (fona.deleteSMS(num)) {
+    Serial.println(F("SMS deleted"));
+    return true;
+
+    } else {
+        Serial.println(F("Couldn't delete"));
+        return false;
+        }
 }
 
 #endif //M0
