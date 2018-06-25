@@ -23,6 +23,9 @@ class UCW_Mobile {
     void battLevel();
     m_gpsParams readGPS();
     bool sendData(String deviceID, String dataStreamName, String payload);
+    bool sendSMS(char sendto[21], char message[141]);
+    void readAllSMS();
+    bool deleteSMS(int num);
     void sys();
 
   protected:
