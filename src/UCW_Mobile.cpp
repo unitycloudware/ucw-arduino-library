@@ -69,13 +69,6 @@ void UCW_Mobile::connect(){
     Serial.print("Module IMEI: "); Serial.println(imei);
   }
 
-  // Optionally configure a GPRS APN, username, and password. Uncomment the line below to achieve this
-  //fona.setGPRSNetworkSettings(F("your APN"), F("your username"), F("your password"));
-
-  // Optionally configure HTTP gets to follow redirects over SSL. Uncomment the line below to achieve this
-  //fona.setHTTPSRedirect(true);
-
-
   readNwkStatus();
 
 }
@@ -172,13 +165,23 @@ void UCW_Mobile::readNwkStatus(){
     Serial.println(F("Failed to enable time Sync"));
   }
 
-  //establish TCP connection
-  int L = _host.length();
-  char _host1[L+1];
-  _host.toCharArray(_host1, sizeof(_host1));
+  // Optionally configure a GPRS APN, username, and password. Uncomment the line below to achieve this
+  // fona.setGPRSNetworkSettings(F("your APN"), F("your username"), F("your password"));
 
-  if(!fona.TCPconnect(_host1, _httpPort)){
-    Serial.println(F("Failed to establish TCP connection"));
+  // Optionally configure HTTP gets to follow redirects over SSL. Uncomment the line below to achieve this
+  //fona.setHTTPSRedirect(true);
+
+  if (!fona.enableGPS(true) || !fona.enableGPRS(true)){
+    Serial.println(F("Failed to turn on GPS or GPRS"));
+  } else {
+      //establish TCP connection
+      int L = _host.length();
+      char _host1[L+1];
+      _host.toCharArray(_host1, sizeof(_host1));
+
+      if(!fona.TCPconnect(_host1, _httpPort)){
+        Serial.println(F("Failed to establish TCP connection"));
+      }
   }
 
 }
@@ -195,7 +198,15 @@ m_gpsParams UCW_Mobile::readGPS(){
   // check GPS fix
   stat = fona.GPSstatus();
 
-  if (!fona.enableGPS(true) || (stat == 2)){
+  if (!fona.enableGPS(true) || (stat != 3)){
+
+    //Turn GPRS on
+    if (!fona.enableGPRS(true)){
+      Serial.println(F("Failed to turn on GPRS"));
+      } else {
+      Serial.println(F("Using GPRS...."));
+      }
+
     // Print out the geolocation of the BTS location to compare
     boolean gsmloc_success = fona.getGSMLoc(&latitude, &longitude);
 
@@ -217,6 +228,14 @@ m_gpsParams UCW_Mobile::readGPS(){
           Serial.println(F("Failed to turn GPRS on"));
           }
         }
+       if (stat == 0){
+         Serial.println(F("GPS off"));
+         } else if (stat == 1){
+            Serial.println(F("No fix"));
+            } else if (stat < 0){
+               Serial.println(F("GPS Failed to query"));
+               }
+
       } else if ((stat == 3)){
           // if you ask for an altitude reading, getGPS will return false if there isn't a 3D fix
           boolean gps_success = fona.getGPS(&latitude, &longitude, &speed_kph, &heading, &altitude);
@@ -238,13 +257,7 @@ m_gpsParams UCW_Mobile::readGPS(){
             .Heading = 0
             };
         }
-      } else if (stat == 0){
-       Serial.println(F("GPS off"));
-       } else if (stat == 1){
-          Serial.println(F("No fix"));
-           } else if (stat < 0){
-             Serial.println(F("Failed to query"));
-             }
+      }
 
   return gpsInfo;
 }
@@ -283,7 +296,7 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   apiUri.toCharArray(myURL, sizeof(myURL));
 
   if (!fona.HTTP_POST_start(myURL, F("application/json"), (uint8_t *) mydata, strlen(mydata), &statuscode, (uint16_t *)&length)) {
-    Serial.println("Failed to post data to server!");
+    Serial.println(F("Failed to post data to server!"));
     return false;
     }
 
@@ -327,6 +340,14 @@ bool UCW_Mobile::sendSMS(char sendto[21], char message[141]) {
           Serial.println(F("Sent!"));
           return true;
           }
+}
+
+void UCW_Mobile::unLock(char PIN[5]){
+    if (! fona.unlockSIM(PIN)) {
+      Serial.println(F("Failed"));
+      } else {
+      Serial.println(F("OK!"));
+      }
 }
 
 void UCW_Mobile::readAllSMS() {

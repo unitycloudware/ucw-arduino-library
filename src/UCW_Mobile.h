@@ -26,6 +26,7 @@ class UCW_Mobile {
     bool sendSMS(char sendto[21], char message[141]);
     void readAllSMS();
     bool deleteSMS(int num);
+    void unLock(char PIN[5]);
     void sys();
 
   protected:
