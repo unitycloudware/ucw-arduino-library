@@ -59,6 +59,8 @@ void UCW_GPS::setupGPS(){
   }
 
 gpsParams UCW_GPS::readGPS(){
+  //declare variable
+  gpsParams gpsInfo;
 
  // read data from the GPS in the 'main loop'
   char c = GPS.read();
@@ -81,24 +83,25 @@ gpsParams UCW_GPS::readGPS(){
 
   // approximately every 2 seconds or so, print out the current stats
   if (millis() - timer > 2000) {
+
     timer = millis(); // reset the timer
-    gpsParams gpsInfo = {
-    .Latitude = (GPS.latitude, 12),
-    .Longitude = (GPS.longitude, 12),
-    .Speed = GPS.speed * 1.852,
-    .Angle = GPS.angle,
-    .Altitude = GPS.altitude,
-    .Satelite = GPS.satellites,
-    .Fix = GPS.fix,
-    .Hour = (GPS.hour, DEC),
-    .Min = (GPS.minute, DEC),
-    .Sec = (GPS.seconds, DEC),
-    .millisec = (GPS.milliseconds),
-    .Year = (GPS.year, DEC),
-    .Month = (GPS.month, DEC),
-    .Day = (GPS.day, DEC),
-    .Quality = GPS.fixquality
-    };
+
+    gpsInfo.Latitude = (GPS.latitude, 12);
+    gpsInfo.Longitude = (GPS.longitude, 12);
+    gpsInfo.Speed = GPS.speed * 1.852;
+    gpsInfo.Angle = GPS.angle;
+    gpsInfo.Altitude = GPS.altitude;
+    gpsInfo.Satelite = GPS.satellites;
+    gpsInfo.Fix = GPS.fix;
+    gpsInfo.Hour = (GPS.hour, DEC);
+    gpsInfo.Min = (GPS.minute, DEC);
+    gpsInfo.Sec = (GPS.seconds, DEC);
+    gpsInfo.millisec = (GPS.milliseconds);
+    gpsInfo.Year = (GPS.year, DEC);
+    gpsInfo.Month = (GPS.month, DEC);
+    gpsInfo.Day = (GPS.day, DEC);
+    gpsInfo.Quality = GPS.fixquality;
+
   }
     return gpsInfo;
 }
