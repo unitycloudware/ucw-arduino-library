@@ -19,7 +19,6 @@ class UCW_Mobile {
 
     //methods
     void connect();
-    uint8_t deviceType();
     void battLevel();
     m_gpsParams readGPS();
     bool sendData(String deviceID, String dataStreamName, String payload);
@@ -34,7 +33,17 @@ class UCW_Mobile {
     String userAgent();
     String apiUrl();
     String version();
+    uint8_t deviceType();
     void readNwkStatus();
+    uint8_t getFirmWareVersion(char *firmWare) ;
+    uint8_t getResponse(FONAFlashStringPtr send, uint16_t timeout);
+    uint8_t readline1(uint16_t timeout, bool multiline);
+    void flushInput1();
+    bool doPost(char *url,
+              FONAFlashStringPtr contenttype,
+              const uint8_t *postdata, uint16_t postdatalen,
+              uint16_t *status, uint16_t *datalen);
+
 
     //variables
     uint8_t type;
@@ -45,6 +54,10 @@ class UCW_Mobile {
     char *_version;
     m_gpsParams gpsInfo;
     UCWConfig *_config;
+    bool gpsData;
+    bool gprsData;
+    bool _useGPRS;
+
 
 };
 

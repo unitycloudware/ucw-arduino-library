@@ -19,7 +19,9 @@
 //FONA type
 uint8_t type;
 
-char url[] = "cloud.dev.unitycloudware.com/api/ucw/v1";
+bool _useGPRS = false;
+bool gpsData = false;
+bool gprsData = false;
 
 // We default to using software serial. If you want to use hardware serial
 // (because softserial isnt supported) comment out the following three lines
@@ -53,8 +55,7 @@ UCW_Mobile::~UCW_Mobile() {
 void UCW_Mobile::connect(){
   while (!Serial);
 
-  Serial.println(F("FONA basic test"));
-  Serial.println(F("Initializing....(May take 3 seconds)"));
+  Serial.println(F("Initializing....(May take a few seconds)"));
 
   fonaSerial->begin(4800);
   if (! fona.begin(*fonaSerial)) {
@@ -62,13 +63,7 @@ void UCW_Mobile::connect(){
     while (1);
   }
 
-  // Print module IMEI number.
-  char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
-  uint8_t imeiLen = fona.getIMEI(imei);
-  if (imeiLen > 0) {
-    Serial.print("Module IMEI: "); Serial.println(imei);
-  }
-
+  delay(5000);
   readNwkStatus();
 
 }
@@ -113,11 +108,26 @@ uint8_t UCW_Mobile::deviceType(){
     default:
       Serial.println(F("???")); break;
     }
+  // Print module IMEI number.
+  char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
+  uint8_t imeiLen = fona.getIMEI(imei);
+  if (imeiLen > 0) {
+    Serial.print("Module IMEI: "); Serial.println(imei);
+  }
+
+  //print firmware version
+  char f_ver[17] = {0}; // MUST use a 17 character buffer for firmware version
+  uint8_t f_verLen = getFirmWareVersion(f_ver);
+  if (f_verLen > 0) {
+    Serial.print("Firmware Version: "); Serial.println(f_ver);
+  }
     return type;
   }
 
 void UCW_Mobile::readNwkStatus(){
 
+  //read device info
+   deviceType();
   // read the network/cellular status
   uint8_t net = fona.getNetworkStatus();
 
@@ -165,60 +175,47 @@ void UCW_Mobile::readNwkStatus(){
     Serial.println(F("Failed to enable time Sync"));
   }
 
-  // Optionally configure a GPRS APN, username, and password. Uncomment the line below to achieve this
-  // fona.setGPRSNetworkSettings(F("your APN"), F("your username"), F("your password"));
+  // Configure a GPRS APN, username, and password. Uncomment the line below to achieve this
+   fona.setGPRSNetworkSettings(F("your APN"), F("your username"), F("your password"));
 
   // Optionally configure HTTP gets to follow redirects over SSL. Uncomment the line below to achieve this
   //fona.setHTTPSRedirect(true);
 
-  if (!fona.enableGPS(true) || !fona.enableGPRS(true)){
-    Serial.println(F("Failed to turn on GPS or GPRS"));
-  } else {
-      //establish TCP connection
-      int L = _host.length();
-      char _host1[L+1];
-      _host.toCharArray(_host1, sizeof(_host1));
-
-      if(!fona.TCPconnect(_host1, _httpPort)){
-        Serial.println(F("Failed to establish TCP connection"));
+  if ((type == FONA3G_A) || (type == FONA3G_E) || (type == FONA808_V1) || (type == FONA808_V2)){
+    if (! _useGPRS){
+      while (!fona.enableGPS(true)){
+        Serial.println(F("Failed to turn on GPS"));
+        delay(2000);
       }
+      gpsData = true;
+    }
+  } else {
+    while (!fona.enableGPRS(true)){
+        Serial.println(F("Failed to turn on GPRS"));
+        delay(2000);
+      }
+    gprsData = true;
   }
 
 }
 
 void UCW_Mobile::sys(){
-    if (fona.getNetworkStatus() != 1 && fona.getNetworkStatus() != 5){
+    if(!fona.enableGPS(true) || !fona.enableGPRS(true)){
         connect();
     }
 }
 
 m_gpsParams UCW_Mobile::readGPS(){
   float latitude, longitude, speed_kph, heading, speed_mph, altitude;
-  int8_t stat;
-  // check GPS fix
-  stat = fona.GPSstatus();
+  m_gpsParams gpsInfo;
 
-  if (!fona.enableGPS(true) || (stat != 3)){
-
-    //Turn GPRS on
-    if (!fona.enableGPRS(true)){
-      Serial.println(F("Failed to turn on GPRS"));
-      } else {
-      Serial.println(F("Using GPRS...."));
-      }
+  if (gprsData){
 
     // Print out the geolocation of the BTS location to compare
     boolean gsmloc_success = fona.getGSMLoc(&latitude, &longitude);
-
     if (gsmloc_success) {
-
-      m_gpsParams gpsInfo = {
-          .Latitude = (latitude, 6),
-          .Longitude = (longitude, 6),
-          .Speed = 0,
-          .Altitude = 0,
-          .Heading = 0
-          };
+      gpsInfo.Latitude = latitude;
+      gpsInfo.Longitude = longitude;
       } else {
         Serial.println("GSM location failed...");
         Serial.println(F("Disabling GPRS"));
@@ -228,36 +225,25 @@ m_gpsParams UCW_Mobile::readGPS(){
           Serial.println(F("Failed to turn GPRS on"));
           }
         }
-       if (stat == 0){
-         Serial.println(F("GPS off"));
-         } else if (stat == 1){
-            Serial.println(F("No fix"));
-            } else if (stat < 0){
-               Serial.println(F("GPS Failed to query"));
-               }
-
-      } else if ((stat == 3)){
+      } else if (gpsData){
           // if you ask for an altitude reading, getGPS will return false if there isn't a 3D fix
           boolean gps_success = fona.getGPS(&latitude, &longitude, &speed_kph, &heading, &altitude);
 
           if (gps_success) {
-            m_gpsParams gpsInfo = {
-            .Latitude = (latitude, 6),
-            .Longitude = (longitude, 6),
-            .Speed = speed_kph * 0.621371192,
-            .Altitude = altitude,
-            .Heading = heading
-            };
+            gpsInfo.Latitude = latitude;
+            gpsInfo.Longitude = longitude;
+            gpsInfo.Speed = speed_kph * 0.621371192;
+            gpsInfo.Altitude = altitude;
+            gpsInfo.Heading = heading;
           } else {
-            m_gpsParams gpsInfo = {
-            .Latitude = 0,
-            .Longitude = 0,
-            .Speed = 0,
-            .Altitude = 0,
-            .Heading = 0
-            };
+            gpsInfo.Latitude = 0;
+            gpsInfo.Longitude = 0;
+            gpsInfo.Speed = 0;
+            gpsInfo.Altitude = 0;
+            gpsInfo.Heading = 0;
         }
       }
+
 
   return gpsInfo;
 }
@@ -267,51 +253,109 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   uint16_t statuscode;
   int16_t length;
 
-  int len = payload.length(); // length of payload data
+  String apiUri = _host + UCW_API_PATH + "/data-streams/%dataStreamName/messages/%deviceId";
+  apiUri.replace("%deviceId", deviceID);
+  apiUri.replace("%dataStreamName", dataStreamName);
+
+   //convert URL to char[]
+  int LEN = apiUri.length()+1; // length of payload data
+  char URL[LEN];
+  strcpy(URL, apiUri.c_str());
+
+  int len = payload.length()+1; // length of payload data
   if (len > MAX_DATA_LENGTH){
     Serial.println(F("Data too large"));
     return false;
     }
   //convert payload to char
-  char mydata [len+1];
-  payload.toCharArray(mydata, sizeof(mydata));
+  char myData [len];
+  strcpy(myData, payload.c_str());
 
-  //set token and user-agent info as USERDATA value in HTTP parameter
-  String userdata = "Bearer " + _config->token + userAgent();
-  int l = userdata.length();
-  char userData [l+1];
-  userdata.toCharArray(userData, sizeof(userData));
+  Serial.println(F("****"));
+  if (!doPost(URL, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
+          Serial.println("Failed!");
+          return false;
+          //break;
+        }
+        while (length > 0) {
+          while (fona.available()) {
+            char c = fona.read();
 
-  if (!fona.HTTP_para(F("USERDATA"), (const char *)userData)) {
-    return false;
-  }
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
+            loop_until_bit_is_set(UCSR0A, UDRE0); /* Wait until data register empty. */
+            UDR0 = c;
+#else
+            Serial.write(c);
+#endif
 
-  String apiUri = apiUrl() + "/data-streams/%dataStreamName/messages/%deviceId";
-  apiUri.replace("%deviceId", deviceID);
-  apiUri.replace("%dataStreamName", dataStreamName);
-
-  //convert URL to char[]
-  int Len = apiUri.length(); // length of payload data
-  char myURL[Len+1];
-  apiUri.toCharArray(myURL, sizeof(myURL));
-
-  if (!fona.HTTP_POST_start(myURL, F("application/json"), (uint8_t *) mydata, strlen(mydata), &statuscode, (uint16_t *)&length)) {
-    Serial.println(F("Failed to post data to server!"));
-    return false;
-    }
-
-  while (length > 0) {
-    while (fona.available()) {
-      char c = fona.read();
-      length--;
-      }
-   }
-
- Serial.println(F("\n****"));
- fona.HTTP_POST_end();
-
+            length--;
+            if (! length) break;
+          }
+        }
+        Serial.println(F("\n****"));
+        fona.HTTP_POST_end();
  return true;
+
 }
+
+bool UCW_Mobile::doPost(char *url,
+              FONAFlashStringPtr contenttype,
+              const uint8_t *postdata, uint16_t postdatalen,
+              uint16_t *status, uint16_t *datalen){
+
+
+  Serial.println(F("do_post"));
+  String Token = "Authorization: Bearer "+_config->token;
+  String uAgent = userAgent();
+
+  int Token_Len = Token.length()+1; // length of token data
+  int uAgent_Len = uAgent.length()+1; // length of UA data
+
+  char new_token[Token_Len];
+  char new_UA[uAgent_Len];
+
+  strcpy(new_token, Token.c_str());  //convert token to chat
+  strcpy(new_UA, uAgent.c_str());   //convert UA to char
+
+ const char * new_token1 = new_token;
+ const char * new_UA1 = new_UA1;
+
+  // Initialize and set parameters
+  if (!fona.HTTP_init())
+    return false;
+  if (!fona.HTTP_para(F("CID"), 1))
+    return false;
+  if (!fona.HTTP_para(F("UA"), *new_UA1))
+    return false;
+  if (!fona.HTTP_para(F("URL"), url))
+    return false;
+  if (!fona.HTTP_para(F("CONTENT"), contenttype))
+    return false;
+  if (!fona.HTTP_para(F("USERDATA"), *new_token1))
+    return false;
+
+  // HTTP POST data
+  if (!fona.HTTP_data(postdatalen, 10000))
+    return false;
+
+  fonaSerial->write(postdata, postdatalen);
+  if (!fona.expectReply(F("OK")))
+    return false;
+
+  // HTTP POST
+  if (!fona.HTTP_action(FONA_HTTP_POST, status, datalen))
+    return false;
+
+  DEBUG_PRINT(F("Status: ")); DEBUG_PRINTLN(*status);
+  DEBUG_PRINT(F("Len: ")); DEBUG_PRINTLN(*datalen);
+
+  // HTTP response data
+  if (!fona.HTTP_readall(datalen))
+    return false;
+
+  return true;
+}
+
 
 String UCW_Mobile::userAgent() {
   if (!_userAgent) {
@@ -392,6 +436,82 @@ bool UCW_Mobile::deleteSMS(int num) {
         Serial.println(F("Couldn't delete"));
         return false;
         }
+}
+
+uint8_t UCW_Mobile::getFirmWareVersion(char *firmWare) {
+  getResponse(F("AT+CGMR"), 500);
+
+  // up to 16 chars
+  strncpy(firmWare, replybuffer, 16);
+  firmWare[16] = 0;
+
+  readline1(500,false); // eat 'OK'
+
+  return strlen(firmWare);
+}
+
+uint8_t UCW_Mobile::getResponse(FONAFlashStringPtr send, uint16_t timeout) {
+  flushInput1();
+
+
+  DEBUG_PRINT(F("\t---> ")); DEBUG_PRINTLN(send);
+
+
+  fonaSerial->println(send);
+
+  uint8_t l = readline1(500,false);
+
+  DEBUG_PRINT (F("\t<--- ")); DEBUG_PRINTLN(replybuffer);
+
+  return l;
+}
+
+uint8_t UCW_Mobile::readline1(uint16_t timeout, bool multiline) {
+  uint16_t replyidx = 0;
+
+  while (timeout--) {
+    if (replyidx >= 254) {
+      //DEBUG_PRINTLN(F("SPACE"));
+      break;
+    }
+
+    while(fonaSerial->available()) {
+      char c =  fonaSerial->read();
+      if (c == '\r') continue;
+      if (c == 0xA) {
+        if (replyidx == 0)   // the first 0x0A is ignored
+          continue;
+
+        if (!multiline) {
+          timeout = 0;         // the second 0x0A is the end of the line
+          break;
+        }
+      }
+      replybuffer[replyidx] = c;
+      //DEBUG_PRINT(c, HEX); DEBUG_PRINT("#"); DEBUG_PRINTLN(c);
+      replyidx++;
+    }
+
+    if (timeout == 0) {
+      //DEBUG_PRINTLN(F("TIMEOUT"));
+      break;
+    }
+    delay(1);
+  }
+  replybuffer[replyidx] = 0;  // null term
+  return replyidx;
+}
+
+void UCW_Mobile::flushInput1() {
+    // Read all available serial input to flush pending data.
+    uint16_t timeoutloop = 0;
+    while (timeoutloop++ < 40) {
+        while(fona.available()) {
+            fona.read();
+            timeoutloop = 0;  // If char was received reset the timer
+        }
+        delay(1);
+    }
 }
 
 #endif //M0
