@@ -321,7 +321,7 @@ bool UCW_Mobile::doPost(char *url,
   strcpy(new_UA, uAgent.c_str());   //convert UA to char
 
  const char * new_token1 = new_token;
- const char * new_UA1 = new_UA1;
+ const char * new_UA1 = new_UA;
 
   // Initialize and set parameters
   if (!fona.HTTP_init())
