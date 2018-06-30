@@ -16,6 +16,9 @@
 //set maximum payload length
 #define MAX_DATA_LENGTH 255
 
+// this is a large buffer for replies
+char replybuffer[255];
+
 //FONA type
 uint8_t type;
 
@@ -176,7 +179,7 @@ void UCW_Mobile::readNwkStatus(){
   }
 
   // Configure a GPRS APN, username, and password. Uncomment the line below to achieve this
-   fona.setGPRSNetworkSettings(F("your APN"), F("your username"), F("your password"));
+   fona.setGPRSNetworkSettings(F("internet"), F(""), F(""));
 
   // Optionally configure HTTP gets to follow redirects over SSL. Uncomment the line below to achieve this
   //fona.setHTTPSRedirect(true);
