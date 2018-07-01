@@ -14,7 +14,7 @@
 
 class UCW_Mobile {
   public:
-    UCW_Mobile(UCWConfig *config);
+    UCW_Mobile(UCWConfig *config, const char *apn, const char *username, const char *pass);
     ~UCW_Mobile();
 
     //methods
@@ -32,7 +32,6 @@ class UCW_Mobile {
     //methods
     String userAgent();
     String apiUrl();
-    String version();
     uint8_t deviceType();
     void readNwkStatus();
     uint8_t getFirmWareVersion(char *firmWare) ;
@@ -51,13 +50,14 @@ class UCW_Mobile {
     uint16_t _httpPort = UCW_API_PORT;
     String _host = UCW_API_HOST;
     String _userAgent;
-    char *_version;
     m_gpsParams gpsInfo;
     UCWConfig *_config;
-    bool gpsData;
-    bool gprsData;
-    bool _useGPRS;
-
+    FONAFlashStringPtr _apn;
+    FONAFlashStringPtr _user;
+    FONAFlashStringPtr _pass;
+    bool gpsData = false;
+    bool gprsData = false;
+    bool _useGPRS = false;
 
 };
 
