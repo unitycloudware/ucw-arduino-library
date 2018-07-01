@@ -14,7 +14,6 @@
 #include <RH_RF95.h>
 #include <Cape.h>
 
-
 // Adafruit Feather M0 WiFi
 #define WINC_CS   8
 #define WINC_IRQ  7
@@ -31,7 +30,7 @@ class UCW_M0LoRa : public UCW_LoRa {
     ucw_status_t Operatingfreq();
     String connectionType();
     String recMsgUpdate();
-    bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload);
+    bool sendData(String deviceID, String dataStreamName, String payload);
     void receiveData();
     double updateBatteryStatus();
     String encryptData(String data);
