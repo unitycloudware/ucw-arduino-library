@@ -17,8 +17,8 @@
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
-uint8_t DEVICE_ID[] = "your_device_id";
-uint8_t DATA_STREAM[] = "data_test";
+#define DEVICE_ID   "your_device_id"
+#define DATA_STREAM "your_data_stream_name"
 
 void setup() {
   // Start the serial connection
