@@ -22,19 +22,19 @@ bool UCW_API_MQTT::sendData(String deviceID, String dataStreamName, String paylo
     return false;
   }
 
-    if (!_mqttClient->connected()) {
-        reconnect();
-        }
-    UCW_LOG_PRINT("Publishing new data:");
-    UCW_LOG_PRINTLN(payload.c_str());
+  if (!_mqttClient->connected()) {
+    reconnect();
+  }
 
-    _mqttClient->publish(device_topic, deviceID.c_str(), isRetained);
-    _mqttClient->publish(dataStream_topic, dataStreamName.c_str(), isRetained);
-    _mqttClient->publish(payload_topic, payload.c_str(), isRetained);
+  UCW_LOG_PRINT("Publishing new data:");
+  UCW_LOG_PRINTLN(payload.c_str());
 
-   _mqttClient->loop();
-
+  _mqttClient->publish(device_topic, deviceID.c_str(), isRetained);
+  _mqttClient->publish(dataStream_topic, dataStreamName.c_str(), isRetained);
+  _mqttClient->publish(payload_topic, payload.c_str(), isRetained);
+  _mqttClient->loop();
   _mqttClient->subscribe(sub_topic);
+
   return true;
 }
 

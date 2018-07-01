@@ -22,7 +22,6 @@
 class UCW_M0_BLE {
   public:
     UCW_M0_BLE();
-
     //methods
     void setupBLE();
     void sendData(String payload);
@@ -35,6 +34,6 @@ class UCW_M0_BLE {
 
 };
 
-#endif //
+#endif //ARDUINO_ARCH_SAMD
 
 #endif // UCWM0_BLE_H

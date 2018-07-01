@@ -23,10 +23,10 @@ bool UCW_ESP_OTA::connect(const char* ssid, const char* password) {
 
   if((WiFiMulti.run() == WL_CONNECTED)) {
     return true;
-    } else {
-      return false;
-      }
+  } else {
+    return false;
   }
+}
 
 bool UCW_ESP_OTA::connect(String ssid, String password) {
 
@@ -43,51 +43,46 @@ bool UCW_ESP_OTA::connect(String ssid, String password) {
 
   if((WiFiMulti.run() == WL_CONNECTED)) {
     return true;
-    } else {
-      return false;
-      }
+  } else {
+    return false;
   }
+}
 
 t_httpUpdate_return UCW_ESP_OTA::updateFirmware(String server) {
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(server);
   switch(ret) {
     case HTTP_UPDATE_FAILED:
-        Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-        break;
+      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      break;
     case HTTP_UPDATE_NO_UPDATES:
-        Serial.println("HTTP_UPDATE_NO_UPDATES");
-        break;
+      Serial.println("HTTP_UPDATE_NO_UPDATES");
+      break;
     case HTTP_UPDATE_OK:
-        Serial.println("HTTP_UPDATE_OK");
-        break;
-    }
-
+      Serial.println("HTTP_UPDATE_OK");
+      break;
   return ret;
-  }
+}
 
 t_httpUpdate_return UCW_ESP_OTA::updateFirmware(String server, uint16_t port, String updateScript, int currentVer) {
 
-
   String newUpdateScript = "/" + updateScript;
   String newVersion = String(currentVer);
-
   t_httpUpdate_return ret = ESPhttpUpdate.update(server,port,newUpdateScript,newVersion);
 
   switch(ret) {
     case HTTP_UPDATE_FAILED:
-        Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-        break;
+      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      break;
     case HTTP_UPDATE_NO_UPDATES:
         Serial.println("HTTP_UPDATE_NO_UPDATES");
         break;
     case HTTP_UPDATE_OK:
         Serial.println("HTTP_UPDATE_OK");
         break;
-    }
-
-  return ret;
   }
+  return ret;
+}
 
 #endif // ESP8266
 

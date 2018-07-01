@@ -62,78 +62,72 @@ struct UCWConfig_Lora {
 };
 
 typedef enum {
+  // CONNECTING
+  UCW_IDLE                    = 0,
+  UCW_NET_DISCONNECTED        = 1,
+  UCW_DISCONNECTED            = 2,
 
-    // CONNECTING
-    UCW_IDLE                    = 0,
-    UCW_NET_DISCONNECTED        = 1,
-    UCW_DISCONNECTED            = 2,
+  // SUCCESS
+  UCW_NET_CONNECTED           = 10,
+  UCW_CONNECTED               = 11,
+  UCW_CONNECTED_INSECURE      = 12,
 
-    // SUCCESS
-    UCW_NET_CONNECTED           = 10,
-    UCW_CONNECTED               = 11,
-    UCW_CONNECTED_INSECURE      = 12,
+  // FAILURE
+  UCW_NET_CONNECT_FAILED      = 20,
+  UCW_CONNECT_FAILED          = 21,
+  UCW_AUTH_FAILED             = 22,
+}ucw_status_t;
 
-    // FAILURE
-    UCW_NET_CONNECT_FAILED      = 20,
-    UCW_CONNECT_FAILED          = 21,
-    UCW_AUTH_FAILED             = 22,
-
-} ucw_status_t;
-
- typedef struct gps {
-   double Latitude;
-   double Longitude;
-   double Speed;
-   double Angle;
-   double Altitude;
-   int Satelite;
-   int Fix;
-   int Hour;
-   int Min;
-   int Sec;
-   long millisec;
-   int Year;
-   int Month;
-   int Day;
-   int Quality;
-
+typedef struct gps {
+  double Latitude;
+  double Longitude;
+  double Speed;
+  double Angle;
+  double Altitude;
+  int Satelite;
+  int Fix;
+  int Hour;
+  int Min;
+  int Sec;
+  long millisec;
+  int Year;
+  int Month;
+  int Day;
+  int Quality;
 }gpsParams;
 
  typedef struct gps_m {
-   float Latitude;
-   float Longitude;
-   float Speed;
-   float Altitude;
-   float Heading;
-
+  float Latitude;
+  float Longitude;
+  float Speed;
+  float Altitude;
+  float Heading;
 }m_gpsParams;
 
 typedef struct gas {
-   float smoke;
-   float nat_gas;
-   float hydro_gas;
-   float CO;
-   float h_sulph;
-   float ammonia;
-   float ECO2;
+  float smoke;
+  float nat_gas;
+  float hydro_gas;
+  float CO;
+  float h_sulph;
+  float ammonia;
+  float ECO2;
 }gasLevel;
 
 typedef enum {
-   // water severity level
-    UCW_STATIC          = 0,
-    UCW_LOW             = 50,
-    UCW_MODERATE        = 100,
-    UCW_HIGH            = 150,
-
+  // water severity level
+  UCW_STATIC          = 0,
+  UCW_LOW             = 50,
+  UCW_MODERATE        = 100,
+  UCW_HIGH            = 150,
 }moistureStatus;
 
 typedef enum {
-   // received  command
-    UCW_GEN_TRACKER     = 1,
-    UCW_KEY_FINDER      = 2,
-    UCW_ANIMAL_TRACKER  = 3,
-    UCW_ACCESS_CONTROL  = 4,
-
+  // received  command
+  UCW_GEN_TRACKER     = 1,
+  UCW_KEY_FINDER      = 2,
+  UCW_ANIMAL_TRACKER  = 3,
+  UCW_ACCESS_CONTROL  = 4,
 }recCommand;
 
 #endif // UCW_SYSTEM_H

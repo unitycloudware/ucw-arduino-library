@@ -6,7 +6,6 @@
 #ifndef UCWGPS_H
 #define UCWGPS_H
 
-
 #include <Adafruit_GPS.h>
 #include <SPI.h>
 #include <Arduino.h>
@@ -16,8 +15,9 @@ class UCW_GPS {
   public:
     UCW_GPS();
     ~UCW_GPS();
-     void setupGPS();
-     gpsParams readGPS();
+    void setupGPS();
+    gpsParams readGPS();
+
   protected:
     char c;
     gpsParams gpsInfo;

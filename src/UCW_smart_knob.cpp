@@ -25,11 +25,9 @@ Servo myservo;  // create servo object to control a servo
 const int servoPin = 2;      //choose the pin for the servo
 
 UCW_smart_knob::UCW_smart_knob(){
-  ;
 }
 
 UCW_smart_knob::~UCW_smart_knob(){
-  ;
 }
 
 void UCW_smart_knob::knobSetup(){
@@ -49,7 +47,7 @@ void UCW_smart_knob::knobSetup(){
   gyro_z_cal /= 1000;
 
   myservo.attach(servoPin);  // attaches the servo on GIO2 to the servo object
-  loop_timer = micros();                                               //Reset the loop timer
+  loop_timer = micros();    //Reset the loop timer
 }
 
 float UCW_smart_knob::readAngle(){
@@ -60,11 +58,11 @@ float UCW_smart_knob::readAngle(){
   gyro_z -= gyro_z_cal;
 
   //Gyro angle calculations . Note 0.0000611 = 1 / (250Hz x 65.5)
-  angle_pitch += gyro_x * 0.0000611;                                   //Calculate the traveled pitch angle and add this to the angle_pitch variable
-  angle_roll += gyro_y * 0.0000611;                                    //Calculate the traveled roll angle and add this to the angle_roll variable
+  angle_pitch += gyro_x * 0.0000611;     //Calculate the traveled pitch angle and add this to the angle_pitch variable
+  angle_roll += gyro_y * 0.0000611;      //Calculate the traveled roll angle and add this to the angle_roll variable
   //0.000001066 = 0.0000611 * (3.142(PI) / 180degr) The Arduino sin function is in radians
-  angle_pitch += angle_roll * sin(gyro_z * 0.000001066);               //If the IMU has yawed transfer the roll angle to the pitch angel
-  angle_roll -= angle_pitch * sin(gyro_z * 0.000001066);               //If the IMU has yawed transfer the pitch angle to the roll angel
+  angle_pitch += angle_roll * sin(gyro_z * 0.000001066);    //If the IMU has yawed transfer the roll angle to the pitch angel
+  angle_roll -= angle_pitch * sin(gyro_z * 0.000001066);    //If the IMU has yawed transfer the pitch angle to the roll angel
 
   //Accelerometer angle calculations
   acc_total_vector = sqrt((acc_x*acc_x)+(acc_y*acc_y)+(acc_z*acc_z));  //Calculate the total accelerometer vector
@@ -78,8 +76,7 @@ float UCW_smart_knob::readAngle(){
   if(set_gyro_angles){                                                 //If the IMU is already started
     angle_pitch = angle_pitch * 0.9996 + angle_pitch_acc * 0.0004;     //Correct the drift of the gyro pitch angle with the accelerometer pitch angle
     angle_roll = angle_roll * 0.9996 + angle_roll_acc * 0.0004;        //Correct the drift of the gyro roll angle with the accelerometer roll angle
-  }
-  else{                                                                //At first start
+  } else{                                                                //At first start
     angle_pitch = angle_pitch_acc;                                     //Set the gyro pitch angle equal to the accelerometer pitch angle
     angle_roll = angle_roll_acc;                                       //Set the gyro roll angle equal to the accelerometer roll angle
     set_gyro_angles = true;                                            //Set the IMU started flag
@@ -90,8 +87,8 @@ float UCW_smart_knob::readAngle(){
   angle_roll_output = angle_roll_output * 0.9 + angle_roll * 0.1;      //Take 90% of the output roll value and add 10% of the raw roll value
 
   if (angle_pitch_output != newAngle){
-        myservo.write(int(angle_pitch_output));
-        newAngle = angle_pitch_output;
+    myservo.write(int(angle_pitch_output));
+    newAngle = angle_pitch_output;
   }
 
   while(micros() - loop_timer < 4000);                                 //Wait until the loop_timer reaches 4000us (250Hz) before starting the next loop
@@ -100,36 +97,38 @@ float UCW_smart_knob::readAngle(){
 }
 
 void UCW_smart_knob::turnKnobOff(){
-    for (int i = myservo.read(); i == 0; i--){
-        myservo.write(i);
-        delay(15);
-    }
+  for (int i = myservo.read(); i == 0; i--){
+    myservo.write(i);
+    delay(15);
+  }
 }
 
 void UCW_smart_knob::moveKnob(int posKnob){
-    if (myservo.read() > posKnob)
-       for (int i = myservo.read(); i == posKnob; i--){
-        myservo.write(i);
-        delay(15);
+  if (myservo.read() > posKnob)
+    for (int i = myservo.read(); i == posKnob; i--){
+      myservo.write(i);
+      delay(15);
     } else {
-        for (int i = myservo.read(); i == posKnob; i++){
-        myservo.write(i);
-        delay(15);
-        }
+      for (int i = myservo.read(); i == posKnob; i++){
+      myservo.write(i);
+      delay(15);
     }
+  }
 }
 
 void UCW_smart_knob::setup_mpu_6050_registers(){
-//Activate the MPU-6050
+  //Activate the MPU-6050
   Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
   Wire.write(0x6B);                                                    //Send the requested starting register
   Wire.write(0x00);                                                    //Set the requested starting register
   Wire.endTransmission();
+
   //Configure the accelerometer (+/-8g)
   Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
   Wire.write(0x1C);                                                    //Send the requested starting register
   Wire.write(0x10);                                                    //Set the requested starting register
   Wire.endTransmission();
+
   //Configure the gyro (500dps full scale)
   Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
   Wire.write(0x1B);                                                    //Send the requested starting register
@@ -138,18 +137,18 @@ void UCW_smart_knob::setup_mpu_6050_registers(){
 }
 
 void UCW_smart_knob::read_mpu_6050_data(){
-Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
+  Wire.beginTransmission(0x68);                                        //Start communicating with the MPU-6050
   Wire.write(0x3B);                                                    //Send the requested starting register
   Wire.endTransmission();                                              //End the transmission
   Wire.requestFrom(0x68,14);                                           //Request 14 bytes from the MPU-6050
   while(Wire.available() < 14);                                        //Wait until all the bytes are received
-  acc_x = Wire.read()<<8|Wire.read();
-  acc_y = Wire.read()<<8|Wire.read();
-  acc_z = Wire.read()<<8|Wire.read();
-  temp = Wire.read()<<8|Wire.read();
-  gyro_x = Wire.read()<<8|Wire.read();
-  gyro_y = Wire.read()<<8|Wire.read();
-  gyro_z = Wire.read()<<8|Wire.read();
+    acc_x = Wire.read()<<8|Wire.read();
+    acc_y = Wire.read()<<8|Wire.read();
+    acc_z = Wire.read()<<8|Wire.read();
+    temp = Wire.read()<<8|Wire.read();
+    gyro_x = Wire.read()<<8|Wire.read();
+    gyro_y = Wire.read()<<8|Wire.read();
+    gyro_z = Wire.read()<<8|Wire.read();
 }
 
 #endif

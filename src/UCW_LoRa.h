@@ -14,22 +14,20 @@ class UCW_LoRa {
   public:
     UCW_LoRa(UCWConfig_Lora *config);
     virtual ~UCW_LoRa();
-
     void connect();
     virtual ucw_status_t Operatingfreq() = 0;
     virtual String connectionType() = 0;
     virtual bool sendData(const uint8_t* your_deviceID, const uint8_t* your_dataStreamName, String payload) = 0;
-
     void sys();
     String version();
     String userAgent();
-
 
   protected:
     virtual void _connect() = 0;
     virtual void _sys() = 0;
     virtual void receiveData() = 0;
 
+    //variables
     char *_version;
     UCWConfig_Lora *_config;
     int _freq = RF95_FREQ;

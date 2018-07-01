@@ -14,16 +14,16 @@ UCW::UCW(UCWConfig *config) {
     _mqttPort = _config->port;
     _mqttClient=0;
   } else{
-  _host = _config->host;
-  _httpPort = _config->port;
-  _http = 0;
+    _host = _config->host;
+    _httpPort = _config->port;
+    _http = 0;
   }
 }
 
 UCW::~UCW() {
   if(_http) {
     delete _http;
-  } if (_mqttClient){
+  } else if (_mqttClient){
     delete _http;
   }
 }

@@ -21,6 +21,5 @@
   #include "wifi/UCW_ESP8266.h"
   typedef UCW_ESP8266 UCW_WiFi;
 
-#endif
-
+#endif //board switch
 #endif // UCW_WIFI_H

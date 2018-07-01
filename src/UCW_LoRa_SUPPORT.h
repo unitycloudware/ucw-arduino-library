@@ -8,9 +8,8 @@
 
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
-    #include "lora/UCW_M0LoRa.h"
-    typedef UCW_M0LoRa UCW_LoRa_SUPPORT;
-
+  #include "lora/UCW_M0LoRa.h"
+  typedef UCW_M0LoRa UCW_LoRa_SUPPORT;
 
 #endif // !ARDUINO_SAMD_MKR1000 && ARDUINO_ARCH_SAMD
 

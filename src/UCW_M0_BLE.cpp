@@ -3,7 +3,7 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-//M0 boards only
+// ARM M0 boards only
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 #include "UCW_M0_BLE.h"
@@ -33,15 +33,14 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 //                             BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
 UCW_M0_BLE::UCW_M0_BLE(){
-analogReadResolution(12);
+  analogReadResolution(12);
 }
 
 void UCW_M0_BLE::setupBLE() {
-
- /*
+  /*
    * Adafruit Feather M0 Bluefruit LE
    * https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
-   */
+  */
 
   while (!Serial);  // required for Flora & Micro
   delay(500);
@@ -55,7 +54,7 @@ void UCW_M0_BLE::setupBLE() {
 
   if ( !ble.begin(VERBOSE_MODE) ){
     Serial.println(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
-    }
+  }
   Serial.println( F("OK!") );
 
   if ( FACTORYRESET_ENABLE ){
@@ -63,8 +62,8 @@ void UCW_M0_BLE::setupBLE() {
     Serial.println(F("Performing a factory reset: "));
     if ( ! ble.factoryReset() ){
       Serial.println(F("Couldn't factory reset"));
-      }
     }
+  }
 
   /* Disable command echo from Bluefruit */
   ble.echo(false);
@@ -81,51 +80,51 @@ void UCW_M0_BLE::setupBLE() {
 
   /* Wait for connection */
   while (! ble.isConnected()){
-      delay(500);
-    }
+    delay(500);
+  }
 
   // LED Activity command is only supported from 0.6.6
   if ( ble.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION) ){
-      // Change Mode LED Activity
-      Serial.println(F("******************************"));
-      Serial.println(F("Change LED activity to " MODE_LED_BEHAVIOUR));
-      ble.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
-      Serial.println(F("******************************"));
-    }
+    // Change Mode LED Activity
+    Serial.println(F("******************************"));
+    Serial.println(F("Change LED activity to " MODE_LED_BEHAVIOUR));
+    ble.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
+    Serial.println(F("******************************"));
+  }
 }
 
 void UCW_M0_BLE::sendData(String payload) {
 
-    if (payload.length() < 1) {
-        Serial.println("No data to send!");
-        delay(1000);
-        return;
-    }
+  if (payload.length() < 1) {
+    Serial.println("No data to send!");
+    delay(1000);
+    return;
+  }
 
-    if (payload.length() > 0) {
-        String input = "{\"Data\": \"%payload\"}";
-        input.replace("%payload", payload);
+  if (payload.length() > 0) {
+    String input = "{\"Data\": \"%payload\"}";
+    input.replace("%payload", payload);
 
-        // Send characters to Bluefruit
-        Serial.print("[Send] ");
-        Serial.println(input);
+    // Send characters to Bluefruit
+    Serial.print("[Send] ");
+    Serial.println(input);
+    ble.print("AT+BLEUARTTX=");
+    ble.println(input);
+    updateBattStatus();
 
-        ble.print("AT+BLEUARTTX=");
-        ble.println(input);
-        updateBattStatus();
-
-        delay(2000);
-    }
+    delay(2000);
+  }
 }
 
 String UCW_M0_BLE::receiveData(){
-    // Check for incoming characters from Bluefruit
-    ble.println("AT+BLEUARTRX");
-    ble.readline();
-    if (strcmp(ble.buffer, "OK") == 0) {
-        // no data
-        return "";
-    }
+  // Check for incoming characters from Bluefruit
+  ble.println("AT+BLEUARTRX");
+  ble.readline();
+  if (strcmp(ble.buffer, "OK") == 0) {
+    // no data
+    return "";
+  }
+
   // Some data was found, its in the buffer
   output = ble.buffer;
   Serial.print(F("[Recv] ")); Serial.println(ble.buffer);
@@ -135,13 +134,13 @@ String UCW_M0_BLE::receiveData(){
 }
 
 double UCW_M0_BLE::updateBattStatus(){
-    //https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
-    double measuredvbat = analogRead(VBATPIN);
-    measuredvbat *= 2;    // we divided by 2, so multiply back
-    measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
-    measuredvbat /= 1024; // convert to voltage
-    Serial.print("VBat: " ); Serial.println(measuredvbat);
-    Serial.println();
+  //https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
+  double measuredvbat = analogRead(VBATPIN);
+  measuredvbat *= 2;    // we divided by 2, so multiply back
+  measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+  measuredvbat /= 1024; // convert to voltage
+  Serial.print("VBat: " ); Serial.println(measuredvbat);
+  Serial.println();
 }
 
 #endif // SAMD

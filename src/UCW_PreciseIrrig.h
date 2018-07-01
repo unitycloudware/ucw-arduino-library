@@ -11,19 +11,15 @@
 #include <UCW_System.h>
 
 class UCW_PreciseIrrig {
-
   public:
     UCW_PreciseIrrig();
     ~UCW_PreciseIrrig();
-
-     void checkMoistureLevel(float t, float h,double lat, double lng);
-     void checkMoistureLevel(int t, double lat, double lng);
-     moistureStatus getUpdate();
-     bool irrigStatus();
-
+    void checkMoistureLevel(float t, float h,double lat, double lng);
+    void checkMoistureLevel(int t, double lat, double lng);
+    moistureStatus getUpdate();
+    bool irrigStatus();
 
   protected:
-
     void startIrrigation(moistureStatus newStatus, double Lat, double Lng);
     float t_threshold_1 = 20.0;
     float t_threshold_2 = 25.0;

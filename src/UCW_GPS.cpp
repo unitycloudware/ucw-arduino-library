@@ -7,16 +7,13 @@
 #include "UCW_GPS.h"
 
 #if defined(ARDUINO_ARCH_ESP32)
-HardwareSerial mySerial(2);    //set hardware serial pin
-Adafruit_GPS GPS(&mySerial);
-
+  HardwareSerial mySerial(2);    //set hardware serial pin
+  Adafruit_GPS GPS(&mySerial);
 #else
-// what's the name of the hardware serial port?
-#define GPSSerial Serial1
-
-// Connect to the GPS on the hardware port
-Adafruit_GPS GPS(&GPSSerial);
-
+  // what's the name of the hardware serial port?
+  #define GPSSerial Serial1
+  // Connect to the GPS on the hardware port
+  Adafruit_GPS GPS(&GPSSerial);
 #endif // defined
 
 uint32_t timer = millis();
@@ -26,11 +23,9 @@ uint32_t timer = millis();
 #define GPSECHO false
 
 UCW_GPS::UCW_GPS() {
-
 }
 
 UCW_GPS::~UCW_GPS() {
-;
 }
 
 void UCW_GPS::setupGPS(){
@@ -56,7 +51,7 @@ void UCW_GPS::setupGPS(){
   //GPS_1.sendCommand("$PGCMD,33,0*6D"); // Turn Off GPS Antenna Update
 
   delay(1000);
-  }
+}
 
 gpsParams UCW_GPS::readGPS(){
   //declare variable
@@ -74,7 +69,7 @@ gpsParams UCW_GPS::readGPS(){
     // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
     Serial.println(GPS.lastNMEA()); // this also sets the newNMEAreceived() flag to false
     if (!GPS.parse(GPS.lastNMEA())){
-        ;
+      ;
     } // this also sets the newNMEAreceived() flag to false
       //return; // we can fail to parse a sentence in which case we should just wait for another
   }
@@ -101,10 +96,6 @@ gpsParams UCW_GPS::readGPS(){
     gpsInfo.Month = (GPS.month, DEC);
     gpsInfo.Day = (GPS.day, DEC);
     gpsInfo.Quality = GPS.fixquality;
-
   }
-    return gpsInfo;
+  return gpsInfo;
 }
-
-
-

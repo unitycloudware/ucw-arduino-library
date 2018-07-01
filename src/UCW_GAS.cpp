@@ -23,41 +23,37 @@ uint32_t Timer = millis(); //timer
 float CO2;  // equivalent calculated carbon-dioxide
 
 UCW_GAS::UCW_GAS() {
-
 }
 
 UCW_GAS::~UCW_GAS() {
-;
 }
 
 void UCW_GAS::setupGas(){
 
-pinMode(sensorA0, INPUT);
-pinMode(sensorA1, INPUT);
-pinMode(sensorA2, INPUT);
-pinMode(sensorA3, INPUT);
-pinMode(sensorA4, INPUT);
-pinMode(sensorA5, INPUT);
-
-  }
+  pinMode(sensorA0, INPUT);
+  pinMode(sensorA1, INPUT);
+  pinMode(sensorA2, INPUT);
+  pinMode(sensorA3, INPUT);
+  pinMode(sensorA4, INPUT);
+  pinMode(sensorA5, INPUT);
+}
 
 gasLevel UCW_GAS::readGas(){
-
+  //set timer
   if (Timer > millis()) Timer = millis();
 
   // approximately every 10 seconds or so, print out the current stats
   if (millis() - Timer > 10000) {
     Timer = millis(); // reset
-    gasLevel gasInfo = {
-      .smoke = analogRead(sensorA0),
-      .nat_gas = analogRead(sensorA1),
-      .hydro_gas = analogRead(sensorA2),
-      .CO = analogRead(sensorA3),
-      .h_sulph = analogRead(sensorA4),
-      .ammonia = analogRead(sensorA5),
-      .ECO2 = getECO2()
-  };
+    gasInfo.smoke = analogRead(sensorA0);
+    gasInfo.nat_gas = analogRead(sensorA1);
+    gasInfo.hydro_gas = analogRead(sensorA2);
+    gasInfo.CO = analogRead(sensorA3);
+    gasInfo.h_sulph = analogRead(sensorA4);
+    gasInfo.ammonia = analogRead(sensorA5);
+    gasInfo.ECO2 = getECO2();
   }
+
   return gasInfo;
 }
 
@@ -66,7 +62,7 @@ float UCW_GAS::getECO2(){
   if(ccs.available()){
     if(!ccs.readData()){
       CO2 = ccs.geteCO2();
-      }
+    }
   }
   return CO2;
 }

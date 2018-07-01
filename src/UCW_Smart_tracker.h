@@ -12,13 +12,10 @@
 
 
 class UCW_Smart_tracker {
-
   public:
     UCW_Smart_tracker();
     ~UCW_Smart_tracker();
-
     recCommand authRecMsg(String recInfo_1);
-
 };
 
 #endif // UCWSTRACKER_H

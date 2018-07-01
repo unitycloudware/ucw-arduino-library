@@ -24,9 +24,6 @@ class UCW_API {
 
     char *_version;
     String _userAgent;
-
-
-  protected:
     UCWConfig *_config;
 
 };

@@ -65,11 +65,9 @@ static const byte SLEEPCMD[19] = {
 };
 
 UCW_LoRa_WAN::UCW_LoRa_WAN(){
-  ;
 }
 
 UCW_LoRa_WAN::~UCW_LoRa_WAN(){
-  ;
 }
 
 void os_getArtEui (u1_t* buf) { }
@@ -96,57 +94,58 @@ void UCW_LoRa_WAN::loraWanSetup(){
 }
 
 void UCW_LoRa_WAN::setConfig(){
-   #ifdef VCC_ENABLE
-  // For Pinoccio Scout boards
-  pinMode(VCC_ENABLE, OUTPUT);
-  digitalWrite(VCC_ENABLE, HIGH);
-  delay(1000);
+  #ifdef VCC_ENABLE
+    // For Pinoccio Scout boards
+    pinMode(VCC_ENABLE, OUTPUT);
+    digitalWrite(VCC_ENABLE, HIGH);
+    delay(1000);
   #endif
 
   // Set static session parameters. Instead of dynamically establishing a session
   // by joining the network, precomputed session parameters are be provided.
   #ifdef PROGMEM
-  // On AVR, these values are stored in flash and only copied to RAM
-  // once. Copy them to a temporary buffer here, LMIC_setSession will
-  // copy them into a buffer of its own again.
-  uint8_t appskey[sizeof(APPSKEY)];
-  uint8_t nwkskey[sizeof(NWKSKEY)];
-  memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
-  memcpy_P(nwkskey, NWKSKEY, sizeof(NWKSKEY));
-  LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
+    // On AVR, these values are stored in flash and only copied to RAM
+    // once. Copy them to a temporary buffer here, LMIC_setSession will
+    // copy them into a buffer of its own again.
+    uint8_t appskey[sizeof(APPSKEY)];
+    uint8_t nwkskey[sizeof(NWKSKEY)];
+    memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
+    memcpy_P(nwkskey, NWKSKEY, sizeof(NWKSKEY));
+    LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
   #else
-  // If not running an AVR with PROGMEM, just use the arrays directly
-  LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
+    // If not running an AVR with PROGMEM, just use the arrays directly
+    LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
   #endif
+
   #if defined(CFG_eu868)
-  // Set up the channels used by the Things Network, which corresponds
-  // to the defaults of most gateways. Without this, only three base
-  // channels from the LoRaWAN specification are used, which certainly
-  // works, so it is good for debugging, but can overload those
-  // frequencies, so be sure to configure the full frequency range of
-  // your network here (unless your network autoconfigures them).
-  // Setting up channels should happen after LMIC_setSession, as that
-  // configures the minimal channel set.
-  // NA-US channels 0-71 are configured automatically
-  LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-  LMIC_setupChannel(1, 868300000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);      // g-band
-  LMIC_setupChannel(2, 868500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-  LMIC_setupChannel(3, 867100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-  LMIC_setupChannel(4, 867300000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-  LMIC_setupChannel(5, 867500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-  LMIC_setupChannel(6, 867700000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-  LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-  LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK,  DR_FSK),  BAND_MILLI);      // g2-band
-  // TTN defines an additional channel at 869.525Mhz using SF9 for class B
-  // devices' ping slots. LMIC does not have an easy way to define set this
-  // frequency and support for class B is spotty and untested, so this
-  // frequency is not configured here.
+    // Set up the channels used by the Things Network, which corresponds
+    // to the defaults of most gateways. Without this, only three base
+    // channels from the LoRaWAN specification are used, which certainly
+    // works, so it is good for debugging, but can overload those
+    // frequencies, so be sure to configure the full frequency range of
+    // your network here (unless your network autoconfigures them).
+    // Setting up channels should happen after LMIC_setSession, as that
+    // configures the minimal channel set.
+    // NA-US channels 0-71 are configured automatically
+    LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+    LMIC_setupChannel(1, 868300000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);      // g-band
+    LMIC_setupChannel(2, 868500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+    LMIC_setupChannel(3, 867100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+    LMIC_setupChannel(4, 867300000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+    LMIC_setupChannel(5, 867500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+    LMIC_setupChannel(6, 867700000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+    LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+    LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK,  DR_FSK),  BAND_MILLI);      // g2-band
+    // TTN defines an additional channel at 869.525Mhz using SF9 for class B
+    // devices' ping slots. LMIC does not have an easy way to define set this
+    // frequency and support for class B is spotty and untested, so this
+    // frequency is not configured here.
   #elif defined(CFG_us915)
-  // NA-US channels 0-71 are configured automatically
-  // but only one group of 8 should (a subband) should be active
-  // TTN recommends the second sub band, 1 in a zero based count.
-  // https://github.com/TheThingsNetwork/gateway-conf/blob/master/US-global_conf.json
-  LMIC_selectSubBand(1);
+    // NA-US channels 0-71 are configured automatically
+    // but only one group of 8 should (a subband) should be active
+    // TTN recommends the second sub band, 1 in a zero based count.
+    // https://github.com/TheThingsNetwork/gateway-conf/blob/master/US-global_conf.json
+    LMIC_selectSubBand(1);
   #endif
 
   //comment for multichannel gateway
@@ -169,4 +168,4 @@ String UCW_LoRa_WAN::isDevice() {
   return s_DEVADDR;
 }
 
-#endif //
+#endif //ARDUINO_ARCH_SAMD

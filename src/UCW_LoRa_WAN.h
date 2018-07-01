@@ -19,7 +19,6 @@ class UCW_LoRa_WAN{
   public:
     UCW_LoRa_WAN();
     ~UCW_LoRa_WAN();
-
     void loraWanSetup();
     void setConfig();
     void wake_mode();

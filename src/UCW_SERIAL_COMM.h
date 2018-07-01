@@ -8,7 +8,6 @@ class UCW_SERIAL_COMM {
   public:
     UCW_SERIAL_COMM();
     ~UCW_SERIAL_COMM();
-
     //methods
     void setupSerialPorts();
     int sendMsg(String data);
@@ -16,4 +15,4 @@ class UCW_SERIAL_COMM {
 
 };
 
-#endif
+#endif  //UCWSERIAL_H
