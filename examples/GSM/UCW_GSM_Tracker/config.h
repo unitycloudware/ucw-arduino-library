@@ -57,9 +57,13 @@ static UCWConfig cfg = {
     - Adafruit FONA 808 - Mini Cellular GSM + GPS Breakout---> http://www.adafruit.com/products/2542
  */
 
+const char Apn[]PROGMEM = "your_apn";
+const char Username[]PROGMEM = "your_username";
+const char Password[]PROGMEM = "your_password";
+
 // uncomment the following two lines for GSM,
 #include "UCW_Mobile.h"
-UCW_Mobile ucw(&cfg);
+UCW_Mobile ucw(&cfg, Apn, Username, Password);
 
 /**************************** LoRa ************************************/
 

@@ -2,7 +2,7 @@
  /*
   UCW GSM tracker 
   Used as to locate obtain geolocation data, temperature and humidity values 
-  Hardware: FONA(800, 808 and 3Gs), DHT
+  Hardware: FONA(800, 808 and 3Gs), DHT22
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
@@ -32,27 +32,24 @@ float Latitude, Longitude;
 
 void setup() {
 
+  //wait till serial console is opened
   while (! Serial);
   Serial.begin(115200);
 
+  //connect to mobile operator
   ucw.connect();
-  ucw.deviceType();
 
   //initialise DHT sensor
   dht.begin();
-  
 }
 
 void loop() {
   ucw.sys();
   readData();
-  
   ucw.sendData(DEVICE_ID,DATA_STREAM,data);
-
 }
 
 void readData(){
-  
   // read GPS info
   m_gpsParams gpsData = ucw.readGPS(); 
   Latitude = gpsData.Latitude;
@@ -60,13 +57,11 @@ void readData(){
 
   //read temperature and humidity
   float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  float t = dht.readTemperature();
+  float t = dht.readTemperature(); // read temperature as Celsius (the default)
 
   String data = "{\"latitude\": %lat,\"longitude\": %long,\"humidity\": \"%humidity\", \"temperatureC\": \"%temperatureC\"}";
   data.replace("%lat", String(Latitude));
   data.replace("%long", String(Longitude));
   data.replace("%humidity", String(h));
   data.replace("%temperatureC", String(t));
-  
-  }
+}
