@@ -132,7 +132,7 @@ void UCW_Mobile::readNwkStatus(){
   uint8_t net = fona.getNetworkStatus();
 
   while (net != 1 && net !=5 ){
-    uint8_t net = fona.getNetworkStatus();
+
     switch (net) {
     case 0:
       Serial.println(F("Not registered")); break;
@@ -363,7 +363,7 @@ String UCW_Mobile::apiUrl() {
 bool UCW_Mobile::sendSMS(char sendto[21], char message[141]) {
   if (!fona.sendSMS(sendto, message)) {
     Serial.println(F("Failed"));
-    return false
+    return false;
   } else {
     Serial.println(F("Sent!"));
     return true;
