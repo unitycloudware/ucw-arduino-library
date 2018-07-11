@@ -19,8 +19,8 @@
 #define DHTPIN 6
 #define DHTTYPE DHT22
 
-#define DEVICE_ID   "your_device_id"
-#define DATA_STREAM "your_data_stream_name"
+const char DEVICE_ID[]PROGMEM = "your_device_id";
+const char DATA_STREAM[]PROGMEM = "your_dataStream_name";
 
 DHT dht(DHTPIN, DHTTYPE);
 

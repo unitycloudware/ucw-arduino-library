@@ -4,14 +4,14 @@
 /************************ UCW Platform Config *******************************/
 
 // Configuration of the connection string to the UCW Platform.
-//for WiFi/GSM connections only
-static UCWConfig cfg = {
-  .host = UCW_API_HOST,
-  .port = UCW_API_PORT,
-  .isSecuredConnection = false,
-  .useMqtt = false,
-  .token = "your_token"
-};
+//for WiFi connections only
+//static UCWConfig cfg = {
+//  .host = UCW_API_HOST,
+//  .port = UCW_API_PORT,
+//  .isSecuredConnection = false,
+//  .useMqtt = false,
+//  .token = "your_token"
+//};
 
 //for LoRa connection only
 //static UCWConfig_Lora cfg = {
@@ -57,13 +57,16 @@ static UCWConfig cfg = {
     - Adafruit FONA 808 - Mini Cellular GSM + GPS Breakout---> http://www.adafruit.com/products/2542
  */
 
+//APN settings of mobile carrier
 const char Apn[]PROGMEM = "your_apn";
 const char Username[]PROGMEM = "your_username";
 const char Password[]PROGMEM = "your_password";
+//provide token information
+const char token[]PROGMEM = "your_token";
 
 // uncomment the following two lines for GSM,
 #include "UCW_Mobile.h"
-UCW_Mobile ucw(&cfg, Apn, Username, Password);
+UCW_Mobile ucw(Apn, Username, Password, token);
 
 /**************************** LoRa ************************************/
 
