@@ -42,12 +42,14 @@ uint8_t type;
 //define __FlashStringHelper macro
 #define P(x) (const __FlashStringHelper*)(x)
 
-UCW_Mobile::UCW_Mobile(const char *apn, const char *username, const char *pass, const char *token) {
+UCW_Mobile::UCW_Mobile(const char *apn, const char *username, const char *pass, const char *server, int *port, const char *token) {
   //initialise FONAFlashStringPtr variables
   _apn = P(apn);
   _user = P(username);
   _pass = P(pass);
   _token = P(token);
+  _Host = P(server);
+  _port = port;
 }
 
 UCW_Mobile::~UCW_Mobile() {
@@ -169,24 +171,34 @@ void UCW_Mobile::readNwkStatus(){
 
   //Enable GPRS or GPS
   delay(2000);
+  int count = 0;
   if ((type == FONA3G_A) || (type == FONA3G_E) || (type == FONA808_V1) || (type == FONA808_V2)){
-    while (!fona.enableGPS(true)){
+    while (!fona.enableGPS(true) && count < 3){
       Serial.println(F("Failed to turn on GPS"));
+      count++;
       delay(2000);
     }
-    gpsData = true;
+    if (count !=3){
+      gpsData = true;
+    }
   } else {
-    while (!fona.enableGPRS(true)){
+    while (!fona.enableGPRS(true) && count < 3){
       Serial.println(F("Failed to turn on GPRS"));
+      count++;
       delay(2000);
     }
-    gprsData = true;
+    if (count !=3){
+      gpsData = true;
+    }
   }
 }
 
 void UCW_Mobile::sys(){
   if((fona.getNetworkStatus() != 1 && fona.getNetworkStatus() != 5)){
     connect();
+  }
+  if (!gprsData && !gpsData){
+    readNwkStatus();
   }
   if(gprsData){
     if (fona.GPRSstate() == -1){
@@ -240,7 +252,7 @@ m_gpsParams UCW_Mobile::readGPS(){
   return gpsInfo;
 }
 
-bool UCW_Mobile::sendData(const char *deviceID, const char *dataStreamName, String payload){
+bool UCW_Mobile::sendData(const char *deviceID, const char *dataStreamName, String payload, bool ssl){
   //declare variables
   uint16_t statuscode;
   int16_t length;
@@ -257,7 +269,11 @@ bool UCW_Mobile::sendData(const char *deviceID, const char *dataStreamName, Stri
   char myData [len];
   strcpy(myData, payload.c_str());
 
-  Serial.println(F("****"));
+  //for secure communication
+  if(ssl){
+    fona.HTTP_ssl(true);
+  }
+
   if(!doPost(_userID, _dataStream, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
     Serial.println("Failed!");
     return false;
@@ -322,7 +338,9 @@ bool UCW_Mobile::doPost(FONAFlashStringPtr DeviceID,FONAFlashStringPtr datastrea
   fonaSS.print(F("AT+HTTPPARA=\""));
   fonaSS.print(F("URL"));
   fonaSS.print(F("\",\""));
-  fonaSS.print(F("cloud.dev.unitycloudware.com/api/ucw/v1/data-streams/"));
+  fonaSS.print(_Host);
+  fonaSS.print(F(":"));
+  fonaSS.print(_port);
   fonaSS.print(datastreamName);
   fonaSS.print(F("/messages/"));
   fonaSS.print(DeviceID);

@@ -14,14 +14,14 @@
 
 class UCW_Mobile {
   public:
-    UCW_Mobile(const char *apn, const char *username, const char *pass, const char *token);
+    UCW_Mobile(const char *apn, const char *username, const char *pass, const char *server, int *port, const char *token);
     ~UCW_Mobile();
 
     //methods
     void connect();
     void battLevel();
     m_gpsParams readGPS();
-    bool sendData(const char *deviceID, const char *dataStreamName, String payload);
+    bool sendData(const char *deviceID, const char *dataStreamName, String payload, bool ssl);
     bool sendSMS(char sendto, char message);
     void readAllSMS();
     bool deleteSMS(int num);
@@ -45,6 +45,7 @@ class UCW_Mobile {
     //variables
     uint8_t type;
     uint16_t vbat;
+    int _port;
     m_gpsParams gpsInfo;
     FONAFlashStringPtr _apn;
     FONAFlashStringPtr _user;
@@ -52,6 +53,7 @@ class UCW_Mobile {
     FONAFlashStringPtr _token;
     FONAFlashStringPtr _userID;
     FONAFlashStringPtr _dataStream;
+    FONAFlashStringPtr _Host;
     bool gpsData = false;
     bool gprsData = false;
 
