@@ -46,7 +46,7 @@ void setup() {
 void loop() {
   ucw.sys();
   readData();
-  ucw.sendData(DEVICE_ID,DATA_STREAM,data);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data, true);
 }
 
 void readData(){
