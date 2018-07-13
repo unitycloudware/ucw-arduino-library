@@ -36,18 +36,15 @@ UCW_M0LoRa::~UCW_M0LoRa() {
 }
 
 void UCW_M0LoRa::_connect() {
-  /*
-    * Adafruit Feather M0 radio with LORA module
-    * https://learn.adafruit.com/adafruit-feather-m0-radio-with-lora-radio-module/using-the-rfm-9x-radio
-    */
+  //initialise radio
   while (!rf95.init()) {
     Serial.println("LoRa radio init failed");
     while (1);
   }
   UCW_LOG_PRINTLN("LoRa radio init OK!");
 
-   //set transmitter powers from 5 to 23 dBm:
-   rf95.setTxPower(23, false);
+  //set transmitter powers from 5 to 23 dBm:
+  rf95.setTxPower(23, false);
 }
 
 void UCW_M0LoRa::_sys() {
