@@ -36,7 +36,7 @@ UCW_M0_BLE::UCW_M0_BLE(){
   analogReadResolution(12);
 }
 
-void UCW_M0_BLE::setupBLE() {
+void UCW_M0_BLE::connect() {
   /*
    * Adafruit Feather M0 Bluefruit LE
    * https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all

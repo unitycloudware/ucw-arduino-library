@@ -23,7 +23,7 @@ class UCW_M0_BLE {
   public:
     UCW_M0_BLE();
     //methods
-    void setupBLE();
+    void connect();
     void sendData(String payload);
     double updateBattStatus();
     String receiveData();
