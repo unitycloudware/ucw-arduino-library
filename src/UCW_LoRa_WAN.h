@@ -20,7 +20,7 @@ class UCW_LoRa_WAN{
     UCW_LoRa_WAN();
     ~UCW_LoRa_WAN();
     void loraWanSetup();
-    void setConfig();
+    void setConfig(bool multiChannel);
     void wake_mode();
     void sleep_mode();
     String isDevice();

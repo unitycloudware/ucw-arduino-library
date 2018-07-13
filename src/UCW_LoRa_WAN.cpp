@@ -93,7 +93,7 @@ void UCW_LoRa_WAN::loraWanSetup(){
 
 }
 
-void UCW_LoRa_WAN::setConfig(){
+void UCW_LoRa_WAN::setConfig(bool multiChannel){
   #ifdef VCC_ENABLE
     // For Pinoccio Scout boards
     pinMode(VCC_ENABLE, OUTPUT);
@@ -149,8 +149,10 @@ void UCW_LoRa_WAN::setConfig(){
   #endif
 
   //comment for multichannel gateway
-  for (int i = 1; i<= 71; i++) {
-    LMIC_disableChannel(i);
+  if (!multiChannel){
+    for (int i = 1; i<= 71; i++) {
+      LMIC_disableChannel(i);
+    }
   }
 }
 
