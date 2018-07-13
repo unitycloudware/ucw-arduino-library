@@ -63,10 +63,12 @@ const char Username[]PROGMEM = "your_username";
 const char Password[]PROGMEM = "your_password";
 //provide token information
 const char token[]PROGMEM = "your_token";
-
+//ucw host and port
+const char UCW_FONA_HOST[]PROGMEM = "ucw_host_add";
+int UCW_FONA_PORT = 80;
 // uncomment the following two lines for GSM,
 #include "UCW_Mobile.h"
-UCW_Mobile ucw(Apn, Username, Password, token);
+UCW_Mobile ucw(Apn, Username, Password, UCW_FONA_HOST, UCW_FONA_PORT, UCW_FONA_TOKEN);
 
 /**************************** LoRa ************************************/
 
