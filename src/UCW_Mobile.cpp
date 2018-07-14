@@ -198,7 +198,7 @@ void UCW_Mobile::sys(){
     connect();
   }
   if (!gprsData && !gpsData){
-    readNwkStatus();
+    connect();
   }
   if(gprsData){
     if (fona.GPRSstate() == -1){
