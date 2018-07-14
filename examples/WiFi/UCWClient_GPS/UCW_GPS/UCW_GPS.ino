@@ -59,7 +59,7 @@ void loop() {
   String Date = "20" + String(data.Year) + "-" + String(data.Month) + "-" + String(data.Day);
   String timeStamp = Date + " " + Time;
 
-  String gpsData = "{\"Latitude\": \"%lat\",\"Longitude\": \"%long\",\"Timestamp\": \"%tStamp\"}";
+  String gpsData = "{\"Latitude\": %lat,\"Longitude\": %long,\"Timestamp\": %tStamp}";
   gpsData.replace("%lat", String(data.Latitude));
   gpsData.replace("%long", String(data.Longitude));
   gpsData.replace("%tStamp", timeStamp);

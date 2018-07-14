@@ -77,7 +77,7 @@ void loop() {
       while(1);
     }
   }
-  String data = "{\"eCO2\": \"%eCO2\", \"TVOC\": \"%tvoc\", \"temperatureC\": \"%temperatureC\"}";
+  String data = "{\"eCO2\": %eCO2, \"TVOC\": %tvoc, \"temperatureC\": %temperatureC}";
   data.replace("%eCO2", String(eCO2));
   data.replace("%tvoc", String(tvoc));
   data.replace("%temperatureC", String(temp));

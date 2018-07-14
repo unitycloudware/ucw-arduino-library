@@ -59,7 +59,7 @@ void readData(){
   float h = dht.readHumidity();
   float t = dht.readTemperature(); // read temperature as Celsius (the default)
 
-  String data = "{\"latitude\": %lat,\"longitude\": %long,\"humidity\": \"%humidity\", \"temperatureC\": \"%temperatureC\"}";
+  String data = "{\"latitude\": %lat,\"longitude\": %long,\"humidity\": %humidity, \"temperatureC\": %temperatureC}";
   data.replace("%lat", String(Latitude));
   data.replace("%long", String(Longitude));
   data.replace("%humidity", String(h));

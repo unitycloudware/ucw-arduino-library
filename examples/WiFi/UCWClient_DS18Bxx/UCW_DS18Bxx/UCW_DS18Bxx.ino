@@ -140,7 +140,7 @@ byte i;
   celsius = (float)raw / 16.0;
   fahrenheit = celsius * 1.8 + 32.0;
 
-  String data_1 = "{\"temperatureC\": \"%temperatureC\",\"temperatureF\": \"%temperatureF\"}";
+  String data_1 = "{\"temperatureC\": %temperatureC,\"temperatureF\": %temperatureF}";
   data_1.replace("%temperatureC", String(celsius));
   data_1.replace("%temperatureF", String(fahrenheit));
   

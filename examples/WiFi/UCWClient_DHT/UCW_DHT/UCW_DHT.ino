@@ -74,7 +74,7 @@ void loop() {
   // Compute heat index in Celsius (isFahreheit = false)
   float hic = dht.computeHeatIndex(t, h, false);
 
-  String data = "{\"humidity\": \"%humidity\", \"temperatureC\": \"%temperatureC\",\"temperatureF\": \"%temperatureF\",\"heat_indexC\": \"%heat_indexC\",\"heat_indexF\": \"%heat_indexF\"}";
+  String data = "{\"humidity\": %humidity, \"temperatureC\": %temperatureC,\"temperatureF\": %temperatureF,\"heat_indexC\": %heat_indexC,\"heat_indexF\": %heat_indexF}";
   data.replace("%humidity", String(h));
   data.replace("%temperatureC", String(t));
   data.replace("%temperatureF", String(f));

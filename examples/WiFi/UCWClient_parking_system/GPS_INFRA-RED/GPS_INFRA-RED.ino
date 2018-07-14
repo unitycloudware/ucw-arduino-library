@@ -79,7 +79,7 @@ void loop() {
 
   // check if the sensor beam is broken. If it is, the sensorState is LOW:
   if (sensorState == LOW) {
-    String location = "{\"Latitude\": \"%lat\",\"Longitude\": \"%long\"}";
+    String location = "{\"Latitude\": %lat,\"Longitude\": %long}";
     location.replace("%lat", String(Latitude));
     location.replace("%long", String(Longitude));
         

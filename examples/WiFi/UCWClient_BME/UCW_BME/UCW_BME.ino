@@ -90,7 +90,7 @@ void loop() {
     return;
   }
   
-  String data = "{\"humidity\": \"%humidity\", \"temperatureC\": \"%temperature\",\"pressure(hPa)\": \"%pressure\",\"altitude(m)\": \"%altitude\"}";
+  String data = "{\"humidity\": %humidity, \"temperatureC\": %temperature,\"pressure(hPa)\": %pressure,\"altitude(m)\": %altitude}";
   data.replace("%humidity", String(h));
   data.replace("%temperature", String(t));
   data.replace("%pressure", String(p));

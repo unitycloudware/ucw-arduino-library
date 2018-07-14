@@ -65,7 +65,7 @@ void loop() {
     return;
   }
     
-  String data = "{\"X-Axis\": \"%x-axis\", \"Y-Axis\": \"%y-axis\" \"Z-axis\": \"%z-axis\"}";
+  String data = "{\"X-Axis\": %x-axis, \"Y-Axis\": %y-axis \"Z-axis\": %z-axis}";
   data.replace("%x-axis", String(x));
   data.replace("%y-axis", String(y));
   data.replace("%z-axis", String(z));
