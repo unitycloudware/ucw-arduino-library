@@ -71,7 +71,7 @@
 /**************************** BLE ************************************/
 
 /*
-  The UCW_LoRa client will work with the following boards:
+  The UCW_M0_BLE client will work with the following boards:
     - Feather M0 BLE -> https://www.adafruit.com/products/2995
  */
 
