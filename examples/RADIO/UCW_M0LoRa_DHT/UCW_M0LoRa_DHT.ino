@@ -1,15 +1,15 @@
 
 /*
-  Data transfer
+  Temperature and Humidity Data measurement and transfer
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
  #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
+  Edit the config.h to configure the LoRa communication between end-devices
+  The file has additional configuration needed for WiFi, BLE, cellular, and ethernet
+  clients. These should be commented.
  */
 #include "DHT.h"
 
@@ -39,7 +39,7 @@ void loop() {
   ucw.sys();
 
   // read data()
-  //Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  // Read humidity value
   float h = dht.readHumidity();
   // Read temperature as Celsius (the default)
   float t = dht.readTemperature();

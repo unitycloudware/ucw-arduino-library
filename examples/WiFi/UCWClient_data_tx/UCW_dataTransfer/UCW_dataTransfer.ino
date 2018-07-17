@@ -7,14 +7,14 @@
 #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
+  Edit the config.h to configure the WiFi connection to the UCW Platform
+  The file has additional configuration needed for BLE, LoRa, cellular, and ethernet
+  clients. These should be commented.
  */
 
- //comment appropriately
-   UCW_API_REST ucw_api =  ucw.api();         //REST API
-// UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
+//comment appropriately
+  UCW_API_REST ucw_api =  ucw.api();         //REST API
+//UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
 
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "data-test"
@@ -44,17 +44,11 @@ void setup() {
 }
 
 void loop() {
-  
   ucw.sys();
 
   // read data()
-  double temperature = 22.00;
-  int humidity = 43;
-  
-  String data = "{\"temperature\": %temperature, \"humidity\": %humidity}";
-  data.replace("%temperature", String(temperature));
-  data.replace("%humidity", String(humidity));
-
+  String data = "{\"temperature\": 22, \"humidity\": 43}";
   ucw_api.sendData(DEVICE_ID, DATA_STREAM, data);
+
   delay(1000);
 }

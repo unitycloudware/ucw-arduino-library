@@ -7,9 +7,9 @@
 #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
+  Edit the config.h to configure the WiFi connection to the UCW Platform
+  The file has additional configuration needed for BLE, LoRa, cellular, and ethernet
+  clients. These should be commented.
  */
 
 //This example uses SPI connection
@@ -38,8 +38,7 @@ Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
 #define DATA_STREAM "Temperature, Pressure and Humidity"
 
 void setup() {
-  
- // Start the serial connection
+  // Start the serial connection
   Serial.begin(9600);
 
   while (!Serial) {
@@ -64,7 +63,7 @@ void setup() {
 void loop() {
   ucw.sys();
 
-// read data()
+  //read data()
   //Humidity readings in %
   float h = bme.readHumidity();
   
@@ -77,7 +76,7 @@ void loop() {
   // Read altitude in meters 
   float a = bme.readAltitude(SEALEVELPRESSURE_HPA);
 
-//connection/wiring checks
+  //connection/wiring checks
   //Check if BME sensor initialises (to try again).
   if (!bme.begin()) {
         Serial.println("Could not find a valid BME280 sensor, check wiring!");

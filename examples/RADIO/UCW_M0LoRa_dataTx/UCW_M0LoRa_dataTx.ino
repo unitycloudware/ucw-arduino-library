@@ -7,9 +7,9 @@
  #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
+  Edit the config.h to configure the LoRa communication between end-devices
+  The file has additional configuration needed for WiFi, BLE, cellular, and ethernet
+  clients. These should be commented.
  */
 
 #define DEVICE_ID   "your_device_id"
@@ -32,13 +32,7 @@ void loop() {
   ucw.sys();
 
   // read data()
-  double temperature = 22.00;
-  int humidity = 43;
-
-  String data = "{\"temperature\": %temperature, \"humidity\": %humidity}";
-  data.replace("%temperature", String(temperature));
-  data.replace("%humidity", String(humidity));
-
+  String data = "{\"temperature\": 22, \"humidity\": 33}";
   ucw.sendData(DEVICE_ID, DATA_STREAM, data);
 
   //check if any data is has been received and print to console if any

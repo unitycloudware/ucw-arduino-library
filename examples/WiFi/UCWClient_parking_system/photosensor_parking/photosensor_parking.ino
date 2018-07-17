@@ -1,6 +1,6 @@
 
  /*
-  Ground based parkinglot monitoring system using photocells
+  Ground based parking lot monitoring system using photocells
   This method is suitable when parking slots are named or indentified
   It only works with Feather M0 WiFi board
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
@@ -9,10 +9,10 @@
 #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
- */
+  Edit the config.h to configure the WiFi connection to the UCW Platform
+  The file has additional configuration needed for BLE, LoRa, cellular, and ethernet
+  clients. These should be commented.
+*/
 
 #include <Adafruit_SleepyDog.h>
 
@@ -66,11 +66,11 @@ void loop(void) {
     ucw_api.sendData(DEVICE_ID, "DATA_STREAM", Location);
     i=0;
     delay(5000); //wait for 5sec
-    } 
+  }
     
   if(photocellReading < voltThreshold){
     Watchdog.sleep(10000); //sleep for 10 seconds if car is parked in this slot
-    }
+  }
     
   delay(1000);
 }

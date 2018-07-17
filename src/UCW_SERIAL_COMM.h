@@ -1,3 +1,9 @@
+
+/*
+  Library for Serial communication
+  Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
+
 #ifndef UCWSERIAL_H
 #define UCWSERIAL_H
 

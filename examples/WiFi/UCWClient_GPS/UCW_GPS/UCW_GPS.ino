@@ -8,9 +8,9 @@
 #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
+  Edit the config.h to configure the WiFi connection to the UCW Platform
+  The file has additional configuration needed for BLE, LoRa, cellular, and ethernet
+  clients. These should be commented.
  */
  //this code was tested using Adafruit M0 feather micro-controller
  
@@ -26,7 +26,6 @@
 UCW_GPS ucw_gps; //create GPS object
 
 void setup(){
-  
   // Start the serial connection
   Serial.begin(115200);
 
@@ -54,6 +53,8 @@ void setup(){
 
 void loop() {
   ucw.sys();
+
+  //Read GPS info
   gpsParams data = ucw_gps.readGPS(); // read GPS info
   String Time = String(data.Hour) + ":" + String(data.Min) + ":" + String(data.Sec) + "." + String(data.millisec);
   String Date = "20" + String(data.Year) + "-" + String(data.Month) + "-" + String(data.Day);

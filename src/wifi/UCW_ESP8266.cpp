@@ -1,5 +1,6 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino WiFi library to access UCW Platform
+  This supports Adafruit ESP8266 micro-controller
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
@@ -15,18 +16,16 @@ UCW_ESP8266::UCW_ESP8266(UCWConfig *config, const char *ssid, const char *pass) 
   if (_config->useMqtt){
     _api_m = 0;
     api_m();
-
-} else {
-   _api = 0;
-   api();
-}
-
+  } else {
+    _api = 0;
+    api();
+  }
 }
 
 UCW_ESP8266::~UCW_ESP8266() {
  if (_Client) {
-    delete _Client;
-  }
+   delete _Client;
+ }
 }
 
 void UCW_ESP8266::_connect() {

@@ -1,6 +1,6 @@
 
  /*
-  Temperature, and humidity measurements using DHT22 sensor
+  Temperature, and Humidity measurements using DHT22 sensor
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
@@ -27,7 +27,6 @@
 DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
-  
   // Start the serial connection
   Serial.begin(9600);
 

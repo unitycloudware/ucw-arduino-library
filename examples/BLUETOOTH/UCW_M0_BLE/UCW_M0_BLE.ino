@@ -2,11 +2,17 @@
 /*
 Temperature and Humidity measurements using DHT22 sensor
 this code was implemented using Adafruit Feather M0 Bluefruit LE
-This sends sensor data to the gateway. 
+This sends sensor data to a bluetooth enabled device.
 */
 
-
 #include "config.h"
+
+/*
+  Edit the config.h to configure the BLE connection to the UCW Platform
+  The file has additional configuration needed for WiFi, LoRa, cellular, and ethernet
+  clients. These should be commented.
+ */
+
 #include "DHT.h"
 
 #define DHTPIN 10
@@ -26,10 +32,8 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
   // read data()
-  //Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  // Read humidity value
   float h = dht.readHumidity();
   // Read temperature as Celsius (the default)
   float t = dht.readTemperature();

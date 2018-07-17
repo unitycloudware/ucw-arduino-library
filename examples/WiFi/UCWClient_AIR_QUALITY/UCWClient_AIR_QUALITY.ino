@@ -7,9 +7,9 @@
 #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
+  Edit the config.h to configure the WiFi connection to the UCW Platform
+  The file has additional configuration needed for BLE, LoRa, cellular, and ethernet
+  clients. These should be commented.
  */
 
 #include "Adafruit_CCS811.h"
@@ -29,7 +29,6 @@ int eCO2;  // equivalent calculated carbon-dioxide
 
 
 void setup() {
-  
   // Start the serial connection
   Serial.begin(9600);
 

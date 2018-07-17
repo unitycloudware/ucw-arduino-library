@@ -1,5 +1,6 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino WiFi library to access UCW Platform
+  This supports Adafruit ESP32 micro-controller
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
@@ -10,15 +11,13 @@
 UCW_ESP32::UCW_ESP32(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
   _ssid = ssid;
   _pass = pass;
-    if (_config->useMqtt){
+  if (_config->useMqtt){
     _api_m = 0;
     api_m();
-
-} else {
-   _api = 0;
-   api();
-}
-
+  } else {
+    _api = 0;
+    api();
+  }
 }
 
 UCW_ESP32::~UCW_ESP32() {
@@ -33,7 +32,8 @@ void UCW_ESP32::_connect() {
     UCW_LOG_PRINTLN("WiFi shield not present!");
     return;
   }
-    delay(1000);
+  delay(1000);
+
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   WiFi.begin(_ssid, _pass);
   _status = UCW_NET_DISCONNECTED;
@@ -47,37 +47,22 @@ void UCW_ESP32::_sys() {
 
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
-       if (WiFi.hostByName(_mhost, _mhostIP)){
-            _mqttClient = new PubSubClient (*_Client);
-            _mqttClient->setServer(_mhost, _mqttPort);
-            _api_m = new UCW_API_MQTT(_config, _mqttClient);
-            _status = UCW_CONNECTED;
-            }
-        }
-    } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
-        if (WiFi.hostByName(_host.c_str(), _hostIP)){
-        _http = new HttpClient(*_Client, _hostIP, _httpPort);
-        _api = new UCW_API_REST(_config, _http);
-
-  if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
-    if (WiFi.hostByName(_host.c_str(), _hostIP)) {
-      if (_config->useMqtt) {
-        //_mqttClient = ...
+      if (WiFi.hostByName(_mhost, _mhostIP)){
+        _mqttClient = new PubSubClient (*_Client);
+        _mqttClient->setServer(_mhost, _mqttPort);
         _api_m = new UCW_API_MQTT(_config, _mqttClient);
-
-      } else {
+        _status = UCW_CONNECTED;
+      }
+    }
+  } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
+      if (WiFi.hostByName(_host.c_str(), _hostIP)){
         _http = new HttpClient(*_Client, _hostIP, _httpPort);
         _api = new UCW_API_REST(_config, _http);
+        _status = UCW_CONNECTED;
+      } else {
+        UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
       }
-
-      _status = UCW_CONNECTED;
-
-    } else {
-      UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
-    }
   }
-}
-}
 }
 
 ucw_status_t UCW_ESP32::networkStatus() {

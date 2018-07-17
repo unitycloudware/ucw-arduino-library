@@ -1,3 +1,7 @@
+/*
+  Library for Serial communication
+  Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
+ */
 
 #include "UCW_SERIAL_COMM.h"
 

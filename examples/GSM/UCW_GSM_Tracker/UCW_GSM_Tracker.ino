@@ -9,9 +9,9 @@
 #include "config.h"
 
 /*
-  Edit the config.h to configure the connection string to the UCW Platform
-  and any additional configuration needed for WiFi, cellular, or ethernet
-  clients.
+  Edit the config.h to configure the GSM/Cellular connection to the UCW Platform
+  The file has additional configuration needed for WiFi, LoRa, BLE, and ethernet
+  clients. These should be commented.
  */
 
 #include "DHT.h"

@@ -1,5 +1,6 @@
 /*
   Arduino library to access UCW Platform
+  This supports Adafruit Feather M0 device
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
@@ -11,14 +12,13 @@ UCW_WINC1500::UCW_WINC1500(UCWConfig *config, const char *ssid, const char *pass
   _ssid = ssid;
   _pass = pass;
 
-if (_config->useMqtt){
+  if (_config->useMqtt){
     _api_m = 0;
     api_m();
-
-} else {
-   _api = 0;
-   api();
-}
+  } else {
+    _api = 0;
+    api();
+  }
   analogReadResolution(12);
 }
 
@@ -27,8 +27,6 @@ UCW_WINC1500::~UCW_WINC1500() {
     delete _Client;
   }
 }
-
-
 
 void UCW_WINC1500::_connect() {
   /*
@@ -59,37 +57,22 @@ void UCW_WINC1500::_sys() {
 
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
-       if (WiFi.hostByName(_mhost, _mhostIP)){
-            _mqttClient = new PubSubClient (*_Client);
-            _mqttClient->setServer(_mhost, _mqttPort);
-            _api_m = new UCW_API_MQTT(_config, _mqttClient);
-            _status = UCW_CONNECTED;
-            }
-        }
-    } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
-        if (WiFi.hostByName(_host.c_str(), _hostIP)){
-        _http = new HttpClient(*_Client, _hostIP, _httpPort);
-        _api = new UCW_API_REST(_config, _http);
-
-  if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
-    if (WiFi.hostByName(_host.c_str(), _hostIP)) {
-      if (_config->useMqtt) {
-        //_mqttClient = ...
+      if (WiFi.hostByName(_mhost, _mhostIP)){
+        _mqttClient = new PubSubClient (*_Client);
+        _mqttClient->setServer(_mhost, _mqttPort);
         _api_m = new UCW_API_MQTT(_config, _mqttClient);
-
-      } else {
-        _http = new HttpClient(*_Client, _hostIP, _httpPort);
-        _api = new UCW_API_REST(_config, _http);
+        _status = UCW_CONNECTED;
       }
-
+    }
+  } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
+    if (WiFi.hostByName(_host.c_str(), _hostIP)){
+      _http = new HttpClient(*_Client, _hostIP, _httpPort);
+      _api = new UCW_API_REST(_config, _http);
       _status = UCW_CONNECTED;
-
     } else {
       UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
     }
   }
-}
-}
 }
 
 ucw_status_t UCW_WINC1500::networkStatus() {
@@ -113,7 +96,6 @@ void UCW_WINC1500::printNetworkInfo() {
     UCW_LOG_PRINTLN("Device is not connected!");
     return;
   }
-
   printConnectionStatus();
 }
 
@@ -139,16 +121,16 @@ void UCW_WINC1500::resetConnection() {
   WiFi.begin(_ssid, _pass);
 
    if (_http) {
-    delete _http;
-    _http = 0;
-  }
+     delete _http;
+     _http = 0;
+   }
 
   if (_mqttClient) {
     delete _http;
     _http = 0;
   }
 
-   _status = UCW_NET_DISCONNECTED;
+  _status = UCW_NET_DISCONNECTED;
 }
 
 UCW_API_REST UCW_WINC1500::api() {
