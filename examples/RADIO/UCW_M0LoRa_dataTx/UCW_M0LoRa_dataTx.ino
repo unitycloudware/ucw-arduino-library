@@ -41,5 +41,12 @@ void loop() {
 
   ucw.sendData(DEVICE_ID, DATA_STREAM, data);
 
+  //check if any data is has been received and print to console if any
+  ucw.receiveData();
+  if (ucw.isReceived()){
+    String receivedMsg = ucw.recMsgUpdate();
+    Serial.println(receivedMsg);
+  }
+
   delay(1000);
 }

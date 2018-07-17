@@ -56,5 +56,11 @@ void loop() {
 
   UCW_M0_Object.sendData(data);
 
+  //check if any data is has been received and print to console if any
+  String receivedMsg = UCW_M0_Object.receiveData();
+  if (receivedMsg.length() > 0){
+    Serial.println(receivedMsg);
+  }
+
   delay(1000);
 }
