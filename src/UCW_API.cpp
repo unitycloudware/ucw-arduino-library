@@ -27,7 +27,9 @@ String UCW_API::userAgent() {
 }
 
 String UCW_API::apiUrl() {
-
   return (_config->isSecuredConnection ? "https://" : "http://" ) + _config->host + ":" + String(_config->port) + UCW_API_PATH;
 }
 
+String UCW_API::apiPath() {
+  return UCW_API_PATH;
+}

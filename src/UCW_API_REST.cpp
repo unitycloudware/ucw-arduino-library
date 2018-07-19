@@ -15,7 +15,6 @@ UCW_API_REST::~UCW_API_REST() {
   }
 }
 
-
 bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String payload) {
 
   if (payload.length() < 1) {
@@ -31,7 +30,7 @@ bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String paylo
   UCW_LOG_PRINT(payload.length());
   UCW_LOG_PRINTLN(" byte(s)");
 
-  String apiUri = apiUrl() + "/data-streams/%dataStreamName/messages/%deviceId";
+  String apiUri = apiPath() + "/data-streams/%dataStreamName/messages/%deviceId";
   apiUri.replace("%deviceId", deviceID);
   apiUri.replace("%dataStreamName", dataStreamName);
 
@@ -40,7 +39,6 @@ bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String paylo
   _http->beginRequest();
   _http->post(apiUri);
 
-  _http->sendHeader("Host", _config->host);
   _http->sendHeader("User-Agent", userAgent());
   _http->sendHeader("Authorization", "Bearer " + _config->token);
   _http->sendHeader("Content-Type", "application/json");
@@ -70,5 +68,3 @@ bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String paylo
 
   return statusCode == 201;
 }
-
-

@@ -45,7 +45,7 @@ class UCW_WINC1500 : public UCW {
 
     const char *_ssid;
     const char *_pass;
-    WiFiClient *_Client;
+    WiFiClient *_httpClient;
     UCW_API_REST *_api;
     UCW_API_MQTT *_api_m;
 };

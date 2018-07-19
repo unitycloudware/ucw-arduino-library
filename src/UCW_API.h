@@ -21,6 +21,7 @@ class UCW_API {
     String version();
     String userAgent();
     String apiUrl();
+    String apiPath();
 
     char *_version;
     String _userAgent;

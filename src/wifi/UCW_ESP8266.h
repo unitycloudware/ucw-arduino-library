@@ -42,7 +42,7 @@ class UCW_ESP8266 : public UCW {
 
     const char *_ssid;
     const char *_pass;
-    WiFiClient *_Client;
+    WiFiClient *_httpClient;
     UCW_API_REST *_api;
     UCW_API_MQTT *_api_m;
 
@@ -52,4 +52,3 @@ class UCW_ESP8266 : public UCW {
 #endif // ESP8266
 
 #endif // UCW_ESP8266_H
-

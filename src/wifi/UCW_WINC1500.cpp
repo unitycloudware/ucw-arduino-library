@@ -11,20 +11,17 @@
 UCW_WINC1500::UCW_WINC1500(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
   _ssid = ssid;
   _pass = pass;
+  _api_m = 0;
+  _api = 0;
 
-  if (_config->useMqtt){
-    _api_m = 0;
-    api_m();
-  } else {
-    _api = 0;
-    api();
-  }
+  _httpClient = new WiFiClient;
+
   analogReadResolution(12);
 }
 
 UCW_WINC1500::~UCW_WINC1500() {
-  if (_Client) {
-    delete _Client;
+  if (_httpClient) {
+    delete _httpClient;
   }
 }
 
@@ -58,7 +55,7 @@ void UCW_WINC1500::_sys() {
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
       if (WiFi.hostByName(_mhost, _mhostIP)){
-        _mqttClient = new PubSubClient (*_Client);
+        _mqttClient = new PubSubClient (*_httpClient);
         _mqttClient->setServer(_mhost, _mqttPort);
         _api_m = new UCW_API_MQTT(_config, _mqttClient);
         _status = UCW_CONNECTED;
@@ -66,7 +63,7 @@ void UCW_WINC1500::_sys() {
     }
   } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
     if (WiFi.hostByName(_host.c_str(), _hostIP)){
-      _http = new HttpClient(*_Client, _hostIP, _httpPort);
+      _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
       _api = new UCW_API_REST(_config, _http);
       _status = UCW_CONNECTED;
     } else {

@@ -12,32 +12,32 @@
 UCW_ESP8266::UCW_ESP8266(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
   _ssid = ssid;
   _pass = pass;
+  _api_m = 0;
+  _api = 0;
 
-  if (_config->useMqtt){
-    _api_m = 0;
-    api_m();
-  } else {
-    _api = 0;
-    api();
-  }
+  _httpClient = new WiFiClient;
 }
 
 UCW_ESP8266::~UCW_ESP8266() {
- if (_Client) {
-   delete _Client;
+ if (_httpClient) {
+   delete _httpClient;
  }
 }
 
 void UCW_ESP8266::_connect() {
 
   // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
+  /*if (WiFi.status() == WL_NO_SHIELD) {
     UCW_LOG_PRINTLN("WiFi shield not present!");
     return;
-  }
+  }*/
 
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  //delay(100);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(_ssid, _pass);
+  //delay(100);
+
   _status = UCW_NET_DISCONNECTED;
 }
 
@@ -49,37 +49,22 @@ void UCW_ESP8266::_sys() {
 
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
-       if (WiFi.hostByName(_mhost, _mhostIP)){
-            _mqttClient = new PubSubClient (*_Client);
-            _mqttClient->setServer(_mhost, _mqttPort);
-            _api_m = new UCW_API_MQTT(_config, _mqttClient);
-            _status = UCW_CONNECTED;
-            }
-        }
-    } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
-        if (WiFi.hostByName(_host.c_str(), _hostIP)){
-        _http = new HttpClient(*_Client, _hostIP, _httpPort);
-        _api = new UCW_API_REST(_config, _http);
-
-  if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)) {
-    if (WiFi.hostByName(_host.c_str(), _hostIP)) {
-      if (_config->useMqtt) {
-        //_mqttClient = ...
+      if (WiFi.hostByName(_mhost, _mhostIP)){
+        _mqttClient = new PubSubClient (*_httpClient);
+        _mqttClient->setServer(_mhost, _mqttPort);
         _api_m = new UCW_API_MQTT(_config, _mqttClient);
-
-      } else {
-        _http = new HttpClient(*_Client, _hostIP, _httpPort);
-        _api = new UCW_API_REST(_config, _http);
+        _status = UCW_CONNECTED;
       }
-
+    }
+  } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
+    if (WiFi.hostByName(_host.c_str(), _hostIP)){
+      _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
+      _api = new UCW_API_REST(_config, _http);
       _status = UCW_CONNECTED;
-
     } else {
       UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _host + "'!");
     }
   }
-}
-}
 }
 
 ucw_status_t UCW_ESP8266::networkStatus() {
