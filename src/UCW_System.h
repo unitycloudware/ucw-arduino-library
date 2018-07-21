@@ -20,9 +20,6 @@
 #define UCW_MQTT_HOST  "cloud.dev.unitycloudware.com"
 #define UCW_MQTT_PORT  1883
 
-//for LoRa
-#define RF95_FREQ 915
-
 // uncomment / comment to turn on/off error output
 #define UCW_ERROR
 
