@@ -7,8 +7,6 @@
 #ifndef UCWLORAWAN_H
 #define UCWLORAWAN_H
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)  //Adafruit Feather M0 LoRa RFM 95
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <lmic.h>
@@ -17,7 +15,8 @@
 class UCW_LoRa_WAN{
 
   public:
-    UCW_LoRa_WAN();
+    UCW_LoRa_WAN(const uint8_t *_NWKSKEY, const uint8_t *_APPSKEY,  uint32_t _DEVADDR);
+    UCW_LoRa_WAN(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI);
     ~UCW_LoRa_WAN();
     void loraWanSetup();
     void setConfig(bool multiChannel);
@@ -25,7 +24,14 @@ class UCW_LoRa_WAN{
     void sleep_mode();
     String isDevice();
 
+  protected:
+      const uint8_t *NWKSKEY;
+      const uint8_t *APPSKEY;
+      uint32_t DEVADDR ;
+      const uint8_t *APPEUI;
+      const uint8_t *DEVEUI;
+      const uint8_t *APPKEY;
+
 };
 
-#endif // Adafruit Feather M0 LoRa RFM 95
 #endif // UCWLORAWAN_H

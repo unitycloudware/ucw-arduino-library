@@ -4,35 +4,9 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)  //Adafruit Feather M0 LoRa RFM 95
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD) && defined(UCW_LORA_DEVICE)  //Adafruit Feather M0 LoRa RFM 95
 
 #include <UCW_LoRa_WAN.h>
-
-//Uncomment for ABP
-// LoRaWAN NwkSKey - Network session key
-static const PROGMEM u1_t NWKSKEY[16] = { 0x43, 0xB5, 0x99, 0x20, 0xA5, 0xDA, 0x6B, 0x73, 0x79, 0xFD, 0x53, 0xED, 0x45, 0xE6, 0x36, 0xBE };
-
-// LoRaWAN AppSKey - Application session key
-static const u1_t PROGMEM APPSKEY[16] = { 0xE1, 0x05, 0x7C, 0x8C, 0xFC, 0xF6, 0xE1, 0x36, 0xF9, 0x03, 0x27, 0xB7, 0x6D, 0x8B, 0x85, 0xFD };
-
-// LoRaWAN end-device address (DevAddr)
-static const u4_t DEVADDR = 0x26011885; // <-- Change this address for every node!
-
-String s_DEVADDR = String (DEVADDR);
-
-//Uncomment for OTTA
-//static const u1_t PROGMEM APPEUI[8] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x00, 0xBE, 0x71 };
-//void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
-
-// This should also be in little endian format, see above.
-//static const u1_t PROGMEM DEVEUI[8] = { 0x00, 0x8B, 0x7A, 0x47, 0x78, 0xB0, 0x22, 0x0C };
-//void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
-
-// This key should be in big endian format (or, since it is not really a
-// number but a block of memory, endianness does not really apply). In
-// practice, a key taken from ttnctl can be copied as-is.
-//static const u1_t PROGMEM APPKEY[16] = { 0x70, 0x3B, 0x53, 0x96, 0x31, 0x81, 0x43, 0xCA, 0x4E, 0xFF, 0xDB, 0xE6, 0xEB, 0x41, 0xAE, 0xA1 };
-//void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
 
 // Pin mapping for gateway communication
 const lmic_pinmap lmic_pins = {
@@ -64,15 +38,35 @@ static const byte SLEEPCMD[19] = {
   0xAB  // tail
 };
 
-UCW_LoRa_WAN::UCW_LoRa_WAN(){
+UCW_LoRa_WAN::UCW_LoRa_WAN(const uint8_t *_NWKSKEY, const uint8_t *_APPSKEY,  uint32_t _DEVADDR){
+  NWKSKEY = _NWKSKEY;
+  APPSKEY = _APPSKEY;
+  DEVADDR = _DEVADDR;
+  #define ABP
+}
+
+UCW_LoRa_WAN::UCW_LoRa_WAN(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI){
+  APPEUI = _APPEUI;
+  APPKEY = _APPKEY;
+  DEVEUI = _DEVEUI;
 }
 
 UCW_LoRa_WAN::~UCW_LoRa_WAN(){
 }
 
+// These callbacks are only used in over-the-air activation, so they are
+// left empty here (it cannot be left out completely unless
+// DISABLE_JOIN is set in config.h, otherwise the linker will complain).
+
+#if defined (ABP)
 void os_getArtEui (u1_t* buf) { }
 void os_getDevEui (u1_t* buf) { }
 void os_getDevKey (u1_t* buf) { }
+#else
+void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
+void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
+void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
+#endif // defined
 
 void UCW_LoRa_WAN::loraWanSetup(){
   // LMIC init
@@ -107,6 +101,7 @@ void UCW_LoRa_WAN::setConfig(bool multiChannel){
     // On AVR, these values are stored in flash and only copied to RAM
     // once. Copy them to a temporary buffer here, LMIC_setSession will
     // copy them into a buffer of its own again.
+    #if defined (ABP)
     uint8_t appskey[sizeof(APPSKEY)];
     uint8_t nwkskey[sizeof(NWKSKEY)];
     memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
@@ -115,6 +110,7 @@ void UCW_LoRa_WAN::setConfig(bool multiChannel){
   #else
     // If not running an AVR with PROGMEM, just use the arrays directly
     LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
+    #endif
   #endif
 
   #if defined(CFG_eu868)

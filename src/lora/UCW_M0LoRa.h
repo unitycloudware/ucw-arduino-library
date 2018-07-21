@@ -1,12 +1,10 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino library to send data between end devices
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
 #ifndef UCWM0LoRa_H
 #define UCWM0LoRa_H
-
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -24,7 +22,7 @@
 class UCW_M0LoRa : public UCW_LoRa {
 
   public:
-    UCW_M0LoRa(UCWConfig_Lora *config);
+    UCW_M0LoRa();
     ~UCW_M0LoRa();
 
     ucw_status_t Operatingfreq();
@@ -44,8 +42,6 @@ class UCW_M0LoRa : public UCW_LoRa {
     String receivedMessage;
     bool isRec;
 };
-
-#endif // ARDUINO_ARCH_SAMD
 
 #endif // UCW_M0LoRa_H
 

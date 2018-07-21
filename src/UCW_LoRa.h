@@ -12,7 +12,7 @@
 class UCW_LoRa {
 
   public:
-    UCW_LoRa(UCWConfig_Lora *config);
+    UCW_LoRa();
     virtual ~UCW_LoRa();
     void connect();
     virtual ucw_status_t Operatingfreq() = 0;
@@ -29,8 +29,6 @@ class UCW_LoRa {
 
     //variables
     char *_version;
-    UCWConfig_Lora *_config;
-    int _freq = RF95_FREQ;
     String _userAgent;
 
   private:

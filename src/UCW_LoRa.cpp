@@ -5,9 +5,7 @@
 
 #include "UCW_LoRa.h"
 
-UCW_LoRa::UCW_LoRa(UCWConfig_Lora *config) {
-  _config = config;
-  _freq = _config->freq;
+UCW_LoRa::UCW_LoRa() {
 }
 
 UCW_LoRa::~UCW_LoRa() {

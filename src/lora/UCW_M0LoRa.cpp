@@ -1,5 +1,5 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino library to send data between end devices
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
@@ -28,7 +28,7 @@ Cape cape(key, RH_RF95_MAX_MESSAGE_LEN);
 String receivedMessage;
 bool isRec = false;
 
-UCW_M0LoRa::UCW_M0LoRa(UCWConfig_Lora *config): UCW_LoRa(config) {
+UCW_M0LoRa::UCW_M0LoRa(){
   analogReadResolution(12);
 }
 
@@ -54,11 +54,11 @@ void UCW_M0LoRa::_sys() {
     resetConnection();
     while (1);
   }
-  Serial.print("Operating Freq is: "); Serial.println(_freq);
+  Serial.print("Operating Freq is: "); Serial.println(RF95_FREQ);
 }
 
 ucw_status_t UCW_M0LoRa::Operatingfreq() {
-  if (rf95.setFrequency(_freq)) {
+  if (rf95.setFrequency(RF95_FREQ)) {
     return UCW_NET_CONNECTED;
   } else {
     return UCW_NET_DISCONNECTED;
@@ -87,10 +87,6 @@ void UCW_M0LoRa::resetConnection() {
 }
 
 double UCW_M0LoRa::updateBatteryStatus() {
-  /*
-   * Adafruit Feather M0 WiFi with ATWINC1500
-   * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
-   */
   double measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
