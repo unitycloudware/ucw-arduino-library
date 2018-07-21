@@ -59,13 +59,13 @@ UCW_LoRa_WAN::~UCW_LoRa_WAN(){
 // DISABLE_JOIN is set in config.h, otherwise the linker will complain).
 
 #if defined (ABP)
-void os_getArtEui (u1_t* buf) { }
-void os_getDevEui (u1_t* buf) { }
-void os_getDevKey (u1_t* buf) { }
+void os_getArtEui (uint8_t* buf) { }
+void os_getDevEui (uint8_t* buf) { }
+void os_getDevKey (uint8_t* buf) { }
 #else
-void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
-void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
-void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
+void os_getArtEui (uint8_t* buf) { memcpy_P(buf, APPEUI, 8);}
+void os_getDevEui (uint8_t* buf) { memcpy_P(buf, DEVEUI, 8);}
+void os_getDevKey (uint8_t* buf) {  memcpy_P(buf, APPKEY, 16);}
 #endif // defined
 
 void UCW_LoRa_WAN::loraWanSetup(){
