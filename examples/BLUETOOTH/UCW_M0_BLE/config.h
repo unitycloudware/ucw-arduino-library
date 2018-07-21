@@ -13,12 +13,6 @@
 //  .token = "your_token"
 //};
 
-//for LoRa connection only
-//static UCWConfig_Lora cfg = {
-//  .freq = RF95_FREQ,
-//  .token = "your_token"
-//};
-
 /******************************* WiFi **************************************/
 
 /*
@@ -66,7 +60,7 @@
 
 // uncomment the following two lines for LoRa,
 //#include "UCW_LoRa_SUPPORT.h"
-//UCW_LoRa_SUPPORT ucw(&cfg);
+//UCW_LoRa_SUPPORT ucw();
 
 /**************************** BLE ************************************/
 
@@ -75,5 +69,5 @@
     - Feather M0 BLE -> https://www.adafruit.com/products/2995
  */
 
-// uncomment the following two lines for BLE,
+// uncomment the following line for BLE,
 #include "UCW_M0_BLE.h"

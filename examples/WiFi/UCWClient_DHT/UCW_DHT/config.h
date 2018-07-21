@@ -13,12 +13,6 @@ static UCWConfig cfg = {
   .token = "your_token"
 };
 
-//for LoRa connection only
-//static UCWConfig_Lora cfg = {
-//  .freq = RF95_FREQ,
-//  .token = "your_token"
-//};
-
 /******************************* WiFi **************************************/
 
 /*
@@ -66,7 +60,7 @@ UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
 // uncomment the following two lines for LoRa,
 //#include "UCW_LoRa_SUPPORT.h"
-//UCW_LoRa_SUPPORT ucw(&cfg);
+//UCW_LoRa_SUPPORT ucw();
 
 /**************************** BLE ************************************/
 
