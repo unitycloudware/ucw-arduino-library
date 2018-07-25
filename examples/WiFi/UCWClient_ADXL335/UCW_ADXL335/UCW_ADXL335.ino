@@ -17,10 +17,6 @@ const int xInput = A1;      //connect Xout pin of sensor to pin A1
 const int yInput = A2;      //connect Yout pin of sensor to pin A2
 const int zInput = A3;      //connect Zout pin of sensor to pin A3
 
-//comment appropriately
-   UCW_API_REST ucw_api =  ucw.api();        //REST API
-// UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
-
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "data-test"
 
@@ -69,7 +65,7 @@ void loop() {
   data.replace("%y-axis", String(y));
   data.replace("%z-axis", String(z));
     
-  ucw_api.sendData(DEVICE_ID, DATA_STREAM, data);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
   
   delay(1000);
 }

@@ -30,10 +30,6 @@
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
 
-//comment appropriately
-   UCW_API_REST ucw_api =  ucw.api();         //REST API
-// UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
-
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "Temperature, Pressure and Humidity"
 
@@ -95,7 +91,7 @@ void loop() {
   data.replace("%pressure", String(p));
   data.replace("%altitude", String(a));
   
-  ucw_api.sendData(DEVICE_ID, DATA_STREAM, data);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
   delay(1000);
  
 }

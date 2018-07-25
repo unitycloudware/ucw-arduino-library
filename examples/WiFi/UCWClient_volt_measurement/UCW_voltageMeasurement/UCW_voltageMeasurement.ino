@@ -11,10 +11,6 @@
   clients.
  */
 
-//comment appropriately
-   UCW_API_REST ucw_api =  ucw.api();         //REST API
-// UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
-
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "Voltage measurement"
 
@@ -60,7 +56,7 @@ void loop() {
   String data = "{\"voltage\": %voltage}";
   data.replace("%voltage", String(voltage));
     
-  ucw_api.sendData(DEVICE_ID, DATA_STREAM, data);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
   delay(1000);
  
 }

@@ -12,10 +12,6 @@
   clients. These should be commented.
  */
 
-//comment appropriately
-  //UCW_API_REST ucw_api =  ucw.api();         //REST API
-//UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
-
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "data-test"
 
@@ -48,7 +44,7 @@ void loop() {
 
   // read data()
   String data = "{\"temperature\": 22, \"humidity\": 43}";
-  ucw.api().sendData(DEVICE_ID, DATA_STREAM, data);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
 
   delay(1000);
 }

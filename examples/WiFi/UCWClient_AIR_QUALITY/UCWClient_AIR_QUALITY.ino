@@ -14,10 +14,6 @@
 
 #include "Adafruit_CCS811.h"
 
-//comment appropriately
-   UCW_API_REST ucw_api =  ucw.api();         //REST API
-// UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
-
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "Air_quality_measurements"
 
@@ -81,7 +77,7 @@ void loop() {
   data.replace("%tvoc", String(tvoc));
   data.replace("%temperatureC", String(temp));
   
-  ucw_api.sendData(DEVICE_ID, DATA_STREAM, data);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
   
   delay(1000);
  

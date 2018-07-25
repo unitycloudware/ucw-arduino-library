@@ -16,9 +16,6 @@
 
 #include <Adafruit_SleepyDog.h>
 
-/* creating objects */
-UCW_API_REST ucw_api =  ucw.api();  //REST API
-
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "ucw-parkinglot"
 
@@ -63,7 +60,7 @@ void loop(void) {
     String Location = "{\"Location\": %Location}";
     Location.replace("%Location", location);
       
-    ucw_api.sendData(DEVICE_ID, "DATA_STREAM", Location);
+    ucw.sendData(DEVICE_ID, "DATA_STREAM", Location);
     i=0;
     delay(5000); //wait for 5sec
   }

@@ -17,8 +17,6 @@
 #include "UCW_GPS.h"
 #include <Adafruit_SleepyDog.h>
 
-UCW_API_REST ucw_api =  ucw.api();       //REST API
-
 #define DEVICE_ID   "your_device_id"
 #define DATA_STREAM "Available_parking_slots"
 
@@ -82,7 +80,7 @@ void loop() {
     location.replace("%lat", String(Latitude));
     location.replace("%long", String(Longitude));
         
-    ucw_api.sendData(DEVICE_ID, DATA_STREAM, location); 
+    ucw.sendData(DEVICE_ID, DATA_STREAM, location);
   } else {
     Watchdog.sleep(10000); //sleep for 10 seconds if car is parked in this slot
     }
