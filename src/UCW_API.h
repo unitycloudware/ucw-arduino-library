@@ -7,7 +7,6 @@
 #define UCW_API_H
 
 #include <Arduino.h>
-#include <ArduinoHttpClient.h>
 #include <UCW_System.h>
 
 class UCW_API {
@@ -15,7 +14,6 @@ class UCW_API {
   public:
     UCW_API(UCWConfig *config);
     virtual ~UCW_API();
-    virtual bool sendData(String deviceID, String dataStreamName, String payload) = 0;
 
   protected:
     String version();

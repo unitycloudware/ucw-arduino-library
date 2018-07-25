@@ -22,7 +22,6 @@ String UCW_API::userAgent() {
   if (!_userAgent) {
     _userAgent = "UCW-Arduino/" + version();
   }
-
   return _userAgent;
 }
 

@@ -32,12 +32,12 @@ class UCW {
 
     ucw_status_t _status = UCW_IDLE;
     UCWConfig *_config;
-    String _host = UCW_API_HOST;
-    const char * _mhost = UCW_MQTT_HOST;
+    String _host;
+    String _mhost;
     IPAddress _hostIP;
     IPAddress _mhostIP;
-    uint16_t _httpPort = UCW_API_PORT;
-    uint16_t _mqttPort = UCW_MQTT_PORT;
+    uint16_t _httpPort;
+    uint16_t _mqttPort;
     HttpClient *_http;
     PubSubClient *_mqttClient;
 

@@ -15,7 +15,7 @@ UCW_API_REST::~UCW_API_REST() {
   }
 }
 
-bool UCW_API_REST::sendData(String deviceID, String dataStreamName, String payload) {
+bool UCW_API_REST::sendDataRest(String deviceID, String dataStreamName, String payload) {
 
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");

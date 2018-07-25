@@ -24,8 +24,6 @@
 
 //define topics
 #define payload_topic "your_payload_topic"
-#define device_topic "your_device_topic"
-#define dataStream_topic "your_dataStream_topic"
 #define sub_topic "your_subscription_topic"
 
 //client ID
@@ -37,7 +35,7 @@ class UCW_API_MQTT : public UCW_API {
     UCW_API_MQTT(UCWConfig *config, PubSubClient *mqttClient);
     ~UCW_API_MQTT();
 
-    bool sendData(String deviceID, String dataStreamName, String payload);
+    bool sendDataMqtt(String deviceID, String dataStreamName, String payload);
 
   protected:
     void reconnect();

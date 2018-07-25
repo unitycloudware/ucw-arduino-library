@@ -34,8 +34,7 @@ class UCW_WINC1500 : public UCW {
     String connectionType();
     ucw_status_t networkStatus();
     void updateBatteryStatus();
-    UCW_API_REST api();
-    UCW_API_MQTT api_m();
+    bool sendData(String deviceID, String dataStreamName, String payload);
 
   protected:
     void _connect();

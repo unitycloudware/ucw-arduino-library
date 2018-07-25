@@ -11,18 +11,15 @@
 UCW_ESP32::UCW_ESP32(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
   _ssid = ssid;
   _pass = pass;
-  if (_config->useMqtt){
-    _api_m = 0;
-    api_m();
-  } else {
-    _api = 0;
-    api();
-  }
+  _api_m = 0;
+  _api = 0;
+
+  _httpClient = new WiFiClient;
 }
 
 UCW_ESP32::~UCW_ESP32() {
-  if (_Client) {
-    delete _Client;
+  if (_httpClient) {
+    delete _httpClient;
   }
 }
 
@@ -44,19 +41,20 @@ void UCW_ESP32::_sys() {
     UCW_LOG_PRINTLN("Trying to reconnect device...");
     delay(1000);
   }
-
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
-      if (WiFi.hostByName(_mhost, _mhostIP)){
-        _mqttClient = new PubSubClient (*_Client);
-        _mqttClient->setServer(_mhost, _mqttPort);
+      if (WiFi.hostByName(_mhost.c_str(), _mhostIP)){
+        _mqttClient = new PubSubClient (*_httpClient);
+        _mqttClient->setServer(_mhost.c_str(), _mqttPort);
         _api_m = new UCW_API_MQTT(_config, _mqttClient);
         _status = UCW_CONNECTED;
+      } else {
+        UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _mhost + "'!");
       }
     }
   } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
       if (WiFi.hostByName(_host.c_str(), _hostIP)){
-        _http = new HttpClient(*_Client, _hostIP, _httpPort);
+        _http = new HttpClient(*_httpClient, _hostIP, _httpPort);
         _api = new UCW_API_REST(_config, _http);
         _status = UCW_CONNECTED;
       } else {
@@ -129,26 +127,33 @@ void UCW_ESP32::printConnectionStatus() {
 
 }
 
-UCW_API_REST UCW_ESP32::api() {
-  return *_api;
-}
-
-UCW_API_MQTT UCW_ESP32::api_m() {
-  return *_api_m;
-}
-
 void UCW_ESP32::updateBatteryStatus() {
   /*
    * Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
    */
-
   float measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage
   UCW_LOG_PRINT("VBat: ");
   UCW_LOG_PRINTLN(measuredvbat);
+}
+
+bool UCW_ESP32::sendData(String deviceID, String dataStreamName, String payload){
+  if(_config->useMqtt){
+    if (_api_m->sendDataMqtt(deviceID,dataStreamName,payload)){
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if(_api->sendDataRest(deviceID,dataStreamName,payload)){
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 #endif // ARDUINO_ARCH_ESP32

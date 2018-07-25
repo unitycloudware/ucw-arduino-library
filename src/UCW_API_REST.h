@@ -26,7 +26,7 @@ class UCW_API_REST : public UCW_API {
     UCW_API_REST(UCWConfig *config, HttpClient *http);
     ~UCW_API_REST();
 
-    bool sendData(String deviceID, String dataStreamName, String payload);
+    bool sendDataRest(String deviceID, String dataStreamName, String payload);
 
   protected:
     HttpClient *_http;

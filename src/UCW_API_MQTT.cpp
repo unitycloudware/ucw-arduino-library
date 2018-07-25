@@ -15,23 +15,23 @@ UCW_API_MQTT::~UCW_API_MQTT() {
   }
 }
 
-bool UCW_API_MQTT::sendData(String deviceID, String dataStreamName, String payload) {
-
+bool UCW_API_MQTT::sendDataMqtt(String deviceID, String dataStreamName, String payload) {
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");
     return false;
   }
-
   if (!_mqttClient->connected()) {
     reconnect();
   }
 
   UCW_LOG_PRINT("Publishing new data:");
-  UCW_LOG_PRINTLN(payload.c_str());
+  UCW_LOG_PRINTLN(payload);
 
-  _mqttClient->publish(device_topic, deviceID.c_str(), isRetained);
-  _mqttClient->publish(dataStream_topic, dataStreamName.c_str(), isRetained);
-  _mqttClient->publish(payload_topic, payload.c_str(), isRetained);
+  String newPayload = payload + "/data-streams/%dataStreamName/messages/%deviceId";
+  newPayload.replace("%deviceId", deviceID);
+  newPayload.replace("%dataStreamName", dataStreamName);
+
+  _mqttClient->publish(payload_topic, newPayload.c_str(), isRetained);
   _mqttClient->loop();
   _mqttClient->subscribe(sub_topic);
 

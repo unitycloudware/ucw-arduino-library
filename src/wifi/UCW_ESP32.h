@@ -28,8 +28,7 @@ class UCW_ESP32 : public UCW {
     void printNetworkInfo();
     String connectionType();
     ucw_status_t networkStatus();
-    UCW_API_MQTT api_m();
-    UCW_API_REST api();
+    bool sendData(String deviceID, String dataStreamName, String payload);
     void updateBatteryStatus();
 
   protected:
@@ -39,7 +38,7 @@ class UCW_ESP32 : public UCW {
     const char *_pass;
     void printConnectionStatus();
 
-    WiFiClient *_Client;
+    WiFiClient *_httpClient;
     UCW_API_REST *_api;
     UCW_API_MQTT *_api_m;
 };

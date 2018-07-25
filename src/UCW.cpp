@@ -9,8 +9,7 @@ UCW::UCW(UCWConfig *config) {
   _config = config;
 
   if (_config->useMqtt){
-    String _mmhost =_config->host;
-    _mhost = _mmhost.c_str();
+    _mhost =_config->host;
     _mqttPort = _config->port;
     _mqttClient=0;
   } else{

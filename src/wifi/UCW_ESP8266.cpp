@@ -46,14 +46,15 @@ void UCW_ESP8266::_sys() {
     UCW_LOG_PRINTLN("Trying to reconnect device...");
     delay(1000);
   }
-
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
-      if (WiFi.hostByName(_mhost, _mhostIP)){
+      if (WiFi.hostByName(_mhost.c_str(), _mhostIP)){
         _mqttClient = new PubSubClient (*_httpClient);
-        _mqttClient->setServer(_mhost, _mqttPort);
+        _mqttClient->setServer(_mhost.c_str(), _mqttPort);
         _api_m = new UCW_API_MQTT(_config, _mqttClient);
         _status = UCW_CONNECTED;
+      } else {
+        UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _mhost + "'!");
       }
     }
   } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
@@ -131,18 +132,8 @@ void UCW_ESP8266::printConnectionStatus() {
 
 }
 
-UCW_API_REST UCW_ESP8266::api() {
-  return *_api;
-}
-
-UCW_API_MQTT UCW_ESP8266::api_m() {
-  return *_api_m;
-}
-
 void UCW_ESP8266::updateBatteryStatus(){
-
     //https://learn.adafruit.com/using-ifttt-with-adafruit-io/arduino-code-1
-
     EEPROM.begin(512);
     byte battery_count = EEPROM.read(0);
     // we only need this to happen once every 100x runtime seconds,
@@ -164,7 +155,6 @@ void UCW_ESP8266::updateBatteryStatus(){
 }
 
 void UCW_ESP8266::battery_level(){
-
   //read the battery level from the ESP8266 analog in pin.
   // analog read level is 10 bit 0-1023 (0V-1V).
   // use 1M & 220K voltage divider takes the max
@@ -176,7 +166,22 @@ void UCW_ESP8266::battery_level(){
   // convert battery level to percent
   level = map(level, 580, 774, 0, 100);
   Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
+}
 
+bool UCW_ESP8266::sendData(String deviceID, String dataStreamName, String payload){
+  if(_config->useMqtt){
+    if (_api_m->sendDataMqtt(deviceID,dataStreamName,payload)){
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if(_api->sendDataRest(deviceID,dataStreamName,payload)){
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 #endif // ESP8266

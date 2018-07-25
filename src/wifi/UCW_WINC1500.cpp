@@ -51,14 +51,15 @@ void UCW_WINC1500::_sys() {
     resetConnection();
     delay(1000);
   }
-
   if (_config->useMqtt){
     if ((!_mqttClient) && (networkStatus() == UCW_NET_CONNECTED)) {
-      if (WiFi.hostByName(_mhost, _mhostIP)){
+      if (WiFi.hostByName(_mhost.c_str(), _mhostIP)){
         _mqttClient = new PubSubClient (*_httpClient);
-        _mqttClient->setServer(_mhost, _mqttPort);
+        _mqttClient->setServer(_mhost.c_str(), _mqttPort);
         _api_m = new UCW_API_MQTT(_config, _mqttClient);
         _status = UCW_CONNECTED;
+      } else {
+        UCW_LOG_PRINTLN("Unable to resolve IP address for host '" + _mhost + "'!");
       }
     }
   } else if ((!_http) && (networkStatus() == UCW_NET_CONNECTED)){
@@ -123,19 +124,11 @@ void UCW_WINC1500::resetConnection() {
    }
 
   if (_mqttClient) {
-    delete _http;
-    _http = 0;
+    delete _mqttClient;
+    _mqttClient = 0;
   }
 
   _status = UCW_NET_DISCONNECTED;
-}
-
-UCW_API_REST UCW_WINC1500::api() {
-  return *_api;
-}
-
-UCW_API_MQTT UCW_WINC1500::api_m() {
-  return *_api_m;
 }
 
 void UCW_WINC1500::printConnectionStatus() {
@@ -188,6 +181,22 @@ void UCW_WINC1500::updateBatteryStatus() {
   measuredvbat /= 1024; // convert to voltage
   UCW_LOG_PRINT("VBat: ");
   UCW_LOG_PRINTLN(measuredvbat);
+}
+
+bool UCW_WINC1500::sendData(String deviceID, String dataStreamName, String payload){
+  if(_config->useMqtt){
+    if (_api_m->sendDataMqtt(deviceID,dataStreamName,payload)){
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if(_api->sendDataRest(deviceID,dataStreamName,payload)){
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 #endif // ARDUINO_ARCH_SAMD

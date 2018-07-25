@@ -31,8 +31,7 @@ class UCW_ESP8266 : public UCW {
     void printNetworkInfo();
     String connectionType();
     void updateBatteryStatus();
-    UCW_API_REST api();
-    UCW_API_MQTT api_m();
+    bool sendData(String deviceID, String dataStreamName, String payload);
 
   protected:
     void _connect();
