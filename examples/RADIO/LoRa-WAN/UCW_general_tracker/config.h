@@ -74,5 +74,6 @@ UCW_LoRa_WAN lora_wan(NWKSKEY, APPSKEY, DEVADDR); //for ABP
     - Feather M0 WiFi -> https://www.adafruit.com/products/3010
  */
 
+//define UCW_BLE_DEVICE
 // uncomment the following line for BLE,
 //#include "UCW_M0_BLE.h"
