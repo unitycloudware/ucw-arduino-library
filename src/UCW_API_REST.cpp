@@ -39,6 +39,7 @@ bool UCW_API_REST::sendDataRest(String deviceID, String dataStreamName, String p
   _http->beginRequest();
   _http->post(apiUri);
 
+  _http->sendHeader("Host", _config->host);
   _http->sendHeader("User-Agent", userAgent());
   _http->sendHeader("Authorization", "Bearer " + _config->token);
   _http->sendHeader("Content-Type", "application/json");
