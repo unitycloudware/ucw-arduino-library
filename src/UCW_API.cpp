@@ -14,7 +14,7 @@ UCW_API::~UCW_API() {
 
 
 String UCW_API::version() {
-  sprintf(_version, "%d.%d.%d", UCW_VERSION_MAJOR, UCW_VERSION_MINOR, UCW_VERSION_PATCH);
+  _version = String(UCW_VERSION_MAJOR) + "." + String(UCW_VERSION_MINOR) + "." + String(UCW_VERSION_PATCH);
   return _version;
 }
 
