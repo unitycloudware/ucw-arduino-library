@@ -48,20 +48,23 @@
  */
 
 // uncomment the following lines for LoRa,
-#include "UCW_LoRa_SUPPORT.h"
+//#include "UCW_LoRa_SUPPORT.h"
 #include <UCW_LoRa_WAN.h>
 
+#define UCW_LORA_DEVICE
+
 // provide network session key, application session key, and device address for ABP
-const uint8_t PROGMEM NWKSKEY[16] = {};
-const uint8_t PROGMEM APPSKEY[16] = {};
+#define ABP
+const uint8_t PROGMEM NWKSKEY[] = {};
+const uint8_t PROGMEM APPSKEY[] = {};
 const uint32_t DEVADDR  = 0x00;
 
 // provide application-eui, application key, and device eui for OTTA
-//const uint8_t PROGMEM APPEUI[8] = {};
-//const uint8_t PROGMEM APPKEY[16] = {};
-//const uint8_t PROGMEM DEVEUI[8]  = {};
+//#define OTTA
+//const uint8_t PROGMEM APPEUI[] = {};
+//const uint8_t PROGMEM APPKEY[] = {};
+//const uint8_t PROGMEM DEVEUI[]  = {};
 
-UCW_LoRa_SUPPORT ucw();
 UCW_LoRa_WAN lora_wan(NWKSKEY, APPSKEY, DEVADDR); //for ABP
 //UCW_LoRa_WAN lora_wan(APPEUI, APPKEY, DEVEUI); //for OTTA
 /**************************** BLE ************************************/

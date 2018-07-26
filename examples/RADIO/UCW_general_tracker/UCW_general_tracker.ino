@@ -24,7 +24,6 @@ UCW_GPS ucw_gps;
 
 //declaring variables
 double Latitude, Longitude;
-float battLevel;
 static osjob_t sendjob;
 String data;  //Json string
 
@@ -39,14 +38,10 @@ void setup() {
     ; // Wait for serial port to connect. Needed for native USB port only
   }
 
-  // Connect to desired frequency
-  Serial.print("Desired operating freq set");
-  ucw.connect();
-    
   //startup GPS connection
   ucw_gps.setupGPS();
 
-  //LoRaWAN steup
+  //LoRaWAN setup
   lora_wan.loraWanSetup();
   lora_wan.setConfig(false);
 
@@ -80,7 +75,7 @@ void do_send(osjob_t* j){
     Serial.println(F("OP_TXRXPEND, not sending"));
   } else {
     //Prepare upstream data transmission at the next possible time.
-    LMIC_setTxData2(1, mydata, sizeof(mydata) - 1, 0);
+    LMIC_setTxData2(1,(uint8_t *) mydata, sizeof(mydata) - 1, 0);
     Serial.println(F("Packet queued"));
   }
 }
