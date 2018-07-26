@@ -57,12 +57,10 @@ UCW_LoRa_WAN::~UCW_LoRa_WAN(){
 // These callbacks are only used in over-the-air activation, so they are
 // left empty here (it cannot be left out completely unless
 // DISABLE_JOIN is set in config.h, otherwise the linker will complain).
-
-#if defined (ABP)
 void os_getArtEui (uint8_t* buf) { }
 void os_getDevEui (uint8_t* buf) { }
 void os_getDevKey (uint8_t* buf) { }
-#else
+#ifdef OTTA
 void os_getArtEui (uint8_t* buf) { memcpy_P(buf, APPEUI, 8);}
 void os_getDevEui (uint8_t* buf) { memcpy_P(buf, DEVEUI, 8);}
 void os_getDevKey (uint8_t* buf) {  memcpy_P(buf, APPKEY, 16);}
@@ -160,10 +158,6 @@ void UCW_LoRa_WAN::sleep_mode() {
 
 void UCW_LoRa_WAN::wake_mode() {
   Serial.write(0x01);
-}
-
-String UCW_LoRa_WAN::isDevice() {
-  return s_DEVADDR;
 }
 
 #endif //ARDUINO_ARCH_SAMD
