@@ -19,9 +19,7 @@ String UCW_API::version() {
 }
 
 String UCW_API::userAgent() {
-  if (!_userAgent) {
-    _userAgent = "UCW-Arduino/" + version();
-  }
+  _userAgent = "UCW-Arduino/" + version();
   return _userAgent;
 }
 
