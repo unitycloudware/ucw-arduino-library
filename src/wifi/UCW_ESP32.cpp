@@ -32,7 +32,10 @@ void UCW_ESP32::_connect() {
   delay(1000);
 
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  delay(100);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(_ssid, _pass);
+  delay(100);
   _status = UCW_NET_DISCONNECTED;
 }
 

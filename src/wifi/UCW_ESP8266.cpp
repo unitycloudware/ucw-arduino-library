@@ -33,10 +33,10 @@ void UCW_ESP8266::_connect() {
   }*/
 
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-  //delay(100);
+  delay(100);
   WiFi.mode(WIFI_STA);
   WiFi.begin(_ssid, _pass);
-  //delay(100);
+  delay(100);
 
   _status = UCW_NET_DISCONNECTED;
 }
