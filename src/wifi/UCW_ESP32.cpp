@@ -1,3 +1,4 @@
+
 /*
   Arduino WiFi library to access UCW Platform
   This supports Adafruit ESP32 micro-controller
@@ -34,6 +35,7 @@ void UCW_ESP32::_connect() {
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   delay(100);
   WiFi.mode(WIFI_STA);
+  WiFi.disconnect(true);
   WiFi.begin(_ssid, _pass);
   delay(100);
   _status = UCW_NET_DISCONNECTED;

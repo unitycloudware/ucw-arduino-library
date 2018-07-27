@@ -15,22 +15,11 @@
 class UCW_LoRa_WAN{
 
   public:
-    UCW_LoRa_WAN(const uint8_t *_NWKSKEY, const uint8_t *_APPSKEY,  uint32_t _DEVADDR);
-    UCW_LoRa_WAN(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI);
+    UCW_LoRa_WAN(bool mode);
     ~UCW_LoRa_WAN();
-    void loraWanSetup();
-    void setConfig(bool multiChannel);
-    void wake_mode();
-    void sleep_mode();
-    String isDevice();
-
-  protected:
-      const uint8_t* NWKSKEY;
-      const uint8_t* APPSKEY;
-      uint32_t DEVADDR ;
-      const uint8_t* APPEUI;
-      const uint8_t* DEVEUI;
-      const uint8_t* APPKEY;
+    void initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint32_t DEVADDR);
+    void initOTTA(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI);
+    void channelConfig(bool multiChannel);
 
 };
 

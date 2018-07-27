@@ -8,6 +8,10 @@
 
 #include <UCW_LoRa_WAN.h>
 
+const uint8_t* APPEUI;
+const uint8_t* DEVEUI;
+const uint8_t* APPKEY;
+
 // Pin mapping for gateway communication
 const lmic_pinmap lmic_pins = {
   .nss = 8,
@@ -38,35 +42,16 @@ static const byte SLEEPCMD[19] = {
   0xAB  // tail
 };
 
-UCW_LoRa_WAN::UCW_LoRa_WAN(const uint8_t *_NWKSKEY, const uint8_t *_APPSKEY,  uint32_t _DEVADDR){
-  NWKSKEY = _NWKSKEY;
-  APPSKEY = _APPSKEY;
-  DEVADDR = _DEVADDR;
-  #define ABP
-}
-
-UCW_LoRa_WAN::UCW_LoRa_WAN(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI){
-  APPEUI = _APPEUI;
-  APPKEY = _APPKEY;
-  DEVEUI = _DEVEUI;
+UCW_LoRa_WAN::UCW_LoRa_WAN(bool mode){
+  if(mode){
+    #define ABP 1
+  }
 }
 
 UCW_LoRa_WAN::~UCW_LoRa_WAN(){
 }
 
-// These callbacks are only used in over-the-air activation, so they are
-// left empty here (it cannot be left out completely unless
-// DISABLE_JOIN is set in config.h, otherwise the linker will complain).
-void os_getArtEui (uint8_t* buf) { }
-void os_getDevEui (uint8_t* buf) { }
-void os_getDevKey (uint8_t* buf) { }
-#ifdef OTTA
-void os_getArtEui (uint8_t* buf) { memcpy_P(buf, APPEUI, 8);}
-void os_getDevEui (uint8_t* buf) { memcpy_P(buf, DEVEUI, 8);}
-void os_getDevKey (uint8_t* buf) {  memcpy_P(buf, APPKEY, 16);}
-#endif // defined
-
-void UCW_LoRa_WAN::loraWanSetup(){
+void UCW_LoRa_WAN::initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint32_t DEVADDR){
   // LMIC init
   os_init();
 
@@ -83,63 +68,90 @@ void UCW_LoRa_WAN::loraWanSetup(){
   // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
   LMIC_setDrTxpow(DR_SF7,14);
 
-}
-
-void UCW_LoRa_WAN::setConfig(bool multiChannel){
   #ifdef VCC_ENABLE
-    // For Pinoccio Scout boards
-    pinMode(VCC_ENABLE, OUTPUT);
-    digitalWrite(VCC_ENABLE, HIGH);
-    delay(1000);
+  // For Pinoccio Scout boards
+  pinMode(VCC_ENABLE, OUTPUT);
+  digitalWrite(VCC_ENABLE, HIGH);
+  delay(1000);
   #endif
 
   // Set static session parameters. Instead of dynamically establishing a session
   // by joining the network, precomputed session parameters are be provided.
   #ifdef PROGMEM
-    // On AVR, these values are stored in flash and only copied to RAM
-    // once. Copy them to a temporary buffer here, LMIC_setSession will
-    // copy them into a buffer of its own again.
-    #if defined (ABP)
-    uint8_t appskey[sizeof(APPSKEY)];
-    uint8_t nwkskey[sizeof(NWKSKEY)];
-    memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
-    memcpy_P(nwkskey, NWKSKEY, sizeof(NWKSKEY));
-    LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
+  // On AVR, these values are stored in flash and only copied to RAM
+  // once. Copy them to a temporary buffer here, LMIC_setSession will
+  // copy them into a buffer of its own again.
+  uint8_t appskey[sizeof(APPSKEY)];
+  uint8_t nwkskey[sizeof(NWKSKEY)];
+  memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
+  memcpy_P(nwkskey,NWKSKEY, sizeof(NWKSKEY));
+  LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
   #else
-    // If not running an AVR with PROGMEM, just use the arrays directly
-    LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-    #endif
+  // If not running an AVR with PROGMEM, just use the arrays directly
+  LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
   #endif
+}
 
+void UCW_LoRa_WAN::initOTTA(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI){
+  #ifdef VCC_ENABLE
+  // For Pinoccio Scout boards
+  pinMode(VCC_ENABLE, OUTPUT);
+  digitalWrite(VCC_ENABLE, HIGH);
+  delay(1000);
+  #endif
+  // LMIC init
+  os_init();
+
+  // Reset the MAC state. Session and pending data transfers will be discarded.
+  LMIC_reset();
+
+  APPEUI = _APPEUI;
+  APPKEY = _APPKEY;
+  DEVEUI = _DEVEUI;
+}
+
+#if defined(ABP)
+void os_getArtEui (u1_t* buf) { }
+void os_getDevEui (u1_t* buf) { }
+void os_getDevKey (u1_t* buf) { }
+#endif // defined
+
+#if !defined(ABP)
+void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
+void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
+void os_getDevKey (u1_t* buf) { memcpy_P(buf, APPKEY, 16);}
+#endif // defined
+
+void UCW_LoRa_WAN::channelConfig(bool multiChannel){
   #if defined(CFG_eu868)
-    // Set up the channels used by the Things Network, which corresponds
-    // to the defaults of most gateways. Without this, only three base
-    // channels from the LoRaWAN specification are used, which certainly
-    // works, so it is good for debugging, but can overload those
-    // frequencies, so be sure to configure the full frequency range of
-    // your network here (unless your network autoconfigures them).
-    // Setting up channels should happen after LMIC_setSession, as that
-    // configures the minimal channel set.
-    // NA-US channels 0-71 are configured automatically
-    LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-    LMIC_setupChannel(1, 868300000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);      // g-band
-    LMIC_setupChannel(2, 868500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-    LMIC_setupChannel(3, 867100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-    LMIC_setupChannel(4, 867300000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-    LMIC_setupChannel(5, 867500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-    LMIC_setupChannel(6, 867700000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-    LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-    LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK,  DR_FSK),  BAND_MILLI);      // g2-band
-    // TTN defines an additional channel at 869.525Mhz using SF9 for class B
-    // devices' ping slots. LMIC does not have an easy way to define set this
-    // frequency and support for class B is spotty and untested, so this
-    // frequency is not configured here.
+  // Set up the channels used by the Things Network, which corresponds
+  // to the defaults of most gateways. Without this, only three base
+  // channels from the LoRaWAN specification are used, which certainly
+  // works, so it is good for debugging, but can overload those
+  // frequencies, so be sure to configure the full frequency range of
+  // your network here (unless your network autoconfigures them).
+  // Setting up channels should happen after LMIC_setSession, as that
+  // configures the minimal channel set.
+  // NA-US channels 0-71 are configured automatically
+  LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+  LMIC_setupChannel(1, 868300000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);      // g-band
+  LMIC_setupChannel(2, 868500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+  LMIC_setupChannel(3, 867100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+  LMIC_setupChannel(4, 867300000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+  LMIC_setupChannel(5, 867500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+  LMIC_setupChannel(6, 867700000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+  LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+  LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK,  DR_FSK),  BAND_MILLI);      // g2-band
+  // TTN defines an additional channel at 869.525Mhz using SF9 for class B
+  // devices' ping slots. LMIC does not have an easy way to define set this
+  // frequency and support for class B is spotty and untested, so this
+  // frequency is not configured here.
   #elif defined(CFG_us915)
-    // NA-US channels 0-71 are configured automatically
-    // but only one group of 8 should (a subband) should be active
-    // TTN recommends the second sub band, 1 in a zero based count.
-    // https://github.com/TheThingsNetwork/gateway-conf/blob/master/US-global_conf.json
-    LMIC_selectSubBand(1);
+  // NA-US channels 0-71 are configured automatically
+  // but only one group of 8 should (a subband) should be active
+  // TTN recommends the second sub band, 1 in a zero based count.
+  // https://github.com/TheThingsNetwork/gateway-conf/blob/master/US-global_conf.json
+  LMIC_selectSubBand(1);
   #endif
 
   //comment for multichannel gateway
@@ -148,16 +160,6 @@ void UCW_LoRa_WAN::setConfig(bool multiChannel){
       LMIC_disableChannel(i);
     }
   }
-}
-
-void UCW_LoRa_WAN::sleep_mode() {
-  for (uint8_t i = 0; i < 19; i++) {
-    Serial.write(SLEEPCMD[i]);
-  }
-}
-
-void UCW_LoRa_WAN::wake_mode() {
-  Serial.write(0x01);
 }
 
 #endif //ARDUINO_ARCH_SAMD
