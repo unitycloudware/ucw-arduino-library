@@ -22,6 +22,9 @@
 //create GPS object
 UCW_GPS ucw_gps; 
 
+//create LoRa WAN object
+UCW_LoRa_WAN lora_wan;
+
 //declaring variables
 double Latitude, Longitude;
 static osjob_t sendjob;
@@ -29,6 +32,7 @@ String data;  //Json string
 
 // Schedule TX every this many seconds (might become longer due to duty cycle limitations).
 const unsigned TX_INTERVAL = 5;
+
 
 void setup() {
   // Start the serial connection
@@ -42,8 +46,8 @@ void setup() {
   ucw_gps.setupGPS();
 
   //LoRaWAN setup
-  lora_wan.loraWanSetup();
-  lora_wan.setConfig(false);
+  lora_wan.initABP(NWKSKEY, APPSKEY, DEVADDR);
+  lora_wan.channelConfig(false);
 
   //Start job
   do_send(&sendjob);
@@ -59,11 +63,12 @@ void do_send(osjob_t* j){
   Latitude = gpsData.Latitude;
   Longitude = gpsData.Longitude;
 
-  data = "{\"latitude\": %lat,\"longitude\": %long,\"DataStreamName\": \"%dsn\"}";
-  data.replace("%lat", String(Latitude));
-  data.replace("%long", String(Longitude));
-  data.replace("%bat", String(battLevel));
-  data.replace("%dsn", DATA_STREAM);
+//  data = "{\"latitude\": %lat,\"longitude\": %long,\"DataStreamName\": \"%dsn\"}";
+//  data.replace("%lat", String(Latitude));
+//  data.replace("%long", String(Longitude));
+//  data.replace("%dsn", DATA_STREAM);
+
+  data = "hello world";
 
   //convert string to char
   int len = data.length()+1; // length of payload data
@@ -93,6 +98,6 @@ void onEvent (ev_t ev) {
     os_setTimedCallback(&sendjob, os_getTime()+sec2osticks(TX_INTERVAL), do_send);
   }
   if (ev == EV_LINK_DEAD) {
-    lora_wan.loraWanSetup();
+    //lora_wan.loraWanSetup();
   }
 }
