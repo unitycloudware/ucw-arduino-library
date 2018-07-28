@@ -12,10 +12,10 @@
 #include <lmic.h>
 #include <hal/hal.h>
 
-class UCW_LoRa_WAN{
+class UCW_LoRa_WAN {
 
   public:
-    UCW_LoRa_WAN(bool mode);
+    UCW_LoRa_WAN();
     ~UCW_LoRa_WAN();
     void initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint32_t DEVADDR);
     void initOTTA(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI);
