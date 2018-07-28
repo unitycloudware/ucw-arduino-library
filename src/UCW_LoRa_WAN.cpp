@@ -4,8 +4,14 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)  //Adafruit Feather M0 LoRa RFM 95
-#if defined(UCW_LORA_DEVICE)   //LORA device
+#include <UCW_LoRaWAN_Config.h>
+
+/*
+  LoRaWAN supports ABP or OTTA connection mode.
+  Depending on the mode, comment accordingly in UCW_LoRaWAN_Config.h file
+ */
+
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD) && defined(UCW_LORA_DEVICE)  //Adafruit Feather M0 LoRa RFM 95
 
 #include <UCW_LoRa_WAN.h>
 
@@ -109,5 +115,4 @@ void UCW_LoRa_WAN::channelConfig(bool multiChannel){
   }
 }
 
-#endif //LORA switch
 #endif //ARDUINO_ARCH_SAMD

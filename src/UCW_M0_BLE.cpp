@@ -3,8 +3,9 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-// ARM M0 boards only
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD) && defined(UCW_BLE_DEVICE)
+#include <UCW_BLE_Config.h>
+
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD) && defined(UCW_BLE_DEVICE)  // M0 BLE boards
 
 #include "UCW_M0_BLE.h"
 
