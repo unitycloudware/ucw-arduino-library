@@ -14,6 +14,9 @@
 
 #define DATA_STREAM "ucw-test"
 
+// Track if the current message has finished sending
+bool dataSent;
+
 // Schedule TX every this many seconds (might become longer due to duty cycle limitations).
 const unsigned TX_INTERVAL = 5;
 
@@ -39,10 +42,6 @@ void readData(){
 
   //payload
   String data = "hello, world!";
-
-  // Track if the current message has finished sending
-  bool dataSent = false;
-
   int len = data.length()+1; // length of payload data
   char mydata[len];
   data.toCharArray(mydata, sizeof(mydata));
@@ -53,6 +52,7 @@ void readData(){
 
   // Wait for the data to send or timeout after 15s
   int sinceSend = 0;
+  dataSent = false;
   while (!dataSent && sinceSend < 15000) {
     os_runloop_once();
     sinceSend++;

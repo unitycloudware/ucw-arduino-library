@@ -50,11 +50,6 @@
 // uncomment the following line for LoRaWAN,
 #include <UCW_LoRa_WAN.h>
 
-#define UCW_LORA_DEVICE //LORA switch
-
-//for ABP. comment if using OTTA
-#define UCW_LORA_ABP 1
-
 // provide network session key, application session key, and device address for ABP
 const uint8_t PROGMEM NWKSKEY[] = {};
 const uint8_t PROGMEM APPSKEY[] = {};
