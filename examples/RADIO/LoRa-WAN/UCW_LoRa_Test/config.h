@@ -47,20 +47,25 @@
     - Feather M0 WiFi -> https://www.adafruit.com/products/3010
  */
 
-// uncomment the following lines for LoRa,
+// uncomment the following line for LoRaWAN,
 #include <UCW_LoRa_WAN.h>
 
+#define UCW_LORA_DEVICE //LORA switch
+
+//for ABP. comment if using OTTA
+#define UCW_LORA_ABP 1
+
 // provide network session key, application session key, and device address for ABP
-const uint8_t PROGMEM NWKSKEY[16] = { 0x43, 0xB5, 0x99, 0x20, 0xA5, 0xDA, 0x6B, 0x73, 0x79, 0xFD, 0x53, 0xED, 0x45, 0xE6, 0x36, 0xBE };
-const uint8_t PROGMEM APPSKEY[16] = { 0xE1, 0x05, 0x7C, 0x8C, 0xFC, 0xF6, 0xE1, 0x36, 0xF9, 0x03, 0x27, 0xB7, 0x6D, 0x8B, 0x85, 0xFD };
-const uint32_t DEVADDR  = 0x26011885;
+const uint8_t PROGMEM NWKSKEY[] = {};
+const uint8_t PROGMEM APPSKEY[] = {};
+const uint32_t DEVADDR  = 0x00;
 
 // provide application-eui, application key, and device eui for OTTA
-//const uint8_t PROGMEM APPEUI[8] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x00, 0xBE, 0x71 };
-//const uint8_t PROGMEM APPKEY[16] = { 0x70, 0x3B, 0x53, 0x96, 0x31, 0x81, 0x43, 0xCA, 0x4E, 0xFF, 0xDB, 0xE6, 0xEB, 0x41, 0xAE, 0xA1 };
-//const uint8_t PROGMEM DEVEUI[8]  = { 0x00, 0x8B, 0x7A, 0x47, 0x78, 0xB0, 0x22, 0x0C };
+//const uint8_t PROGMEM APPEUI[] = {};
+//const uint8_t PROGMEM APPKEY[] = {};
+//const uint8_t PROGMEM DEVEUI[] = {};
 
-UCW_LoRa_WAN lora_wan(true);
+UCW_LoRa_WAN lora_wan;
 /**************************** BLE ************************************/
 
 /*
