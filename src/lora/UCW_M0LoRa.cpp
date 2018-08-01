@@ -86,8 +86,8 @@ void UCW_M0LoRa::resetConnection() {
   delay(10);
 }
 
-double UCW_M0LoRa::updateBatteryStatus() {
-  double measuredvbat = analogRead(VBATPIN);
+float UCW_M0LoRa::updateBatteryStatus() {
+  float measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage

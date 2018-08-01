@@ -30,7 +30,7 @@ class UCW_M0LoRa : public UCW_LoRa {
     String recMsgUpdate();
     bool sendData(String deviceID, String dataStreamName, String payload);
     void receiveData();
-    double updateBatteryStatus();
+    float updateBatteryStatus();
     String encryptData(String data);
     String decryptData(String data);
     bool isReceived();
