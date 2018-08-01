@@ -30,14 +30,14 @@ class UCW_ESP8266 : public UCW {
     ucw_status_t networkStatus();
     void printNetworkInfo();
     String connectionType();
-    void updateBatteryStatus();
+    float updateBatteryStatus();
     bool sendData(String deviceID, String dataStreamName, String payload);
 
   protected:
     void _connect();
     void _sys();
     void printConnectionStatus();
-    void battery_level();
+    float battery_level();
 
     const char *_ssid;
     const char *_pass;

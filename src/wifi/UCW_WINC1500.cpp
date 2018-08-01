@@ -169,18 +169,18 @@ void UCW_WINC1500::printConnectionStatus() {
   UCW_LOG_PRINTLN();
 }
 
-void UCW_WINC1500::updateBatteryStatus() {
-  /*
-   * Adafruit Feather M0 WiFi with ATWINC1500
+float UCW_WINC1500::updateBatteryStatus() {
+  /* Adafruit Feather M0 WiFi with ATWINC1500
    * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
    */
-
   float measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage
   UCW_LOG_PRINT("VBat: ");
   UCW_LOG_PRINTLN(measuredvbat);
+
+  return measuredvbat;
 }
 
 bool UCW_WINC1500::sendData(String deviceID, String dataStreamName, String payload){

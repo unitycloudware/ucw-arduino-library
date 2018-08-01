@@ -16,7 +16,7 @@
 #include <UCW_API_REST.h>
 #include <UCW_API_MQTT.h>
 
-#define VBATPIN A13
+#define VBATPIN A13 //measuring battery level
 
 class UCW_ESP32 : public UCW {
 
@@ -29,7 +29,7 @@ class UCW_ESP32 : public UCW {
     String connectionType();
     ucw_status_t networkStatus();
     bool sendData(String deviceID, String dataStreamName, String payload);
-    void updateBatteryStatus();
+    float updateBatteryStatus();
 
   protected:
     void _connect();

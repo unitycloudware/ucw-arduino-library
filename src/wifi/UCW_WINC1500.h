@@ -33,7 +33,7 @@ class UCW_WINC1500 : public UCW {
     void printNetworkInfo();
     String connectionType();
     ucw_status_t networkStatus();
-    void updateBatteryStatus();
+    float updateBatteryStatus();
     bool sendData(String deviceID, String dataStreamName, String payload);
 
   protected:

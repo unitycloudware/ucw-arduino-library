@@ -132,17 +132,15 @@ void UCW_ESP32::printConnectionStatus() {
 
 }
 
-void UCW_ESP32::updateBatteryStatus() {
-  /*
-   * Adafruit Feather M0 WiFi with ATWINC1500
-   * https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500/downloads?view=all
-   */
+float UCW_ESP32::updateBatteryStatus() {
   float measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage
   UCW_LOG_PRINT("VBat: ");
   UCW_LOG_PRINTLN(measuredvbat);
+
+  return measuredvbat;
 }
 
 bool UCW_ESP32::sendData(String deviceID, String dataStreamName, String payload){
