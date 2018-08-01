@@ -58,11 +58,9 @@
     - Feather M0 RFM95 LoRa -> https://www.adafruit.com/products/3178
  */
 
-#define UCW_LORA_DEVICE
-
 // uncomment the following two lines for LoRa,
 #include "UCW_LoRa_SUPPORT.h"
-UCW_LoRa_SUPPORT ucw();
+UCW_LoRa_SUPPORT ucw;
 
 /**************************** BLE ************************************/
 

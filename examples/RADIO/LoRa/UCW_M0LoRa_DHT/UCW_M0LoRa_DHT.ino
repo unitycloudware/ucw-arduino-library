@@ -24,11 +24,7 @@ void setup() {
   // Start the serial connection
   Serial.begin(9600);
 
-  while (!Serial) {
-    ; // Wait for serial port to connect. Needed for native USB port only
-  }
-
-  // Connect to UCW IoT Cloud
+  // ensure operating frequency is set
   Serial.print("Desired operating freq set");
   ucw.connect();
 
