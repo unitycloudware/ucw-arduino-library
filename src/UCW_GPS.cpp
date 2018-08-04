@@ -6,6 +6,8 @@
 
 #include "UCW_GPS.h"
 
+#if (!defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)) || defined(ARDUINO_ARCH_ESP32) //switch for M0 and ESP32 HUZZAH
+
 #if defined(ARDUINO_ARCH_ESP32)
   HardwareSerial mySerial(2);    //set hardware serial pin
   Adafruit_GPS GPS(&mySerial);
@@ -101,3 +103,5 @@ gpsParams UCW_GPS::readGPS(){
   }
   return gpsInfo;
 }
+
+#endif //M0 and ESP32 HUZZAH
