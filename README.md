@@ -36,6 +36,7 @@ by taking the following steps:
 * [RH_RF95](https://github.com/PaulStoffregen/RadioHead)
 * [Cape](https://github.com/gioblu/Cape)
 * [Adafruit BluefruitLE nRF51](https://github.com/adafruit/Adafruit_BluefruitLE_nRF51)
+* [Ethernet2](https://github.com/adafruit/Ethernet2)
 					
 by taking the steps below:
 * download the libraires using the links provided
