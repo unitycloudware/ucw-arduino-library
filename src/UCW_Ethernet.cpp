@@ -3,37 +3,11 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
+#include <UCW_Ethernet_Config.h>
+
+#if defined(UCW_ETHERNET_DEVICE)
 
 #include <UCW_Ethernet.h>
-
-
-//#define WIZ_RESET 9
-
-//define Chip pin for different boards
-#if defined(ESP8266)
-  // default for ESPressif
-  #define WIZ_CS 15
-#elif defined(ESP32)
-  #define WIZ_CS 33
-#elif defined(ARDUINO_STM32_FEATHER)
-  // default for WICED
-  #define WIZ_CS PB4
-#elif defined(TEENSYDUINO)
-  #define WIZ_CS 10
-#elif defined(ARDUINO_FEATHER52)
-  #define WIZ_CS 11
-#else   // default for 328p, 32u4, M4 and M0
-  #define WIZ_CS 10
-#endif
-
-#if defined(WIZ_RESET)
-  pinMode(WIZ_RESET, OUTPUT);
-  digitalWrite(WIZ_RESET, HIGH);
-  delay(100);
-  digitalWrite(WIZ_RESET, LOW);
-  delay(100);
-  digitalWrite(WIZ_RESET, HIGH);
-#endif
 
 //initialize variables
 int counter = 0;  //loop counter
@@ -166,9 +140,6 @@ bool UCW_Ethernet::sendData(String deviceID, String dataStreamName, String paylo
     //POST body
     client.println(payload);
 
-    //print to serial console any incoming data from network connection
-    printNetLog();
-
     return true;
   } else {
     UCW_LOG_PRINTLN("Connection failed");
@@ -183,3 +154,4 @@ void UCW_Ethernet::printNetLog() {
   }
 }
 
+#endif // defined
