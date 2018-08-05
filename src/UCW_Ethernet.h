@@ -3,8 +3,8 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#ifndef UCW_ETHERET_H
-#define UCW_ETHERET_H
+#ifndef UCW_ETHERNET_H
+#define UCW_ETHERNET_H
 
 #include <Arduino.h>
 #include <UCW_System.h>
@@ -22,11 +22,9 @@ class UCW_Ethernet : public UCW_API {
     void connect(byte *mac);
     bool sendData(String deviceID, String dataStreamName, String payload);
     void sys();
-
-  protected:
-    //method
     void printNetLog();
 
+  protected:
     //variables
     bool dhcp;
     byte *_mac;
@@ -34,5 +32,5 @@ class UCW_Ethernet : public UCW_API {
 
 };
 
-#endif //UCW_ETHERET_H
+#endif //UCW_ETHERNET_H
 
