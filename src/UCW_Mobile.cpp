@@ -3,8 +3,9 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
-#if !defined(ARDUINO_ARCH_SAMD)
+#include <UCW_GSM_Config.h>
+
+#if defined(UCW_GSM_DEVICE)
 
 #include "UCW_Mobile.h"
 
@@ -42,20 +43,16 @@ uint8_t type;
 //define __FlashStringHelper macro
 #define P(x) (const __FlashStringHelper*)(x)
 
-UCW_Mobile::UCW_Mobile(const char *apn, const char *username, const char *pass, const char *server, int *port, const char *token) {
-  //initialise FONAFlashStringPtr variables
-  _apn = P(apn);
-  _user = P(username);
-  _pass = P(pass);
-  _token = P(token);
-  _Host = P(server);
-  _port = port;
+//if data has been posted
+bool isdataPosted = false;
+
+UCW_Mobile::UCW_Mobile(UCWConfig *config) : UCW_API(config) {
 }
 
 UCW_Mobile::~UCW_Mobile() {
 }
 
-void UCW_Mobile::connect(){
+void UCW_Mobile::connect(const char *apn, const char *username, const char *pass){
   while (!Serial);
 
   Serial.println(F("Initializing....(May take a few seconds)"));
@@ -67,10 +64,14 @@ void UCW_Mobile::connect(){
   }
 
   deviceType();
-  readNwkStatus();
+
+  _apn = P(apn);
+  _user = P(username);
+  _pass = P(pass);
+  readNwkStatus(_apn, _user, _pass);
 }
 
-void UCW_Mobile::battLevel(){
+uint16_t UCW_Mobile::battLevel(){
   // read the battery voltage
   uint16_t vbat;
   if (! fona.getBattVoltage(&vbat)) {
@@ -84,6 +85,7 @@ void UCW_Mobile::battLevel(){
   } else {
     Serial.print(F("VPct = ")); Serial.print(vbat); Serial.println(F("%"));
   }
+  return vbat;
 }
 
 uint8_t UCW_Mobile::deviceType(){
@@ -122,7 +124,7 @@ uint8_t UCW_Mobile::deviceType(){
   return type;
 }
 
-void UCW_Mobile::readNwkStatus(){
+void UCW_Mobile::readNwkStatus(FONAFlashStringPtr AccessPoint, FONAFlashStringPtr Username, FONAFlashStringPtr Password){
   //delay for 5 seconds for SIM to connect to network
   delay(5000);
   // read the network/cellular status
@@ -169,45 +171,42 @@ void UCW_Mobile::readNwkStatus(){
   // Optionally configure HTTP gets to follow redirects over SSL. Uncomment the line below to achieve this
   //fona.setHTTPSRedirect(true);
 
-  //Enable GPRS or GPS
   delay(2000);
-  int count = 0;
+  //Enable GPS
   if ((type == FONA3G_A) || (type == FONA3G_E) || (type == FONA808_V1) || (type == FONA808_V2)){
-    while (!fona.enableGPS(true) && count < 3){
+    if (!fona.enableGPS(true)){
       Serial.println(F("Failed to turn on GPS"));
-      count++;
-      delay(2000);
+      fona.enableGPS(false);
+      delay(500);
+      fona.enableGPS(true);
     }
-    if (count !=3){
-      gpsData = true;
-    }
-  } else {
-    while (!fona.enableGPRS(true) && count < 3){
+    gpsData = true;
+  }
+  //Enable GPRS
+  if ((type == FONA800L) || (type == FONA800H)) {
+    if (!fona.enableGPRS(true)){
       Serial.println(F("Failed to turn on GPRS"));
-      count++;
-      delay(2000);
+      fona.enableGPRS(false);
+      delay(500);
+      fona.enableGPRS(true);
     }
-    if (count !=3){
-      gpsData = true;
-    }
+    gprsData = true;
   }
 }
 
 void UCW_Mobile::sys(){
-  if((fona.getNetworkStatus() != 1 && fona.getNetworkStatus() != 5)){
-    connect();
-  }
-  if (!gprsData && !gpsData){
-    connect();
-  }
-  if(gprsData){
+  if (gprsData) {
     if (fona.GPRSstate() == -1){
-      readNwkStatus();
+      fona.enableGPRS(false);
+      delay(500);
+      fona.enableGPRS(true);
     }
   }
   if(gpsData){
     if ((fona.GPSstatus() != 2) && fona.GPSstatus() != 3){
-      readNwkStatus();
+      fona.enableGPS(false);
+      delay(500);
+      fona.enableGPS(true);
     }
   }
 }
@@ -252,7 +251,7 @@ m_gpsParams UCW_Mobile::readGPS(){
   return gpsInfo;
 }
 
-bool UCW_Mobile::sendData(const char *deviceID, const char *dataStreamName, String payload, bool ssl){
+bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload){
   //declare variables
   uint16_t statuscode;
   int16_t length;
@@ -270,11 +269,18 @@ bool UCW_Mobile::sendData(const char *deviceID, const char *dataStreamName, Stri
   strcpy(myData, payload.c_str());
 
   //for secure communication
-  if(ssl){
+  if(_config->isSecuredConnection){
     fona.HTTP_ssl(true);
   }
 
-  if(!doPost(_userID, _dataStream, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
+  //token and url
+  if (!isdataPosted) {
+    Host = urlToChar(deviceID, dataStreamName);
+    delay(5000);
+    Token = tokenToChar();
+  }
+
+  if(!doPost(Host, Token, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
     Serial.println("Failed!");
     return false;
   }
@@ -294,11 +300,14 @@ bool UCW_Mobile::sendData(const char *deviceID, const char *dataStreamName, Stri
   }
   Serial.println(F("\n****"));
   fona.HTTP_POST_end();
+
+  //update status
+  isdataPosted = true;
+
   return true;
 }
 
-bool UCW_Mobile::doPost(FONAFlashStringPtr DeviceID,FONAFlashStringPtr datastreamName,
-              FONAFlashStringPtr contenttype,
+bool UCW_Mobile::doPost(char* _Url, char* _Token, FONAFlashStringPtr contenttype,
               const uint8_t *postdata, uint16_t postdatalen,
               uint16_t *status, uint16_t *datalen){
 
@@ -329,41 +338,14 @@ bool UCW_Mobile::doPost(FONAFlashStringPtr DeviceID,FONAFlashStringPtr datastrea
     return false;
 
   //-------------URL-----------------
-  flushInput1();
-  DEBUG_PRINT(F("\t---> "));
-  DEBUG_PRINT(F("AT+HTTPPARA=\""));
-  DEBUG_PRINT(F("URL"));
-  DEBUG_PRINTLN('"');
-
-  fonaSS.print(F("AT+HTTPPARA=\""));
-  fonaSS.print(F("URL"));
-  fonaSS.print(F("\",\""));
-  fonaSS.print(_Host);
-  fonaSS.print(F(":"));
-  fonaSS.print(_port);
-  fonaSS.print(datastreamName);
-  fonaSS.print(F("/messages/"));
-  fonaSS.print(DeviceID);
-  if (!fona.HTTP_para_end(true))
-    return false;
-
+  if (!fona.HTTP_para(F("URL"), _Url))
+      return false;
   //------------CONTENT------------------
   if (!fona.HTTP_para(F("CONTENT"), contenttype))
     return false;
   //------------USERDATA------------------
-  flushInput1();
-  DEBUG_PRINT(F("\t---> "));
-  DEBUG_PRINT(F("AT+HTTPPARA=\""));
-  DEBUG_PRINT(F("USERDATA"));
-  DEBUG_PRINTLN('"');
-
-  fonaSS.print(F("AT+HTTPPARA=\""));
-  fonaSS.print(F("USERDATA"));
-  fonaSS.print(F("\",\""));
-  fonaSS.print(F("Authorization: Bearer "));
-  fonaSS.print(_token);
-  if (!fona.HTTP_para_end(true))
-    return false;
+  if (!fona.HTTP_para(F("USERDATA"), _Token))
+      return false;
 
   // HTTP POST data
   if (!fona.HTTP_data(postdatalen, 10000))
@@ -384,17 +366,10 @@ bool UCW_Mobile::doPost(FONAFlashStringPtr DeviceID,FONAFlashStringPtr datastrea
   if (!fona.HTTP_readall(datalen))
     return false;
 
-  return true;
-}
+  //update status
+  isdataPosted = true;
 
-bool UCW_Mobile::sendSMS(char sendto, char message) {
-  if (!fona.sendSMS(sendto, message)) {
-    Serial.println(F("Failed"));
-    return false;
-  } else {
-    Serial.println(F("Sent!"));
-    return true;
-  }
+  return true;
 }
 
 void UCW_Mobile::unLock(char PIN){
@@ -402,49 +377,6 @@ void UCW_Mobile::unLock(char PIN){
     Serial.println(F("Failed"));
   } else {
     Serial.println(F("OK!"));
-  }
-}
-
-void UCW_Mobile::readAllSMS() {
-  int8_t smsnum = fona.getNumSMS();
-  uint16_t smslen;
-  int8_t smsn;
-
-  if ( (type == FONA3G_A) || (type == FONA3G_E) ) {
-    smsn = 0; // zero indexed
-    smsnum--;
-  } else {
-    smsn = 1;  // 1 indexed
-  }
-
-  for ( ; smsn <= smsnum; smsn++) {
-    Serial.print(F("\n\rReading SMS #")); Serial.println(smsn);
-    if (!fona.readSMS(smsn, replybuffer, 250, &smslen)) {  // pass in buffer and max len!
-      Serial.println(F("Failed!"));
-      break;
-    }
-    // if the length is zero, its a special case where the index number is higher
-    // so increase the max we'll look at!
-    if (smslen == 0) {
-      Serial.println(F("[empty slot]"));
-      smsnum++;
-      continue;
-    }
-
-    Serial.print(F("***** SMS #")); Serial.print(smsn);
-    Serial.print(" ("); Serial.print(smslen); Serial.println(F(") bytes *****"));
-    Serial.println(replybuffer);
-    Serial.println(F("*****"));
-  }
-}
-
-bool UCW_Mobile::deleteSMS(int num) {
-  if (fona.deleteSMS(num)) {
-    Serial.println(F("SMS deleted"));
-    return true;
-  } else {
-    Serial.println(F("Couldn't delete"));
-    return false;
   }
 }
 
@@ -513,6 +445,5 @@ void UCW_Mobile::flushInput1() {
     }
 }
 
-#endif //M0
+#endif // defined
 
-#endif // ESP8266 ESP32
