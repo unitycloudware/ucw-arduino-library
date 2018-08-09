@@ -255,9 +255,6 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   //declare variables
   uint16_t statuscode;
   int16_t length;
-  //initialise FONAFlashStringPtr variables
-  _userID = P(deviceID);
-  _dataStream = P(dataStreamName);
 
   int len = payload.length()+1; // length of payload data
   if(len > MAX_DATA_LENGTH){
@@ -365,9 +362,6 @@ bool UCW_Mobile::doPost(char* _Url, char* _Token, FONAFlashStringPtr contenttype
   // HTTP response data
   if (!fona.HTTP_readall(datalen))
     return false;
-
-  //update status
-  isdataPosted = true;
 
   return true;
 }
