@@ -20,6 +20,9 @@ class UCW_API {
     String userAgent();
     String apiUrl();
     String apiPath();
+    char* urlToChar(String device, String name);
+    char* tokenToChar();
+
 
     String _version;
     String _userAgent;

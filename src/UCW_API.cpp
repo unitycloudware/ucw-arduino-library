@@ -30,3 +30,22 @@ String UCW_API::apiUrl() {
 String UCW_API::apiPath() {
   return UCW_API_PATH;
 }
+
+char* UCW_API::urlToChar(String device, String name) {
+  String url = _config->host + ":" + String(_config->port) + UCW_API_PATH + "/data-streams/" + name + "/messages/" + device;
+  int len = url.length()+1;
+  char *newUrl = new char[len];
+  strcpy(newUrl, url.c_str());
+  Serial.println(newUrl);
+
+  return newUrl;
+}
+
+char* UCW_API::tokenToChar() {
+  String Token = "Authorization: Bearer " + _config->token;
+  int len = Token.length()+1;
+  char *newToken = new char[len];
+  strcpy(newToken, Token.c_str());
+
+  return newToken;
+}
