@@ -19,8 +19,8 @@
 #define DHTPIN 6
 #define DHTTYPE DHT22
 
-const char DEVICE_ID[]PROGMEM = "your_device_id";
-const char DATA_STREAM[]PROGMEM = "your_dataStream_name";
+#define DEVICE_ID "your_device_id"
+#define DATA_STREAM "your_dataStream_name"
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -34,10 +34,10 @@ void setup() {
 
   //wait till serial console is opened
   while (! Serial);
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   //connect to mobile operator
-  ucw.connect();
+  ucw.connect(Apn, Username, Password);
 
   //initialise DHT sensor
   dht.begin();
@@ -46,7 +46,7 @@ void setup() {
 void loop() {
   ucw.sys();
   readData();
-  ucw.sendData(DEVICE_ID, DATA_STREAM, data, true);
+  ucw.sendData(DEVICE_ID, DATA_STREAM, data);
 }
 
 void readData(){
@@ -59,7 +59,7 @@ void readData(){
   float h = dht.readHumidity();
   float t = dht.readTemperature(); // read temperature as Celsius (the default)
 
-  String data = "{\"latitude\": %lat,\"longitude\": %long,\"humidity\": %humidity, \"temperatureC\": %temperatureC}";
+  data = "{\"latitude\": %lat,\"longitude\": %long,\"humidity\": %humidity, \"temperatureC\": %temperatureC}";
   data.replace("%lat", String(Latitude));
   data.replace("%long", String(Longitude));
   data.replace("%humidity", String(h));
