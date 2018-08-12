@@ -28,7 +28,7 @@ class UCW {
    protected:
     virtual void _connect() = 0;
     virtual void _sys() = 0;
-    virtual void updateBatteryStatus() = 0;
+    virtual float updateBatteryStatus() = 0;
 
     ucw_status_t _status = UCW_IDLE;
     UCWConfig *_config;
