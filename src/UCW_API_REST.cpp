@@ -5,6 +5,12 @@
 
 #include "UCW_API_REST.h"
 
+//if data has been posted
+bool dataPost = false;
+
+//declare uri
+String apiUri;
+
 UCW_API_REST::UCW_API_REST(UCWConfig *config, HttpClient *http) : UCW_API(config) {
   _http = http;
 }
@@ -30,21 +36,25 @@ bool UCW_API_REST::sendDataRest(String deviceID, String dataStreamName, String p
   UCW_LOG_PRINT(payload.length());
   UCW_LOG_PRINTLN(" byte(s)");
 
-  String apiUri = apiPath() + "/data-streams/%dataStreamName/messages/%deviceId";
-  apiUri.replace("%deviceId", deviceID);
-  apiUri.replace("%dataStreamName", dataStreamName);
+  if (!dataPost) {
+    apiUri = apiPath() + "/data-streams/%dataStreamName/messages/%deviceId";
+    apiUri.replace("%deviceId", deviceID);
+    apiUri.replace("%dataStreamName", dataStreamName);
+  }
 
   UCW_LOG_PRINTLN("API URI: " + apiUri);
 
   _http->beginRequest();
   _http->post(apiUri);
 
+  //headers
   _http->sendHeader("Host", _config->host);
   _http->sendHeader("User-Agent", userAgent());
   _http->sendHeader("Authorization", "Bearer " + _config->token);
   _http->sendHeader("Content-Type", "application/json");
   _http->sendHeader("Content-Length", payload.length());
 
+  //body
   _http->beginBody();
   _http->print(payload);
   _http->endRequest();
@@ -66,6 +76,9 @@ bool UCW_API_REST::sendDataRest(String deviceID, String dataStreamName, String p
   UCW_LOG_PRINTLN();
 
   UCW_LOG_PRINTLN(response);
+
+  //update post status
+  dataPost = true;
 
   return statusCode == 201;
 }
