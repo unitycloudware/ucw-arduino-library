@@ -11,6 +11,15 @@
 //Switches for GSM
 #define UCW_GSM_DEVICE    //GSM switch
 
+//set maximum payload length
+#define MAX_DATA_LENGTH 255
+
+// this is a large buffer for replies
+char replybuffer[255];
+
+//define __FlashStringHelper macro
+#define P(x) (const __FlashStringHelper*)(x)
+
 #endif //UCW_GSM_CONFIG
 
 

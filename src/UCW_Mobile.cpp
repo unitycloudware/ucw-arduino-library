@@ -31,17 +31,8 @@ Adafruit_FONA fona = Adafruit_FONA(FONA_RST);
 // Use this one for FONA 3G
 //Adafruit_FONA_3G fona = Adafruit_FONA_3G(FONA_RST);
 
-//set maximum payload length
-#define MAX_DATA_LENGTH 255
-
-// this is a large buffer for replies
-char replybuffer[255];
-
 //FONA type
 uint8_t type;
-
-//define __FlashStringHelper macro
-#define P(x) (const __FlashStringHelper*)(x)
 
 //if data has been posted
 bool isdataPosted = false;
@@ -230,7 +221,9 @@ m_gpsParams UCW_Mobile::readGPS(){
         Serial.println(F("Failed to turn GPRS on"));
       }
     }
-  } else if(gpsData){
+  }
+
+  if (gpsData) {
     // if you ask for an altitude reading, getGPS will return false if there isn't a 3D fix
     boolean gps_success = fona.getGPS(&latitude, &longitude, &speed_kph, &heading, &altitude);
 
