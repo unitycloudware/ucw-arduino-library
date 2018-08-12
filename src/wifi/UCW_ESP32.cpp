@@ -25,19 +25,10 @@ UCW_ESP32::~UCW_ESP32() {
 }
 
 void UCW_ESP32::_connect() {
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    UCW_LOG_PRINTLN("WiFi shield not present!");
-    return;
-  }
-  delay(1000);
-
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-  delay(100);
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect(true);
+  WiFi.enableSTA(true);
+  delay(2000);
   WiFi.begin(_ssid, _pass);
-  delay(100);
   _status = UCW_NET_DISCONNECTED;
 }
 
