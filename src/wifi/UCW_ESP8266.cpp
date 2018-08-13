@@ -4,7 +4,7 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if defined(ESP8266)
+#if defined(ESP8266) && defined (UCW_WIFI_DEVICE)
 
 #include "UCW_ESP8266.h"
 #include <EEPROM.h>

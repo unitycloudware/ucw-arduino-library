@@ -6,7 +6,7 @@
 #ifndef UCW_WIFI_H
 #define UCW_WIFI_H
 
-#if defined(UCW_WIFI_DEVICE)
+#define UCW_WIFI_DEVICE
 
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 

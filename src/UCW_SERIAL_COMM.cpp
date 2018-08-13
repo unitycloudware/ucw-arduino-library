@@ -3,6 +3,8 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
+#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
+
 #include "UCW_SERIAL_COMM.h"
 
 UCW_SERIAL_COMM::UCW_SERIAL_COMM(){
@@ -61,3 +63,4 @@ String UCW_SERIAL_COMM::readSerial() {
   return input;
 }
 
+#endif //M0 Switch

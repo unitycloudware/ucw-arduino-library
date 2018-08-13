@@ -5,7 +5,7 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if defined(ARDUINO_ARCH_ESP32)
+#if defined(ARDUINO_ARCH_ESP32) && defined (UCW_WIFI_DEVICE)
 
 #include "UCW_ESP32.h"
 
