@@ -3,7 +3,7 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
+#if !defined (ARDUINO_ARCH_ESP32)
 
 #include "UCW_SERIAL_COMM.h"
 
