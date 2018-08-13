@@ -71,3 +71,4 @@
 
 // uncomment the following line for BLE,
 #include "UCW_M0_BLE.h"
+UCW_M0_BLE ucw;

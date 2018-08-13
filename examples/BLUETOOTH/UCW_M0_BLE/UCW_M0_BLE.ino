@@ -20,15 +20,15 @@ This sends sensor data to a bluetooth enabled device.
 
 DHT dht(DHTPIN, DHTTYPE);
 
-UCW_M0_BLE UCW_M0_Object;
-
-
 void setup() {
   // put your setup code here, to run once:
-  UCW_M0_Object.setupBLE();
+  Serial.begin(9600);
 
+  //initialise BLE
+  ucw.connect();
+
+  //initialise DHT
   dht.begin();
-
 }
 
 void loop() {
@@ -51,17 +51,17 @@ void loop() {
   // Compute heat index in Celsius (isFahreheit = false)
   float hic = dht.computeHeatIndex(t, h, false);
 
-  String data = "{\"humidity\": %humidity, \"temperatureC\": %temperatureC,\"temperatureF\": %temperatureF,\"heat_indexC\": %heat_indexC,\"heat_indexF\": %heat_indexF}";
+  String data = "{\"humidity\": %humidity, \"tempC\": %temperatureC,\"tempF\": %temperatureF,\"heat_indexC\": %heat_indexC,\"heat_indexF\": %heat_indexF}";
   data.replace("%humidity", String(h));
   data.replace("%temperatureC", String(t));
   data.replace("%temperatureF", String(f));
   data.replace("%heat_indexC", String(hic));
   data.replace("%heat_indexF", String(hif));
 
-  UCW_M0_Object.sendData(data);
+  ucw.sendData(data);
 
   //check if any data is has been received and print to console if any
-  String receivedMsg = UCW_M0_Object.receiveData();
+  String receivedMsg = ucw.receiveData();
   if (receivedMsg.length() > 0){
     Serial.println(receivedMsg);
   }
