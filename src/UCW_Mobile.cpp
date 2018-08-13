@@ -5,7 +5,7 @@
 
 #include <UCW_GSM_Config.h>
 
-#if !defined(ARDUINO_ARCH_ESP32) && defined(UCW_GSM_DEVICE)
+#if !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266) && !defined(ARDUINO_ARCH_SAMD) && defined(UCW_GSM_DEVICE)
 
 #include "UCW_Mobile.h"
 
