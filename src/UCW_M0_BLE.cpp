@@ -38,18 +38,6 @@ UCW_M0_BLE::UCW_M0_BLE(){
 }
 
 void UCW_M0_BLE::connect() {
-  /*
-   * Adafruit Feather M0 Bluefruit LE
-   * https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
-  */
-
-  while (!Serial);  // required for Flora & Micro
-  delay(500);
-
-  Serial.begin(115200);
-  Serial.println(F("Adafruit Bluefruit Command Mode Example"));
-  Serial.println(F("---------------------------------------"));
-
   /* Initialise the module */
   Serial.print(F("Initialising the Bluefruit LE module: "));
 
@@ -77,7 +65,8 @@ void UCW_M0_BLE::connect() {
   Serial.println(F("Then Enter characters to send to Bluefruit"));
   Serial.println();
 
-  ble.verbose(false);  // debug info is a little annoying after this point!
+  // comment if debug info not needed
+  ble.verbose(false);
 
   /* Wait for connection */
   while (! ble.isConnected()){
@@ -94,27 +83,21 @@ void UCW_M0_BLE::connect() {
   }
 }
 
-void UCW_M0_BLE::sendData(String payload) {
-
+bool UCW_M0_BLE::sendData(String payload) {
   if (payload.length() < 1) {
     Serial.println("No data to send!");
     delay(1000);
-    return;
+    return false;
   }
 
-  if (payload.length() > 0) {
-    String input = "{\"Data\": \"%payload\"}";
-    input.replace("%payload", payload);
+  // Send characters to Bluefruit
+  Serial.print("[Send] ");
+  Serial.println(payload);
+  ble.print("AT+BLEUARTTX=");
+  ble.println(payload);
+  delay(2000);
 
-    // Send characters to Bluefruit
-    Serial.print("[Send] ");
-    Serial.println(input);
-    ble.print("AT+BLEUARTTX=");
-    ble.println(input);
-    updateBattStatus();
-
-    delay(2000);
-  }
+  return true;
 }
 
 String UCW_M0_BLE::receiveData(){
@@ -134,14 +117,15 @@ String UCW_M0_BLE::receiveData(){
   return output;
 }
 
-double UCW_M0_BLE::updateBattStatus(){
-  //https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le?view=all
-  double measuredvbat = analogRead(VBATPIN);
+float UCW_M0_BLE::updateBattStatus(){
+  float measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage
   Serial.print("VBat: " ); Serial.println(measuredvbat);
   Serial.println();
+
+  return measuredvbat;
 }
 
 #endif // SAMD

@@ -6,8 +6,6 @@
 #ifndef UCWM0_BLE_H
 #define UCWM0_BLE_H
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_BLE.h>
@@ -25,7 +23,7 @@ class UCW_M0_BLE {
     //methods
     void connect();
     void sendData(String payload);
-    double updateBattStatus();
+    float updateBattStatus();
     String receiveData();
 
     protected:
@@ -33,7 +31,5 @@ class UCW_M0_BLE {
     String output;
 
 };
-
-#endif //ARDUINO_ARCH_SAMD
 
 #endif // UCWM0_BLE_H
