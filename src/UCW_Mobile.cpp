@@ -3,9 +3,9 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
-#include <UCW_GSM_Config.h>
+#include <UCW_Config.h>
 
-#if !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266) && !defined(ARDUINO_ARCH_SAMD) && defined(UCW_GSM_DEVICE)
+#if defined(UCW_GSM_DEVICE)
 
 #include "UCW_Mobile.h"
 
@@ -33,6 +33,15 @@ Adafruit_FONA fona = Adafruit_FONA(FONA_RST);
 
 //FONA type
 uint8_t type;
+
+//set maximum payload length
+#define MAX_DATA_LENGTH 255
+
+// this is a large buffer for replies
+char replybuffer[255];
+
+//define __FlashStringHelper macro
+#define P(x) (const __FlashStringHelper*)(x)
 
 //if data has been posted
 bool isdataPosted = false;
