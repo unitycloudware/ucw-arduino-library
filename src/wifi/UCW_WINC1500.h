@@ -7,14 +7,13 @@
 #ifndef UCW_WINC1500_H
 #define UCW_WINC1500_H
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <WiFi101.h>
 #include <UCW.h>
 #include <UCW_API_REST.h>
 #include <UCW_API_MQTT.h>
+#include <UCW_System.h>
 
 // Adafruit Feather M0 WiFi
 #define WINC_CS   8
@@ -48,7 +47,5 @@ class UCW_WINC1500 : public UCW {
     UCW_API_REST *_api;
     UCW_API_MQTT *_api_m;
 };
-
-#endif // ARDUINO_ARCH_SAMD
 
 #endif // UCW_WINC1500_H
