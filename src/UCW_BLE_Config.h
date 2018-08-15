@@ -10,7 +10,7 @@
 
 
 //Switches for BLE
-#define UCW_BLE_DEVICE    //BLE switch
+//#define UCW_BLE_DEVICE    //BLE switch
 
 #endif //UCW_CONFIG_H
 

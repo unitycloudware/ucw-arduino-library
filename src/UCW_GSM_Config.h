@@ -9,7 +9,7 @@
 #define UCW_GSM_CONFIG
 
 //Switches for GSM
-#define UCW_GSM_DEVICE    //GSM switch
+//#define UCW_GSM_DEVICE    //GSM switch
 
 //set maximum payload length
 #define MAX_DATA_LENGTH 255

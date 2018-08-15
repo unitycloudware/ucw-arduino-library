@@ -9,7 +9,7 @@
 #define UCW_ETHERNET_CONFIG
 
 //Switches for BLE
-#define UCW_ETHERNET_DEVICE    //Ethernet switch
+//#define UCW_ETHERNET_DEVICE    //Ethernet switch
 
 //#define WIZ_RESET 9
 

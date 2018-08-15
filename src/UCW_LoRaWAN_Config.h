@@ -10,7 +10,7 @@
 
 
 //Switches for LORA AND BLE
-#define UCW_LORA_DEVICE    //LORA switch
+//#define UCW_LORA_DEVICE    //LORA switch
 
 //variables for LoRaWAN. Comment appropriately
 #define UCW_LORA_ABP
