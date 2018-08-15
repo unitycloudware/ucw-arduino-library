@@ -12,13 +12,6 @@
 
 #include <Arduino.h>
 
-//switches
-//#define UCW_BLE_DEVICE    //BLE switch
-//#define UCW_ETHERNET_DEVICE    //Ethernet switch
-//#define UCW_GSM_DEVICE    //GSM switch
-//#define UCW_LORA_DEVICE    //LORA switch
-#define UCW_WIFI_DEVICE
-
 #define UCW_API_HOST  "cloud.dev.unitycloudware.com"
 #define UCW_API_PORT  80
 #define UCW_API_PATH  "/api/ucw/v1"
