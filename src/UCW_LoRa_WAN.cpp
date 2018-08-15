@@ -15,7 +15,7 @@
 
 #include <UCW_LoRa_WAN.h>
 
-/variables for LoRaWAN. Comment appropriately
+//variables for LoRaWAN. Comment appropriately
 #define UCW_LORA_ABP
 //#define UCW_LORA_OTTA
 
