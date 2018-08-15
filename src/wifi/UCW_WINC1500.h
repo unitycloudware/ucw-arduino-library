@@ -13,7 +13,6 @@
 #include <UCW.h>
 #include <UCW_API_REST.h>
 #include <UCW_API_MQTT.h>
-#include <UCW_System.h>
 
 // Adafruit Feather M0 WiFi
 #define WINC_CS   8

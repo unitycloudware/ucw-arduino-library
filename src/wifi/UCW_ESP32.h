@@ -7,8 +7,6 @@
 #ifndef UCW_ESP32_H
 #define UCW_ESP32_H
 
-#if defined(ARDUINO_ARCH_ESP32)
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <WiFi.h>
@@ -42,8 +40,6 @@ class UCW_ESP32 : public UCW {
     UCW_API_REST *_api;
     UCW_API_MQTT *_api_m;
 };
-
-#endif // ARDUINO_ARCH_ESP32
 
 #endif // UCW_ESP32_H
 

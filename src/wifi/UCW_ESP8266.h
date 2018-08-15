@@ -7,15 +7,12 @@
 #ifndef UCW_ESP8266_H
 #define UCW_ESP8266_H
 
-#if defined(ESP8266)
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <ESP8266WiFi.h>
 #include <UCW.h>
 #include <UCW_API_REST.h>
 #include <UCW_API_MQTT.h>
-
 
 #define BATTERY_INTERVAL 5 // how often to report battery level(in minutes)
 
@@ -47,7 +44,5 @@ class UCW_ESP8266 : public UCW {
 
 
 };
-
-#endif // ESP8266
 
 #endif // UCW_ESP8266_H

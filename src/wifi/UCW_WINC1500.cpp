@@ -4,6 +4,8 @@
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
+#include <UCW_Config.h>
+
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD) && defined (UCW_WIFI_DEVICE)
 
 #include "UCW_WINC1500.h"
