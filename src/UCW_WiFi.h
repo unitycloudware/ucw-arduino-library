@@ -6,8 +6,6 @@
 #ifndef UCW_WIFI_H
 #define UCW_WIFI_H
 
-#define UCW_WIFI_DEVICE
-
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
   #include "wifi/UCW_WINC1500.h"
@@ -24,5 +22,4 @@
   typedef UCW_ESP8266 UCW_WiFi;
 
 #endif //board switch
-#endif // WiFi switch
 #endif // UCW_WIFI_H
