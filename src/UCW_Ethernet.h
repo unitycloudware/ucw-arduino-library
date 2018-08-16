@@ -22,13 +22,15 @@ class UCW_Ethernet : public UCW_API {
     void connect(byte *mac);
     bool sendData(String deviceID, String dataStreamName, String payload);
     void sys();
-    void printNetLog();
 
   protected:
     //variables
     bool dhcp;
-    byte *_mac;
-    IPAddress _ip;
+    char *Path;
+    char *Host;
+    char *Payload;
+    char *UserAgent;
+    char *Token;
 
 };
 

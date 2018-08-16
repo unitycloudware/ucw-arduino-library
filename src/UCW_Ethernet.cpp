@@ -38,14 +38,12 @@
 #endif
 
 
-//initialize variables
-int counter = 0;  //loop counter
-bool dhcp = true;  //DHCP or static ip? set true for DHCP
+//initialize variable
+bool dhcp = true;  //set true for DHCP
+bool isDataPost = false;
 
-//declare variables
-byte *_mac;
-IPAddress _ip;
-EthernetClient client;  // Initialize the Ethernet client library
+// Initialize the Ethernet client library
+EthernetClient client;
 
 UCW_Ethernet::UCW_Ethernet (UCWConfig *config) : UCW_API(config) {
 }
@@ -54,9 +52,6 @@ UCW_Ethernet::~UCW_Ethernet () {
 }
 
 void UCW_Ethernet::connect (byte *mac, IPAddress ip) {
-  _mac = mac;
-  _ip = ip;
-
   //initialisation
   Ethernet.init(WIZ_CS);
 
@@ -78,11 +73,11 @@ void UCW_Ethernet::connect (byte *mac, IPAddress ip) {
   if (client.connect((_config->host).c_str(), _config->port)) {
     UCW_LOG_PRINTLN("Connected to UCW platform!");
   }
+
+  dhcp = false;
 }
 
 void UCW_Ethernet::connect (byte *mac) {
-  _mac = mac;
-
   //initialisation
   Ethernet.init(WIZ_CS);
 
@@ -105,31 +100,19 @@ void UCW_Ethernet::connect (byte *mac) {
 }
 
 void UCW_Ethernet::sys() {
-  //for static IP, dhcp = false
-  if (dhcp) {
+  if (dhcp){
     Ethernet.maintain();
-    if (!client.connected()) {
-      connect(_mac);
-    } else if (client.connected() && counter > 9) {
-      //reset connection after 10 successful loops
-      client.stop();
-      client.connect((_config->host).c_str(), _config->port);
-      counter = 0;
-    }
-  } else {
-    if (!client.connected()) {
-      connect(_mac, _ip);
-    } else if (client.connected() && counter > 9) {
-      //reset connection after 10 successful loops
-      client.stop();
-      client.connect((_config->host).c_str(), _config->port);
-      counter = 0;
-    }
   }
-  counter++;
+  client.stop();
+  if (!client.connect((_config->host).c_str(), _config->port)){
+    UCW_LOG_PRINTLN("Unable to connect to UCW platform!");
+  }
 }
 
 bool UCW_Ethernet::sendData(String deviceID, String dataStreamName, String payload) {
+   //declare variable
+    char outBuf[150];
+
   //ensure there is payload to send
   if (payload.length() < 1) {
     UCW_LOG_PRINTLN("No data to send!");
@@ -149,37 +132,48 @@ bool UCW_Ethernet::sendData(String deviceID, String dataStreamName, String paylo
   path.replace("%deviceId", deviceID);
   path.replace("%dataStreamName", dataStreamName);
 
+  //convert strings to char
+  if (!isDataPost){
+    Path = ToChar(path);
+    Host = ToChar(_config->host + ":" + String(_config->port));
+    UserAgent = userToChar();
+    Token = tokenToChar();
+  }
+  Payload = ToChar(payload);
+
   if (client.connected()) {
     //POST Headers
-    client.print("POST ");
-    client.print(path);
-    client.println(" HTTP/1.1");
-    client.print("Host: ");
-    client.println(_config->host);
-    client.print("User-Agent: ");
-    client.println(userAgent());
-    client.print("Authorization: ");
-    client.print("Bearer ");
-    client.println(_config->token);
-    client.println("Connection: close");
-    client.println("Content-Type: application/json");
-    client.print("Content-Length: " );
-    client.println(String(payload.length()));
+    sprintf(outBuf,"POST %s HTTP/1.1", Path);
+    client.println(outBuf);
+    sprintf(outBuf,"Host: %s", Host);
+    client.println(outBuf);
+    sprintf(outBuf,"User-Agent: %s", UserAgent);
+    client.println(outBuf);
+    sprintf(outBuf,"%s", Token);
+    client.println(outBuf);
+    client.println(F("Content-Type: application/json"));
+    client.println(F("Connection: close"));
+    sprintf(outBuf,"Content-Length: %u\r\n",strlen(Payload));
+    client.println(outBuf);
 
     //POST body
-    client.println(payload);
+    client.print(newPayload);
 
-    return true;
+    //for debugging
+    while(!client.available()) {
+      ;
+    }
+
+    while(client.available()) {
+      char c = client.read();
+      Serial.write(c);
+    }
+  isDataPost = true;
+
+  return true;
   } else {
     UCW_LOG_PRINTLN("Connection failed");
     return false;
-  }
-}
-
-void UCW_Ethernet::printNetLog() {
-  while (client.available()) {
-    char c = client.read();
-    Serial.write(c);
   }
 }
 
