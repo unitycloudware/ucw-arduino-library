@@ -44,15 +44,27 @@ by taking the steps below:
 * place this renamed folder in your \Arduino\libraries folder
 				
 
+## EDIT THE UCW_CONFIG FILE
+Depending on the communication medium, uncomment the appropriate switch in the UCW_Config.h file. By default, the WiFi switch is un-commented
+
+```
+//switches
+//#define UCW_BLE_DEVICE    //BLE switch
+//#define UCW_ETHERNET_DEVICE    //Ethernet switch
+//#define UCW_GSM_DEVICE    //GSM switch
+//#define UCW_LORA_DEVICE    //LORA switch
+#define UCW_WIFI_DEVICE     //WiFi switch
+```
+    	
+
 ## EDIT THE CONFIG FILE
 	
 Include UCW_System file
 ```	
  #include <UCW_System.h>
 ```
-  
-Depending on the communication medium, uncomment the appropriate switch in the UCW_Config.h file.
-Also, comment the config struct if using BLE or LoRa connection.
+
+Comment the config struct if using BLE or LoRa connection.
 		
 WiFi/GSM/Ethernet Struct :   
 * provide host-name(server)  
