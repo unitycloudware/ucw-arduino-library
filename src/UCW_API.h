@@ -22,12 +22,12 @@ class UCW_API {
     String apiPath();
     char* urlToChar(String device, String name);
     char* tokenToChar();
-
+    char* userToChar();
+    char* ToChar(String newString);
 
     String _version;
     String _userAgent;
     UCWConfig *_config;
-
 };
 
 #endif // UCW_API_H

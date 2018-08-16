@@ -12,7 +12,6 @@ UCW_API::UCW_API(UCWConfig *config){
 UCW_API::~UCW_API() {
 }
 
-
 String UCW_API::version() {
   _version = String(UCW_VERSION_MAJOR) + "." + String(UCW_VERSION_MINOR) + "." + String(UCW_VERSION_PATCH);
   return _version;
@@ -48,4 +47,21 @@ char* UCW_API::tokenToChar() {
   strcpy(newToken, Token.c_str());
 
   return newToken;
+}
+
+char* UCW_API::userToChar() {
+  String user = userAgent();
+  int len = user.length()+1;
+  char *newUser = new char[len];
+  strcpy(newUser, user.c_str());
+
+  return newUser;
+}
+
+char* UCW_API::ToChar(String newString) {
+  int len = newString.length()+1;
+  char *newChar = new char[len];
+  strcpy(newChar, newString.c_str());
+
+  return newChar;
 }
