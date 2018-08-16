@@ -32,7 +32,7 @@ class UCW_Mobile : public UCW_API {
     uint8_t getResponse(FONAFlashStringPtr send, uint16_t timeout);
     uint8_t readline1(uint16_t timeout, bool multiline);
     void flushInput1();
-    bool doPost(char* _Url, char* _Token, FONAFlashStringPtr contenttype,
+    bool doPost(char* _host, char* _device, char* _name, char* _Token, FONAFlashStringPtr contenttype,
               const uint8_t *postdata, uint16_t postdatalen,
               uint16_t *status, uint16_t *datalen);
 
@@ -47,6 +47,8 @@ class UCW_Mobile : public UCW_API {
     bool gprsData = false;
     char *Host;
     char *Token;
+    char *Name;
+    char *Device;
     UCWConfig *_config;
 
 };

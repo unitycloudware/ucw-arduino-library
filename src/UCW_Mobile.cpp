@@ -149,6 +149,8 @@ void UCW_Mobile::readNwkStatus(FONAFlashStringPtr AccessPoint, FONAFlashStringPt
   } else {
     Serial.println(F("Registered (roaming)"));
   }
+  //delay
+  delay(2000);
   // read the RSSI
   uint8_t n = fona.getRSSI();
   int8_t r;
@@ -179,6 +181,7 @@ void UCW_Mobile::readNwkStatus(FONAFlashStringPtr AccessPoint, FONAFlashStringPt
       fona.enableGPS(false);
       delay(500);
       fona.enableGPS(true);
+      delay(1000);
     }
     gpsData = true;
   }
@@ -189,9 +192,11 @@ void UCW_Mobile::readNwkStatus(FONAFlashStringPtr AccessPoint, FONAFlashStringPt
       fona.enableGPRS(false);
       delay(500);
       fona.enableGPRS(true);
+      delay(1000);
     }
     gprsData = true;
   }
+  delay(3000);
 }
 
 void UCW_Mobile::sys(){
@@ -200,6 +205,7 @@ void UCW_Mobile::sys(){
       fona.enableGPRS(false);
       delay(500);
       fona.enableGPRS(true);
+      delay(1000);
     }
   }
   if(gpsData){
@@ -207,6 +213,7 @@ void UCW_Mobile::sys(){
       fona.enableGPS(false);
       delay(500);
       fona.enableGPS(true);
+      delay(1000);
     }
   }
 }
@@ -274,12 +281,17 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
 
   //token and url
   if (!isdataPosted) {
-    Host = urlToChar(deviceID, dataStreamName);
-    delay(5000);
+    Host = urlToChar();
+    delay(2000);
     Token = tokenToChar();
+    delay(2000);
+    Device = ToChar(deviceID);
+    delay(2000);
+    Name = ToChar(dataStreamName);
+    delay(2000);
   }
 
-  if(!doPost(Host, Token, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
+  if(!doPost(Host, Device, Name, Token, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
     Serial.println("Failed!");
     return false;
   }
@@ -300,15 +312,15 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   Serial.println(F("\n****"));
   fona.HTTP_POST_end();
 
-  //update status
-  isdataPosted = true;
-
   return true;
 }
 
-bool UCW_Mobile::doPost(char* _Url, char* _Token, FONAFlashStringPtr contenttype,
+bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _Token, FONAFlashStringPtr contenttype,
               const uint8_t *postdata, uint16_t postdatalen,
               uint16_t *status, uint16_t *datalen){
+
+  //update status
+    isdataPosted = true;
 
   // Handle any pending
   fona.HTTP_term();
@@ -337,8 +349,23 @@ bool UCW_Mobile::doPost(char* _Url, char* _Token, FONAFlashStringPtr contenttype
     return false;
 
   //-------------URL-----------------
-  if (!fona.HTTP_para(F("URL"), _Url))
-      return false;
+  flushInput1();
+  DEBUG_PRINT(F("\t---> "));
+  DEBUG_PRINT(F("AT+HTTPPARA=\""));
+  DEBUG_PRINT(F("URL"));
+  DEBUG_PRINTLN('"');
+
+  fonaSS.print(F("AT+HTTPPARA=\""));
+  fonaSS.print(F("URL"));
+  fonaSS.print(F("\",\""));
+  fonaSS.print(_host);
+  fonaSS.print(F("/api/ucw/v1/data-streams/"));
+  fonaSS.print(_name);
+  fonaSS.print(F("/messages/"));
+  fonaSS.print(_device);
+  if (!fona.HTTP_para_end(true))
+    return false;
+
   //------------CONTENT------------------
   if (!fona.HTTP_para(F("CONTENT"), contenttype))
     return false;
