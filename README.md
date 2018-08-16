@@ -51,7 +51,8 @@ Include UCW_System file
  #include <UCW_System.h>
 ```
   
-Depending on the communication medium, uncomment the appropriate config struct. BLE connection does not require a struct.
+Depending on the communication medium, uncomment the appropriate switch in the UCW_Config.h file.
+Also, comment the config struct if using BLE or LoRa connection.
 		
 WiFi/GSM/Ethernet Struct :   
 * provide host-name(server)  
@@ -61,28 +62,15 @@ WiFi/GSM/Ethernet Struct :
 * provide token for authentication  
   
 ```
-//for WiFi/GSM connections only
+//for WiFi/GSM/Ethernet connections 
 static UCWConfig cfg = {
   .host = UCW_API_HOST,
   .port = UCW_API_PORT,
   .isSecuredConnection = false,
-  .useMqtt = false,
+  .useMqtt = false,   
   .token = "your_token"
 };
-```
-  
-LoRa Struct:  
-* indicate operating frequency (this varies depending on the your location)  
-* provide token for authentication  
-  
-```
-//for LoRa connection only
-static UCWConfig_Lora cfg = {
-  .freq = RF95_FREQ,
-  .token = "your_token"
-};
-```
-    	
+```     	
 Include the library needed by uncommenting accordingly.
  
 ```	
@@ -95,7 +83,7 @@ UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
   
 //LoRa			
 #include "UCW_LoRa_SUPPORT.h"
-UCW_LoRa_SUPPORT ucw(&cfg);
+UCW_LoRa_SUPPORT ucw;
   		
 //GSM			
 #include "UCW_Mobile.h"
@@ -107,17 +95,6 @@ UCW_Mobile ucw(&cfg);
 ```
 #include "config.h"
 ```
-  
-    
-## WIFI....REST OR MQTT?
-  
-When using WiFi connection, indicate if communication protocol will be REST-API or MQTT
-```
-//comment appropriately
- UCW_API_REST ucw_api =  ucw.api();         //REST
- UCW_API_MQTT ucw_api =  ucw.api_m();      //MQTT
-```
-  
   	
 ## CONNECT TO THE NETWORK
   
@@ -152,11 +129,7 @@ The sendData method takes three parameters:
 2 dataStreamName: name of the data stream
 3 payload: the collected data from the sensor or monitoring device
 ```
-// WiFi
-ucw_api.sendData(deviceID, dataStreamName, payload);  //REST
-ucw_api_m.sendData(deviceID, dataStreamName, payload);  //MQTT
-  		
-//GSM or LoRa
+// WiFi, GSM or Ethernet
 ucw.sendData(deviceID, dataStreamName, payload);
 ```
   	
@@ -167,5 +140,5 @@ Examples implementing this library can be found [here](https://gitlab.unitycloud
   
   
 ## NOTE 
-  	
-All examples were implemented using Adafruit M0 feather, ESP Huzzah 8266, ESP 32, Feather M0 LoRa RFM95, Feather 32u4 FONA
+ 
+All examples were implemented using the following Adafruit devices: M0 feather, ESP Huzzah 8266, ESP 32, Feather M0 LoRa RFM95, Feather 32u4 FONA, Ethernet Featherwing

@@ -66,7 +66,7 @@ UCW_Ethernet ucw(&cfg);
 
 // uncomment the following two lines for LoRa,
 //#include "UCW_LoRa_SUPPORT.h"
-//UCW_LoRa_SUPPORT ucw();
+//UCW_LoRa_SUPPORT ucw;
 
 /**************************** BLE ************************************/
 
