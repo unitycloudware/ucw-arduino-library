@@ -50,6 +50,8 @@ struct UCWConfig {
     int port;
     bool isSecuredConnection;
     bool useMqtt;
+    String mqttUser;
+    String mqttPassword;
     String token;
 };
 
