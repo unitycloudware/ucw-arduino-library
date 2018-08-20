@@ -1,9 +1,12 @@
 /*
-  Arduino library to access UCW Platform
+  Arduino library to access UCW Platform using MQTT protocol
   Copyright 2018 Unity{Cloud}Ware - UCW Industries Ltd. All rights reserved.
  */
 
 #include "UCW_API_MQTT.h"
+
+//initialise variable
+isPub = false;
 
 UCW_API_MQTT::UCW_API_MQTT(UCWConfig *config, PubSubClient *mqttClient) : UCW_API(config) {
   _mqttClient = mqttClient;
@@ -27,13 +30,18 @@ bool UCW_API_MQTT::sendDataMqtt(String deviceID, String dataStreamName, String p
   UCW_LOG_PRINT("Publishing new data:");
   UCW_LOG_PRINTLN(payload);
 
-  String newPayload = payload + "/data-streams/%dataStreamName/messages/%deviceId";
-  newPayload.replace("%deviceId", deviceID);
-  newPayload.replace("%dataStreamName", dataStreamName);
+  if (!isPub) {
+    String payload_topic = "/data-streams/%dataStreamName/messages/%deviceId";
+    payload_topic.replace("%deviceId", deviceID);
+    payload_topic.replace("%dataStreamName", dataStreamName);
+  }
 
-  _mqttClient->publish(payload_topic, newPayload.c_str(), isRetained);
+  _mqttClient->publish(payload_topic.c_str(), payload.c_str(), isRetained);
   _mqttClient->loop();
   _mqttClient->subscribe(sub_topic);
+
+  //update status
+  isPub = true;
 
   return true;
 }
@@ -41,16 +49,16 @@ bool UCW_API_MQTT::sendDataMqtt(String deviceID, String dataStreamName, String p
 void UCW_API_MQTT::reconnect() {
   // Loop until we're reconnected
   while (!_mqttClient->connected()) {
-    Serial.print("Attempting MQTT connection...");
+    UCW_LOG_PRINT("Attempting MQTT connection...");
     // Attempt to connect
     // If you do not want to use a username and password, change next line to
-    // if (_mqttClient.connect("MQTT_clientID")) {
-    if (_mqttClient->connect("MQTT_clientID", MQTT_user, MQTT_password)) {
-      Serial.println("connected");
+    // if (_mqttClient.connect(MQTT_clientID)) {
+    if (_mqttClient->connect(MQTT_clientID, (_config->mqttUser).c_str(), (_config->mqttPassword).c_str())) {
+      UCW_LOG_PRINTLN("connected");
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(_mqttClient->state());
-      Serial.println(" try again in 5 seconds");
+      UCW_LOG_PRINT("failed, rc=");
+      UCW_LOG_PRINT(_mqttClient->state());
+      UCW_LOG_PRINTLN(" try again in 5 seconds");
       // Wait 5 seconds before retrying
       delay(5000);
     }

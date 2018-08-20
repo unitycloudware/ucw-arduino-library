@@ -19,15 +19,11 @@
     #include <WiFi.h>
 #endif
 
-#define MQTT_user "your_username"
-#define MQTT_password "your_password"
-
 //define topics
-#define payload_topic "your_payload_topic"
 #define sub_topic "your_subscription_topic"
 
 //client ID
-#define MQTT_clientID "your_client_ID"
+#define MQTT_clientID ""
 
 class UCW_API_MQTT : public UCW_API {
 
@@ -39,7 +35,6 @@ class UCW_API_MQTT : public UCW_API {
 
   protected:
     void reconnect();
-    void resetConnection();
     PubSubClient *_mqttClient;
     bool isRetained = false;
 
