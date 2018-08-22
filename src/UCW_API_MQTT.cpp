@@ -5,9 +5,6 @@
 
 #include "UCW_API_MQTT.h"
 
-//initialise variable
-isPub = false;
-
 UCW_API_MQTT::UCW_API_MQTT(UCWConfig *config, PubSubClient *mqttClient) : UCW_API(config) {
   _mqttClient = mqttClient;
 }
@@ -31,7 +28,7 @@ bool UCW_API_MQTT::sendDataMqtt(String deviceID, String dataStreamName, String p
   UCW_LOG_PRINTLN(payload);
 
   if (!isPub) {
-    String payload_topic = "/data-streams/%dataStreamName/messages/%deviceId";
+    payload_topic = "/data-streams/%dataStreamName/messages/%deviceId";
     payload_topic.replace("%deviceId", deviceID);
     payload_topic.replace("%dataStreamName", dataStreamName);
   }
@@ -51,7 +48,7 @@ void UCW_API_MQTT::reconnect() {
   while (!_mqttClient->connected()) {
     UCW_LOG_PRINT("Attempting MQTT connection...");
     // Attempt to connect
-    // If you do not want to use a username and password, change next line to
+    // If you do not want to use a username and password, uncomment next line
     // if (_mqttClient.connect(MQTT_clientID)) {
     if (_mqttClient->connect(MQTT_clientID, (_config->mqttUser).c_str(), (_config->mqttPassword).c_str())) {
       UCW_LOG_PRINTLN("connected");

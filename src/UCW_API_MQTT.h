@@ -11,14 +11,6 @@
 #include <PubSubClient.h>
 #include <UCW_API.h>
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
-    #include <WiFi101.h>
-#elif defined(ESP8266)
-    #include <ESP8266WiFi.h>
-#elif defined(ARDUINO_ARCH_ESP32)
-    #include <WiFi.h>
-#endif
-
 //define topics
 #define sub_topic "your_subscription_topic"
 
@@ -37,6 +29,8 @@ class UCW_API_MQTT : public UCW_API {
     void reconnect();
     PubSubClient *_mqttClient;
     bool isRetained = false;
+    String payload_topic;
+    bool isPub = false;
 
 };
 

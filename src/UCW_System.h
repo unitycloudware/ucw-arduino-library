@@ -19,6 +19,8 @@
 // for MQTT
 #define UCW_MQTT_HOST  "cloud.dev.unitycloudware.com"
 #define UCW_MQTT_PORT  1883
+#define UCW_MQTT_USER  "mqtt_username"
+#define UCW_MQTT_PASS  "mqtt_password"
 
 // uncomment / comment to turn on/off error output
 #define UCW_ERROR
