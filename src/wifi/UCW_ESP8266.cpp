@@ -9,10 +9,6 @@
 #if defined(ESP8266) && defined (UCW_WIFI_DEVICE)
 
 #include "UCW_ESP8266.h"
-#include <EEPROM.h>
-
-//if battery status has been read
-bool vbat = false;
 
 UCW_ESP8266::UCW_ESP8266(UCWConfig *config, const char *ssid, const char *pass) : UCW(config) {
   _ssid = ssid;
@@ -138,45 +134,20 @@ void UCW_ESP8266::printConnectionStatus() {
 }
 
 float UCW_ESP8266::updateBatteryStatus(){
-  //https://learn.adafruit.com/using-ifttt-with-adafruit-io/arduino-code-1
-  EEPROM.begin(512);
-  byte battery_count = EEPROM.read(0);
-  float batt;
-  // we only need this to happen once every 100x runtime seconds,
-  // so we use eeprom to track the count between resets.
-  if(battery_count >= ((BATTERY_INTERVAL * 60) / SLEEP_LENGTH)) {
-    // reset counter
-    battery_count = 0;
-    // report battery level to Adafruit IO
-    batt = battery_level();
-    vbat = true;
-  } else {
-    // increment counter
-    battery_count++;
-    if (!vbat) {
-      batt = 100;
-    }
+  //variable for measuring battery
+  float measuredvbat;
+
+  if (!vbat) {
+    measuredvbat = analogRead(A0);
   }
 
-  // save the current count
-  EEPROM.write(0, battery_count);
-  EEPROM.commit();
+  vbat = true;
+  if (millis() - lastConnectionTime > postingInterval) {
+    float measuredvbat = analogRead(A0);
+    lastConnectionTime = millis();
+  }
 
-  return batt;
-}
-
-float UCW_ESP8266::battery_level(){
-  //read the battery level from the ESP8266 analog in pin.
-  // analog read level is 10 bit 0-1023 (0V-1V).
-  // use 1M & 220K voltage divider takes the max
-  // lipo value of 4.2V and drops it to 0.758V max.
-  float level = analogRead(A0);
-
-  // convert battery level to percent
-  level = map(level, 580, 774, 0, 100);
-  Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
-
-  return level;
+  return measuredvbat;
 }
 
 bool UCW_ESP8266::sendData(String deviceID, String dataStreamName, String payload){

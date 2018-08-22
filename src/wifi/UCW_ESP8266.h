@@ -14,10 +14,6 @@
 #include <UCW_API_REST.h>
 #include <UCW_API_MQTT.h>
 
-#define BATTERY_INTERVAL 5 // how often to report battery level(in minutes)
-
-#define SLEEP_LENGTH 1 // how long to sleep between updates(in seconds)
-
 class UCW_ESP8266 : public UCW {
 
   public:
@@ -34,14 +30,18 @@ class UCW_ESP8266 : public UCW {
     void _connect();
     void _sys();
     void printConnectionStatus();
-    float battery_level();
 
+    //variables/objects
     const char *_ssid;
     const char *_pass;
     WiFiClient *_httpClient;
     UCW_API_REST *_api;
     UCW_API_MQTT *_api_m;
 
+    //battery variables
+    bool vbat = false;
+    unsigned long lastConnectionTime = 0;             // last time you connected to the server, in milliseconds
+    const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
 
 };
 
