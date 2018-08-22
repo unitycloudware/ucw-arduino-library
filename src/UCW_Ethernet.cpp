@@ -38,143 +38,158 @@
 #endif
 
 
-//initialize variable
-bool dhcp = true;  //set true for DHCP
-bool isDataPost = false;
-
-// Initialize the Ethernet client library
-EthernetClient client;
-
-UCW_Ethernet::UCW_Ethernet (UCWConfig *config) : UCW_API(config) {
+UCW_Ethernet::UCW_Ethernet (UCWConfig *config, byte *mac, IPAddress ip) : UCW(config) {
+  client = new EthernetClient();
+  _mac = mac;
+  _ip = ip;
 }
 
 UCW_Ethernet::~UCW_Ethernet () {
+  if (client) {
+    delete client;
+  }
 }
 
-void UCW_Ethernet::connect (byte *mac, IPAddress ip) {
+void UCW_Ethernet::_connect () {
   //initialisation
   Ethernet.init(WIZ_CS);
 
   // give the ethernet module time 1s to boot up:
   delay(1000);
 
+  //counter
+  int counter = 4;
+  for (int i = 0; i < 4; i++) {
+    if (_ip[i] == 0){
+      counter--;
+    }
+  }
+
   // start the Ethernet connection:
-  if (!Ethernet.begin(mac)) {
+  _getIP = Ethernet.begin(_mac);
+  if (_getIP == 0) {
     UCW_LOG_PRINTLN("Failed to configure Ethernet using DHCP");
     dhcp = false; //using static ip
-    Ethernet.begin(mac, ip);
-  }
-
-  // print the Ethernet board/shield's IP address:
-  UCW_LOG_PRINT("IP address: ");
-  UCW_LOG_PRINTLN(Ethernet.localIP());
-
-  //connect to server
-  if (client.connect((_config->host).c_str(), _config->port)) {
-    UCW_LOG_PRINTLN("Connected to UCW platform!");
-  }
-
-  dhcp = false;
-}
-
-void UCW_Ethernet::connect (byte *mac) {
-  //initialisation
-  Ethernet.init(WIZ_CS);
-
-  // give the ethernet module time 1s to boot up:
-  delay(1000);
-
-  // start the Ethernet connection:
-  if (!Ethernet.begin(mac)) {
-    UCW_LOG_PRINTLN("Failed to configure ethernet using DHCP. confirm MAC address");
-  }
-
-  // print the Ethernet board/shield's IP address:
-  UCW_LOG_PRINT("IP address: ");
-  UCW_LOG_PRINTLN(Ethernet.localIP());
-
-  //connect to server
-  if (client.connect((_config->host).c_str(), _config->port)) {
-    UCW_LOG_PRINTLN("Connected to UCW platform!");
+    if (counter != 0) {
+      Ethernet.begin(_mac, _ip);
+      _getIP = 1;
+    }
   }
 }
 
-void UCW_Ethernet::sys() {
+void UCW_Ethernet::_sys() {
   if (dhcp){
     Ethernet.maintain();
   }
-  client.stop();
-  if (!client.connect((_config->host).c_str(), _config->port)){
-    UCW_LOG_PRINTLN("Unable to connect to UCW platform!");
+
+  client->stop();
+
+  //MQTT
+  if (_config->useMqtt) {
+    _mqttClient = new PubSubClient (*client);
+    _mqttClient->setServer((_config->host).c_str(), _config->port);
+    api_m = new UCW_API_MQTT(_config, _mqttClient);
+    _status = UCW_CONNECTED;
+  } else {
+
+  //REST_API
+  dns.begin(Ethernet.dnsServerIP());
+  if (dns.getHostByName((_config->host).c_str(), server_IP_addr) == 1) {
+    _http = new HttpClient(*client, server_IP_addr, _config->port);
+    api = new UCW_API_REST(_config, _http);
+    _status = UCW_CONNECTED;
   }
 }
 
 bool UCW_Ethernet::sendData(String deviceID, String dataStreamName, String payload) {
-   //declare variable
-    char outBuf[150];
-
-  //ensure there is payload to send
-  if (payload.length() < 1) {
-    UCW_LOG_PRINTLN("No data to send!");
-    return false;
-  }
-
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Request:");
-  UCW_LOG_PRINTLN();
-  UCW_LOG_PRINTLN("Sending payload: " + payload);
-  UCW_LOG_PRINT("Payload length: ");
-  UCW_LOG_PRINT(payload.length());
-  UCW_LOG_PRINTLN(" byte(s)");
-
-  //url path
-  String path = apiPath() + "/data-streams/%dataStreamName/messages/%deviceId";
-  path.replace("%deviceId", deviceID);
-  path.replace("%dataStreamName", dataStreamName);
-
-  //convert strings to char
-  if (!isDataPost){
-    Path = ToChar(path);
-    Host = ToChar(_config->host + ":" + String(_config->port));
-    UserAgent = userToChar();
-    Token = tokenToChar();
-  }
-  Payload = ToChar(payload);
-
-  if (client.connected()) {
-    //POST Headers
-    sprintf(outBuf,"POST %s HTTP/1.1", Path);
-    client.println(outBuf);
-    sprintf(outBuf,"Host: %s", Host);
-    client.println(outBuf);
-    sprintf(outBuf,"User-Agent: %s", UserAgent);
-    client.println(outBuf);
-    sprintf(outBuf,"%s", Token);
-    client.println(outBuf);
-    client.println(F("Content-Type: application/json"));
-    client.println(F("Connection: close"));
-    sprintf(outBuf,"Content-Length: %u\r\n",strlen(Payload));
-    client.println(outBuf);
-
-    //POST body
-    client.print(newPayload);
-
-    //for debugging
-    while(!client.available()) {
-      ;
+  if (_config->useMqtt) {
+    if (api_m->sendDataMqtt(deviceID, dataStreamName, payload)){
+      return true;
+    } else {
+      return false;
     }
-
-    while(client.available()) {
-      char c = client.read();
-      Serial.write(c);
-    }
-  isDataPost = true;
-
-  return true;
   } else {
-    UCW_LOG_PRINTLN("Connection failed");
-    return false;
+    if(api->sendDataRest(deviceID, dataStreamName, payload)){
+      return true;
+    } else {
+      return false;
+    }
   }
+}
+
+String UCW_Ethernet::connectionType() {
+  return "ethernet_wing";
+}
+
+void UCW_Ethernet::printNetworkInfo() {
+  UCW_LOG_PRINTLN();
+
+  // Print your DHCP assigned IP address:
+  UCW_LOG_PRINT("IP Address: ");
+  UCW_LOG_PRINTLN(Ethernet.localIP());
+
+  // Print the subnetmask IP address:
+  UCW_LOG_PRINT("Subnet mask address: ");
+  UCW_LOG_PRINTLN(Ethernet.subnetMask());
+
+  // Print the connected network gateway IP address:
+  UCW_LOG_PRINT("Gateway address: ");
+  UCW_LOG_PRINTLN(Ethernet.gatewayIP());
+
+  // Print the DNS server IP address:
+  UCW_LOG_PRINT("DNS Server IP address: ");
+  UCW_LOG_PRINTLN(Ethernet.dnsServerIP());
+
+  // Print the DNS domain name:
+  UCW_LOG_PRINT("DNS domain name: ");
+  UCW_LOG_PRINTLN(Ethernet.dnsDomainName());
+
+  UCW_LOG_PRINTLN();
+}
+
+ucw_status_t UCW_Ethernet::networkStatus() {
+  switch(_getIP) {
+    case 1:
+      return UCW_NET_CONNECTED;
+
+    case 0:
+      return UCW_NET_CONNECT_FAILED;
+
+    default:
+      return UCW_NET_DISCONNECTED;
+  }
+}
+
+float UCW_Ethernet::updateBatteryStatus() {
+  //variable for measuring battery
+  float measuredvbat;
+
+  #if (!defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)) || defined(ARDUINO_ARCH_ESP32)
+
+  measuredvbat = analogRead(A7);
+  measuredvbat *= 2;    // we divided by 2, so multiply back
+  measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+  measuredvbat /= 1024; // convert to voltage
+  UCW_LOG_PRINT("VBat: ");
+  UCW_LOG_PRINTLN(measuredvbat);
+
+  return measuredvbat;
+
+  #elif defined(ESP8266)
+
+  if (!vbat) {
+    measuredvbat = analogRead(A0);
+  }
+
+  vbat = true;
+  if (millis() - lastConnectionTime > postingInterval) {
+    measuredvbat = analogRead(A0);
+    lastConnectionTime = millis();
+  }
+
+  return measuredvbat;
+
+  #endif // defined
 }
 
 #endif // defined
