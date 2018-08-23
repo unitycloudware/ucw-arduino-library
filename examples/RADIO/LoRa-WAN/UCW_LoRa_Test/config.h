@@ -4,12 +4,14 @@
 /************************ UCW Platform Config *******************************/
 
 // Configuration of the connection string to the UCW Platform.
-//for WiFi API connection only
+//for WiFi/GSM/Ethernet connections only
 //static UCWConfig cfg = {
 //  .host = UCW_API_HOST,
 //  .port = UCW_API_PORT,
 //  .isSecuredConnection = false,
 //  .useMqtt = false,
+//  .mqttUser = UCW_MQTT_USER,
+//  .mqttPassword = UCW_MQTT_PASS,
 //  .token = "your_token"
 //};
 
@@ -40,14 +42,30 @@
 //#include "UCW_Ethernet.h"
 //UCW_Ethernet ucw(&cfg);
 
+/**************************** GSM ************************************/
+
+/*
+  The UCW_Mobile client will work with the following boards:
+    - Adafruit Feather 32u4 FONA -> https://www.adafruit.com/products/3027
+ */
+
+// uncomment the following two lines for GSM,
+//#include "UCW_Mobile.h"
+//UCW_Mobile ucw(&cfg);
+
 /**************************** LoRa ************************************/
 
 /*
   The UCW_LoRa client will work with the following boards:
-    - Feather M0 WiFi -> https://www.adafruit.com/products/3010
+    - Feather M0 RFM95 LoRa -> https://www.adafruit.com/products/3178
  */
 
-// uncomment the following line for LoRaWAN,
+// uncomment the following two lines for LoRa,
+//#include "UCW_LoRa_SUPPORT.h"
+//UCW_LoRa_SUPPORT ucw;
+
+/****************LoRaWAN*************/
+// uncomment the following lines for LoRaWAN,
 #include <UCW_LoRa_WAN.h>
 
 // provide network session key, application session key, and device address for ABP
@@ -61,12 +79,14 @@ const uint32_t DEVADDR  = 0x00;
 //const uint8_t PROGMEM DEVEUI[] = {};
 
 UCW_LoRa_WAN lora_wan;
+
 /**************************** BLE ************************************/
 
 /*
   The UCW_LoRa client will work with the following boards:
-    - Feather M0 WiFi -> https://www.adafruit.com/products/3010
+    - Feather M0 BLE -> https://www.adafruit.com/products/2995
  */
 
-// uncomment the following line for BLE,
+// uncomment the following lines below for BLE,
 //#include "UCW_M0_BLE.h"
+//UCW_M0_BLE ucw;

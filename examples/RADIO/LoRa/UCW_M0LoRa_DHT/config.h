@@ -4,12 +4,14 @@
 /************************ UCW Platform Config *******************************/
 
 // Configuration of the connection string to the UCW Platform.
-//for WiFi/GSM connections only
+//for WiFi/GSM/Ethernet connections only
 //static UCWConfig cfg = {
 //  .host = UCW_API_HOST,
 //  .port = UCW_API_PORT,
 //  .isSecuredConnection = false,
 //  .useMqtt = false,
+//  .mqttUser = UCW_MQTT_USER,
+//  .mqttPassword = UCW_MQTT_PASS,
 //  .token = "your_token"
 //};
 
@@ -25,7 +27,7 @@
 
 //#define WIFI_SSID       "your_ssid"
 //#define WIFI_PASS       "your_pass"
-//
+
 //#include "UCW_WiFi.h"
 //UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
@@ -62,14 +64,29 @@
 #include "UCW_LoRa_SUPPORT.h"
 UCW_LoRa_SUPPORT ucw;
 
+/****************LoRaWAN*************/
+// uncomment the following lines for LoRaWAN,
+//#include <UCW_LoRa_WAN.h>
+
+// provide network session key, application session key, and device address for ABP
+//const uint8_t PROGMEM NWKSKEY[] = {};
+//const uint8_t PROGMEM APPSKEY[] = {};
+//const uint32_t DEVADDR  = 0x00;
+
+// provide application-eui, application key, and device eui for OTTA
+//const uint8_t PROGMEM APPEUI[] = {};
+//const uint8_t PROGMEM APPKEY[] = {};
+//const uint8_t PROGMEM DEVEUI[] = {};
+
+//UCW_LoRa_WAN lora_wan;
+
 /**************************** BLE ************************************/
 
 /*
   The UCW_LoRa client will work with the following boards:
-    - Feather M0 WiFi -> https://www.adafruit.com/products/3010
+    - Feather M0 BLE -> https://www.adafruit.com/products/2995
  */
 
-//define UCW_BLE_DEVICE
-// uncomment the following line for BLE,
+// uncomment the following lines below for BLE,
 //#include "UCW_M0_BLE.h"
-
+//UCW_M0_BLE ucw;
