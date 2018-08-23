@@ -30,33 +30,6 @@ String UCW_API::apiPath() {
   return UCW_API_PATH;
 }
 
-char* UCW_API::urlToChar() {
-  String url = _config->host + ":" + String(_config->port);
-  int len = url.length()+1;
-  char *newUrl = new char[len];
-  strcpy(newUrl, url.c_str());
-
-  return newUrl;
-}
-
-char* UCW_API::tokenToChar() {
-  String Token = "Authorization: Bearer " + _config->token;
-  int len = Token.length()+1;
-  char *newToken = new char[len];
-  strcpy(newToken, Token.c_str());
-
-  return newToken;
-}
-
-char* UCW_API::userToChar() {
-  String user = userAgent();
-  int len = user.length()+1;
-  char *newUser = new char[len];
-  strcpy(newUser, user.c_str());
-
-  return newUser;
-}
-
 char* UCW_API::ToChar(String newString) {
   int len = newString.length()+1;
   char *newChar = new char[len];
