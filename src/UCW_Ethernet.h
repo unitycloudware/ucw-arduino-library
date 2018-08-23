@@ -31,6 +31,7 @@ class UCW_Ethernet : public UCW {
     //methods
     void _sys();
     void _connect();
+    void printConnectionStatus();
 
     //variables
     bool dhcp;

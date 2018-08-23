@@ -122,6 +122,14 @@ String UCW_Ethernet::connectionType() {
 }
 
 void UCW_Ethernet::printNetworkInfo() {
+  if (networkStatus() != UCW_NET_CONNECTED) {
+    UCW_LOG_PRINTLN("Device is not connected!");
+    return;
+  }
+  printConnectionStatus();
+}
+
+void UCW_Ethernet::printConnectionStatus() {
   UCW_LOG_PRINTLN();
 
   // Print your DHCP assigned IP address:
