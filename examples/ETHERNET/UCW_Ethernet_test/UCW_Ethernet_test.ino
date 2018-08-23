@@ -25,9 +25,17 @@ void setup() {
 
   // Connect to UCW IoT Cloud
   Serial.print("Connecting to UCW IoT Cloud...");
-  ucw.connect(mac_add);  //using DHCP
-  //ucw.connect(mac_add, ip_add);  //using static IP
-  
+  ucw.connect();
+
+  //Wait for a connection
+  while (ucw.status() != UCW_NET_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+
+  // We are connected
+  Serial.println(" Connected!");
+  ucw.printNetworkInfo();
 }
 
 void loop() {

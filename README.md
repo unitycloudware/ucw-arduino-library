@@ -70,7 +70,9 @@ WiFi/GSM/Ethernet Struct :
 * provide host-name(server)  
 * provide port   
 * indicate if connection is secured or not  
-* state protocol used (REST or MQTT)  
+* state protocol used (REST or MQTT)
+* MQTT username (if applicable)
+* MQTT password (if applicable)    
 * provide token for authentication  
   
 ```
@@ -79,7 +81,9 @@ static UCWConfig cfg = {
   .host = UCW_API_HOST,
   .port = UCW_API_PORT,
   .isSecuredConnection = false,
-  .useMqtt = false,   
+  .useMqtt = false,
+  .mqttUser = UCW_MQTT_USER,
+  .mqttPassword = UCW_MQTT_PASS,   
   .token = "your_token"
 };
 ```     	
