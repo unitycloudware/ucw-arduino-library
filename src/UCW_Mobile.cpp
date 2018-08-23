@@ -43,7 +43,7 @@ char replybuffer[255];
 //define __FlashStringHelper macro
 #define P(x) (const __FlashStringHelper*)(x)
 
-//if data has been posted
+//reduce memory allocation
 bool isdataPosted = false;
 
 UCW_Mobile::UCW_Mobile(UCWConfig *config) : UCW_API(config) {
@@ -281,19 +281,34 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
 
   //token and url
   if (!isdataPosted) {
-    Host = urlToChar();
+    Host = ToChar(_config->host);
     delay(2000);
-    Token = tokenToChar();
+    Token = ToChar(_config->token);
     delay(2000);
     Device = ToChar(deviceID);
     delay(2000);
     Name = ToChar(dataStreamName);
     delay(2000);
+    isdataPosted = true;
   }
 
-  if(!doPost(Host, Device, Name, Token, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
-    Serial.println("Failed!");
-    return false;
+  //REST or MQTT?
+  if (_config->useMqtt) {
+    if (!_Client) {
+      _Client = new PubSubClient;
+      _Client->setServer((_config->host).c_str(), _config->port);
+      Api_m = new UCW_API_MQTT(_config, _Client);
+    }
+    if (Api_m->sendDataMqtt(deviceID, dataStreamName, payload)){
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if(!doPost(Host, Device, Name, Token, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
+      Serial.println("Failed!");
+      return false;
+    }
   }
 
   while (length > 0) {
@@ -319,9 +334,6 @@ bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _Token, F
               const uint8_t *postdata, uint16_t postdatalen,
               uint16_t *status, uint16_t *datalen){
 
-  //update status
-    isdataPosted = true;
-
   // Handle any pending
   fona.HTTP_term();
   // Initialize and set parameters
@@ -343,7 +355,9 @@ bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _Token, F
   fonaSS.print(F("\",\""));
   fonaSS.print(F("UCW-Adafruit-GSM"));
   fonaSS.print(UCW_VERSION_MAJOR);
+  fonaSS.print(F("."));
   fonaSS.print(UCW_VERSION_MINOR);
+  fonaSS.print(F("."));
   fonaSS.print(UCW_VERSION_PATCH);
   if (!fona.HTTP_para_end(true))
     return false;
@@ -359,6 +373,8 @@ bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _Token, F
   fonaSS.print(F("URL"));
   fonaSS.print(F("\",\""));
   fonaSS.print(_host);
+  fonaSS.print(F(":"));
+  fonaSS.print(_config->port);
   fonaSS.print(F("/api/ucw/v1/data-streams/"));
   fonaSS.print(_name);
   fonaSS.print(F("/messages/"));
@@ -370,8 +386,19 @@ bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _Token, F
   if (!fona.HTTP_para(F("CONTENT"), contenttype))
     return false;
   //------------USERDATA------------------
-  if (!fona.HTTP_para(F("USERDATA"), _Token))
-      return false;
+  flushInput1();
+  DEBUG_PRINT(F("\t---> "));
+  DEBUG_PRINT(F("AT+HTTPPARA=\""));
+  DEBUG_PRINT(F("USERDATA"));
+  DEBUG_PRINTLN('"');
+
+  fonaSS.print(F("AT+HTTPPARA=\""));
+  fonaSS.print(F("USERDATA"));
+  fonaSS.print(F("\",\""));
+  fonaSS.print(F("Authorization: Bearer "));
+  fonaSS.print(_token);
+  if (!fona.HTTP_para_end(true))
+    return false;
 
   // HTTP POST data
   if (!fona.HTTP_data(postdatalen, 10000))
