@@ -50,6 +50,8 @@ class UCW_Mobile : public UCW_API {
     char *Name;
     char *Device;
     UCWConfig *_config;
+    PubSubClient *_Client;
+    UCW_API_MQTT *Api_m;
 
 };
 

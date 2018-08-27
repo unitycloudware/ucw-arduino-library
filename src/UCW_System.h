@@ -17,7 +17,7 @@
 #define UCW_API_PATH  "/api/ucw/v1"
 
 // for MQTT
-#define UCW_MQTT_HOST  "cloud.dev.unitycloudware.com"
+#define UCW_MQTT_HOST  "01.mqtt.services.unitycloudware.net"
 #define UCW_MQTT_PORT  1883
 #define UCW_MQTT_USER  "mqtt_username"
 #define UCW_MQTT_PASS  "mqtt_password"
