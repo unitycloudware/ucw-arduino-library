@@ -10,6 +10,8 @@
 #include <UCW_System.h>
 #include <Adafruit_FONA.h>
 #include <UCW_API.h>
+#include <PubSubClient.h>
+#include <UCW_API_MQTT.h>
 
 class UCW_Mobile : public UCW_API {
   public:
