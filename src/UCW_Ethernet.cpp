@@ -91,13 +91,13 @@ void UCW_Ethernet::_sys() {
     api_m = new UCW_API_MQTT(_config, _mqttClient);
     _status = UCW_CONNECTED;
   } else {
-
-  //REST_API
-  dns.begin(Ethernet.dnsServerIP());
-  if (dns.getHostByName((_config->host).c_str(), server_IP_addr) == 1) {
-    _http = new HttpClient(*client, server_IP_addr, _config->port);
-    api = new UCW_API_REST(_config, _http);
-    _status = UCW_CONNECTED;
+    //REST_API
+    dns.begin(Ethernet.dnsServerIP());
+    if (dns.getHostByName((_config->host).c_str(), server_IP_addr) == 1) {
+      _http = new HttpClient(*client, server_IP_addr, _config->port);
+      api = new UCW_API_REST(_config, _http);
+      _status = UCW_CONNECTED;
+    }
   }
 }
 
