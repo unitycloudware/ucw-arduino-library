@@ -36,7 +36,9 @@ void setup() {
 
   //We are connected
   Serial.println("Connected!");
-  ucw.printNetworkInfo();}
+  ucw.printNetworkInfo();
+
+}
 
 void loop() {
   ucw.sys();
