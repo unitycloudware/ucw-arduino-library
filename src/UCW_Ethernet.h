@@ -34,7 +34,6 @@ class UCW_Ethernet : public UCW {
     void printConnectionStatus();
 
     //variables
-    bool dhcp;
     UCW_API_MQTT *api_m;
     UCW_API_REST *api;
     EthernetClient *client;
