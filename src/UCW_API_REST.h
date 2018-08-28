@@ -12,14 +12,6 @@
 #include <UCW_API.h>
 #include <UCW_System.h>
 
-#if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
-    #include <WiFi101.h>
-#elif defined(ESP8266)
-    #include <ESP8266WiFi.h>
-#elif defined(ARDUINO_ARCH_ESP32)
-    #include <WiFi.h>
-#endif
-
 class UCW_API_REST : public UCW_API {
 
   public:
