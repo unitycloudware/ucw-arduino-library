@@ -39,7 +39,7 @@ static UCWConfig cfg = {
  */
 
 // Enter a MAC address for your controller below.
-byte mac_add[] = {0x00};
+byte mac_add[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 
 // Comment if you are using DHCP
 IPAddress ip_add(0,0,0,0);
@@ -56,13 +56,13 @@ UCW_Ethernet ucw(&cfg, mac_add, ip_add);
  */
 
 //APN settings of mobile carrier
-//const char Apn[]PROGMEM = "your_apn";
-//const char Username[]PROGMEM = "your_username";
-//const char Password[]PROGMEM = "your_password";
+//const char apn[]PROGMEM = "your_apn";
+//const char username[]PROGMEM = "your_username";
+//const char password[]PROGMEM = "your_password";
 
 // uncomment the following two lines for GSM,
 //#include "UCW_Mobile.h"
-//UCW_Mobile ucw(&cfg);
+//UCW_Mobile ucw(&cfg, apn, username, password);
 
 /**************************** LoRa ************************************/
 

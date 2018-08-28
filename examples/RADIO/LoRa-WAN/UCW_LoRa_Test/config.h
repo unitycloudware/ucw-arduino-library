@@ -27,7 +27,7 @@
 
 //#define WIFI_SSID       "your_ssid"
 //#define WIFI_PASS       "your_pass"
-
+//
 //#include "UCW_WiFi.h"
 //UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
 
@@ -38,9 +38,15 @@
     - Ethernet FeatherWing -> https://www.adafruit.com/products/3201
  */
 
+// Enter a MAC address for your controller below.
+//byte mac_add[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
+
+// Comment if you are using DHCP
+//IPAddress ip_add(0,0,0,0);
+
 // uncomment the following two lines for ethernet,
 //#include "UCW_Ethernet.h"
-//UCW_Ethernet ucw(&cfg);
+//UCW_Ethernet ucw(&cfg, mac_add, ip_add);
 
 /**************************** GSM ************************************/
 
@@ -49,9 +55,14 @@
     - Adafruit Feather 32u4 FONA -> https://www.adafruit.com/products/3027
  */
 
+//APN settings of mobile carrier
+//const char apn[]PROGMEM = "your_apn";
+//const char username[]PROGMEM = "your_username";
+//const char password[]PROGMEM = "your_password";
+
 // uncomment the following two lines for GSM,
 //#include "UCW_Mobile.h"
-//UCW_Mobile ucw(&cfg);
+//UCW_Mobile ucw(&cfg, apn, username, password);
 
 /**************************** LoRa ************************************/
 

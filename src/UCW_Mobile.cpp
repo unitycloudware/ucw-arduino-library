@@ -45,14 +45,22 @@ char replybuffer[255];
 
 //reduce memory allocation
 bool isdataPosted = false;
+bool isdataPublished = false;
 
-UCW_Mobile::UCW_Mobile(UCWConfig *config) : UCW_API(config) {
+UCW_Mobile::UCW_Mobile(UCWConfig *config, const char *apn, const char *username, const char *pass) : UCW_API(config) {
+  _apn = P(apn);
+  _user = P(username);
+  _pass = P(pass);
+
+  if (_config->useMqtt) {
+    mqttFONA = new Adafruit_MQTT_FONA (&fona, (_config->host).c_str(), _config->port, (_config->mqttUser).c_str(), (_config->mqttPassword).c_str());
+  }
 }
 
 UCW_Mobile::~UCW_Mobile() {
 }
 
-void UCW_Mobile::connect(const char *apn, const char *username, const char *pass){
+void UCW_Mobile::connect(){
   while (!Serial);
 
   Serial.println(F("Initializing....(May take a few seconds)"));
@@ -63,72 +71,34 @@ void UCW_Mobile::connect(const char *apn, const char *username, const char *pass
     while (1);
   }
 
-  deviceType();
-
-  _apn = P(apn);
-  _user = P(username);
-  _pass = P(pass);
-  readNwkStatus(_apn, _user, _pass);
+  //FONA type
+  type = fona.type();
+  //start network connection
+  readNwkStatus();
 }
 
-uint16_t UCW_Mobile::battLevel(){
+float UCW_Mobile::updateBatteryStatus(){
   // read the battery voltage
   uint16_t vbat;
   if (! fona.getBattVoltage(&vbat)) {
     Serial.println(F("Failed to read Batt"));
   } else {
-      Serial.print(F("VBat = ")); Serial.print(vbat); Serial.println(F(" mV"));
-      }
-  //...and percentage
-  if (! fona.getBattPercent(&vbat)) {
-    Serial.println(F("Failed to read Batt"));
-  } else {
-    Serial.print(F("VPct = ")); Serial.print(vbat); Serial.println(F("%"));
+    Serial.print(F("VBat = ")); Serial.print(vbat); Serial.println(F(" mV"));
   }
-  return vbat;
+  //uncomment if you want battery as percentage
+  //if (! fona.getBattPercent(&vbat)) {
+  //  Serial.println(F("Failed to read Batt"));
+  //} else {
+  //  Serial.print(F("VPct = ")); Serial.print(vbat); Serial.println(F("%"));
+  //}
+  return float(vbat);
 }
 
-uint8_t UCW_Mobile::deviceType(){
-  Serial.println(F("PRINTING DEVICE TYPE INFO:"));
-  type = fona.type();
-  Serial.print(F("Found "));
-
-  switch (type) {
-    case FONA800L:
-      Serial.println(F("FONA 800L")); break;
-    case FONA800H:
-      Serial.println(F("FONA 800H")); break;
-    case FONA808_V1:
-      Serial.println(F("FONA 808 (v1)")); break;
-    case FONA808_V2:
-      Serial.println(F("FONA 808 (v2)")); break;
-    case FONA3G_A:
-      Serial.println(F("FONA 3G (American)")); break;
-    case FONA3G_E:
-      Serial.println(F("FONA 3G (European)")); break;
-    default:
-      Serial.println(F("???")); break;
-  }
-  // Print module IMEI number.
-  char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
-  uint8_t imeiLen = fona.getIMEI(imei);
-  if (imeiLen > 0) {
-    Serial.print("Module IMEI: "); Serial.println(imei);
-  }
-  //print firmware version
-  char f_ver[17] = {0}; // MUST use at least 17 character buffer for firmware version
-  uint8_t f_verLen = getFirmWareVersion(f_ver);
-  if (f_verLen > 0) {
-    Serial.print("Firmware Version: "); Serial.println(f_ver);
-  }
-  return type;
-}
-
-void UCW_Mobile::readNwkStatus(FONAFlashStringPtr AccessPoint, FONAFlashStringPtr Username, FONAFlashStringPtr Password){
+void UCW_Mobile::readNwkStatus(){
   //delay for 5 seconds for SIM to connect to network
   delay(5000);
   // read the network/cellular status
-  uint8_t net = fona.getNetworkStatus();
+  net = fona.getNetworkStatus();
 
   while (net != 1 && net !=5 ){
     switch (net) {
@@ -150,18 +120,7 @@ void UCW_Mobile::readNwkStatus(FONAFlashStringPtr AccessPoint, FONAFlashStringPt
     Serial.println(F("Registered (roaming)"));
   }
   //delay
-  delay(2000);
-  // read the RSSI
-  uint8_t n = fona.getRSSI();
-  int8_t r;
-  Serial.print(F("RSSI = ")); Serial.print(n); Serial.print(": ");
-  if (n == 0) r = -115;
-  if (n == 1) r = -111;
-  if (n == 31) r = -52;
-  if ((n >= 2) && (n <= 30)) {
-    r = map(n, 2, 30, -110, -54);
-  }
-  Serial.print(r); Serial.println(F(" dBm"));
+  delay(1000);
 
   // enable network time sync
   if (!fona.enableNetworkTimeSync(true)){
@@ -196,7 +155,7 @@ void UCW_Mobile::readNwkStatus(FONAFlashStringPtr AccessPoint, FONAFlashStringPt
     }
     gprsData = true;
   }
-  delay(3000);
+  delay(1000);
 }
 
 void UCW_Mobile::sys(){
@@ -218,48 +177,6 @@ void UCW_Mobile::sys(){
   }
 }
 
-m_gpsParams UCW_Mobile::readGPS(){
-  float latitude, longitude, speed_kph, heading, speed_mph, altitude;
-  m_gpsParams gpsInfo;
-
-  if(gprsData){
-    // Print out the geolocation of the BTS location to compare
-    boolean gsmloc_success = fona.getGSMLoc(&latitude, &longitude);
-    if(gsmloc_success) {
-      gpsInfo.Latitude = latitude;
-      gpsInfo.Longitude = longitude;
-    } else {
-      Serial.println("GSM location failed...");
-      Serial.println(F("Disabling GPRS"));
-      fona.enableGPRS(false);
-      Serial.println(F("Enabling GPRS"));
-      if (!fona.enableGPRS(true)) {
-        Serial.println(F("Failed to turn GPRS on"));
-      }
-    }
-  }
-
-  if (gpsData) {
-    // if you ask for an altitude reading, getGPS will return false if there isn't a 3D fix
-    boolean gps_success = fona.getGPS(&latitude, &longitude, &speed_kph, &heading, &altitude);
-
-    if(gps_success) {
-      gpsInfo.Latitude = latitude;
-      gpsInfo.Longitude = longitude;
-      gpsInfo.Speed = speed_kph * 0.621371192;
-      gpsInfo.Altitude = altitude;
-      gpsInfo.Heading = heading;
-    } else {
-      gpsInfo.Latitude = 0;
-      gpsInfo.Longitude = 0;
-      gpsInfo.Speed = 0;
-      gpsInfo.Altitude = 0;
-      gpsInfo.Heading = 0;
-    }
-  }
-  return gpsInfo;
-}
-
 bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload){
   //declare variables
   uint16_t statuscode;
@@ -279,34 +196,38 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
     fona.HTTP_ssl(true);
   }
 
-  //token and url
+  //token, host, deviceID, datasream
   if (!isdataPosted) {
-    Host = ToChar(_config->host);
+    newHost = ToChar(_config->host);
     delay(2000);
-    Token = ToChar(_config->token);
+    newToken = ToChar(_config->token);
     delay(2000);
-    Device = ToChar(deviceID);
+    newDevice = ToChar(deviceID);
     delay(2000);
-    Name = ToChar(dataStreamName);
+    newName = ToChar(dataStreamName);
     delay(2000);
+
     isdataPosted = true;
   }
 
   //REST or MQTT?
   if (_config->useMqtt) {
-    if (!_Client) {
-      _Client = new PubSubClient;
-      _Client->setServer((_config->host).c_str(), _config->port);
-      Api_m = new UCW_API_MQTT(_config, _Client);
+    if (!isdataPublished) {
+      //create topic
+      const char* topic = new char [strlen(newDevice)+strlen(newName)+1];
+      strcat(topic, newDevice);
+      strcat(topic,"/");
+      strcat(topic, newName);
+      topic_pub = new Adafruit_MQTT_Publish(mqttFONA, topic);
     }
-    if (Api_m->sendDataMqtt(deviceID, dataStreamName, payload)){
-      return true;
-    } else {
+    mqttConnect();
+    if (! topic_pub->publish(payload.c_str())) {
+      Serial.println(F("Failed to publish"));
       return false;
     }
   } else {
-    if(!doPost(Host, Device, Name, Token, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
-      Serial.println("Failed!");
+    if(!doPost(newHost, newDevice, newName, newToken, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
+      Serial.println(F("Failed!"));
       return false;
     }
   }
@@ -330,7 +251,7 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   return true;
 }
 
-bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _Token, FONAFlashStringPtr contenttype,
+bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _token, FONAFlashStringPtr contenttype,
               const uint8_t *postdata, uint16_t postdatalen,
               uint16_t *status, uint16_t *datalen){
 
@@ -493,6 +414,93 @@ void UCW_Mobile::flushInput1() {
       }
       delay(1);
     }
+}
+
+void UCW_Mobile::printNetworkInfo(){
+  if (networkStatus() != UCW_NET_CONNECTED) {
+      Serial.println(F("Device is not connected!"));
+      return;
+    }
+    printConnectionStatus();
+}
+
+void UCW_Mobile::printConnectionStatus(){
+  // read the RSSI
+  uint8_t n = fona.getRSSI();
+  int8_t r;
+  Serial.print(F("RSSI = ")); Serial.print(n); Serial.print(": ");
+  if (n == 0) r = -115;
+  if (n == 1) r = -111;
+  if (n == 31) r = -52;
+  if ((n >= 2) && (n <= 30)) {
+    r = map(n, 2, 30, -110, -54);
+  }
+  Serial.print(r); Serial.println(F(" dBm"));
+
+  // Print module IMEI number.
+  char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
+  uint8_t imeiLen = fona.getIMEI(imei);
+  if (imeiLen > 0) {
+    Serial.print(F("Module IMEI: ")); Serial.println(imei);
+  }
+
+  //print firmware version
+  char f_ver[17] = {0}; // MUST use at least 17 character buffer for firmware version
+  uint8_t f_verLen = getFirmWareVersion(f_ver);
+  if (f_verLen > 0) {
+    Serial.print(F("Firmware Version: ")); Serial.println(f_ver);
+  }
+
+  // read the CCID
+  fona.getSIMCCID(replybuffer);  // make sure replybuffer is at least 21 bytes!
+  Serial.print(F("SIM CCID = ")); Serial.println(replybuffer);
+}
+
+uint8_t UCW_Mobile::connectionType(){
+  switch (type) {
+    case FONA800L:
+      Serial.println(F("FONA 800L")); break;
+    case FONA800H:
+      Serial.println(F("FONA 800H")); break;
+    case FONA808_V1:
+      Serial.println(F("FONA 808 (v1)")); break;
+    case FONA808_V2:
+      Serial.println(F("FONA 808 (v2)")); break;
+    case FONA3G_A:
+      Serial.println(F("FONA 3G (American)")); break;
+    case FONA3G_E:
+      Serial.println(F("FONA 3G (European)")); break;
+    default:
+      Serial.println(F("???")); break;
+  }
+  return type;
+}
+
+ucw_status_t UCW_Mobile::networkStatus(){
+  if (net == 1 || net == 5) {
+    return UCW_NET_CONNECTED;
+  } else {
+    return UCW_NET_CONNECT_FAILED;
+  }
+}
+
+void UCW_Mobile::mqttConnect() {
+  int8_t ret;
+
+  // Stop if already connected.
+  if (mqttFONA->connected()) {
+    return;
+  }
+
+  Serial.print(F("Connecting to MQTT... "));
+
+  while ((ret = mqttFONA->connect()) != 0) { // connect will return 0 for connected
+    Serial.println(mqttFONA->connectErrorString(ret));
+    Serial.println(F("Retrying MQTT connection in 5 seconds..."));
+    mqttFONA->disconnect();
+    delay(5000);  // wait 5 seconds
+  }
+  Serial.println(F("MQTT Connected!"));
 }
 
 #endif // defined

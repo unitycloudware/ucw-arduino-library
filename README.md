@@ -30,6 +30,7 @@ by taking the following steps:
 * [Adafruit_SleepyDog](https://github.com/adafruit/Adafruit_SleepyDog)
 * [Adafruit_FONA](https://github.com/adafruit/Adafruit_FONA)
 * [Adafruit_GPS](https://github.com/adafruit/Adafruit_GPS)
+* [Adafruit_Mqtt_FONA](https://github.com/adafruit/Adafruit_MQTT_Library)
 * [DHT](https://github.com/adafruit/DHT-sensor-library)
 * [PubSubClient](https://github.com/knolleary/pubsubclient)
 * [lmic](https://github.com/matthijskooijman/arduino-lmic)
