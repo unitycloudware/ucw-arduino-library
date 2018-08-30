@@ -37,7 +37,7 @@ static UCWConfig cfg = {
   The UCW_Ethernet client will work with the following boards:
     - Ethernet FeatherWing -> https://www.adafruit.com/products/3201
  */
-
+//#include "IPAddress.h"
 // Enter a MAC address for your controller below.
 //byte mac_add[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 
