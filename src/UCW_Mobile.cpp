@@ -191,11 +191,6 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   char myData [len];
   strcpy(myData, payload.c_str());
 
-  //for secure communication
-  if(_config->isSecuredConnection){
-    fona.HTTP_ssl(true);
-  }
-
   //token, host, deviceID, datasream
   if (!isdataPosted) {
     newHost = ToChar(_config->host);
@@ -221,12 +216,16 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
       topic_pub = new Adafruit_MQTT_Publish(mqttFONA, topic);
     }
     mqttConnect();
-    if (! topic_pub->publish(payload.c_str())) {
+    if (! topic_pub->publish(myData)) {
       Serial.println(F("Failed to publish"));
       return false;
     }
   } else {
-    if(!doPost(newHost, newDevice, newName, newToken, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
+    //for secure communication
+    if (_config->isSecuredConnection) {
+      fona.HTTP_ssl(true);
+    }
+    if (!doPost(newHost, newDevice, newName, newToken, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
       Serial.println(F("Failed!"));
       return false;
     }
@@ -489,6 +488,7 @@ void UCW_Mobile::mqttConnect() {
 
   // Stop if already connected.
   if (mqttFONA->connected()) {
+    Serial.print(F("Connected to MQTT"));
     return;
   }
 
