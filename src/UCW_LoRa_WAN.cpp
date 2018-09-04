@@ -46,6 +46,17 @@ void UCW_LoRa_WAN::initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint
   LMIC_reset();
   LMIC_setClockError(MAX_CLOCK_ERROR * 1 / 100);
 
+  #ifdef PROGMEM
+    // If  running an AVR with PROGMEM for AVR
+    uint8_t appskey[sizeof(APPSKEY)];
+    uint8_t nwkskey[sizeof(NWKSKEY)];
+    memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
+    memcpy_P(nwkskey,NWKSKEY, sizeof(NWKSKEY));
+    LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
+    #else
+    LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
+    #endif
+
   // Disable link check validation
   LMIC_setLinkCheckMode(0);
 
@@ -54,17 +65,6 @@ void UCW_LoRa_WAN::initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint
 
   // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
   LMIC_setDrTxpow(DR_SF7,14);
-
-  #ifdef PROGMEM
-  // If  running an AVR with PROGMEM for AVR
-  uint8_t appskey[sizeof(APPSKEY)];
-  uint8_t nwkskey[sizeof(NWKSKEY)];
-  memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
-  memcpy_P(nwkskey,NWKSKEY, sizeof(NWKSKEY));
-  LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
-  #else
-  LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-  #endif
 }
 
 void UCW_LoRa_WAN::initOTTA(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI){
