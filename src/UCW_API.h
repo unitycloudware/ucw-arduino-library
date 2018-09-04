@@ -21,6 +21,7 @@ class UCW_API {
     String apiUrl();
     String apiPath();
     char* ToChar(String newString);
+    char mqttTopic(String device, String name);
 
     String _version;
     String _userAgent;

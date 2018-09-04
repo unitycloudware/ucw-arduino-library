@@ -37,3 +37,14 @@ char* UCW_API::ToChar(String newString) {
 
   return newChar;
 }
+
+char UCW_API::mqttTopic(String device, String name) {
+  String topic = "/api/ucw/v1/data-streams/%dataStreamName/messages/%deviceId";
+  topic.replace("%deviceId", device);
+  topic.replace("%dataStreamName", name);
+  int len = topic.length()+1;
+  char newChar[len];
+  topic.toCharArray(newChar, len);
+
+  return newChar;
+}
