@@ -12,6 +12,7 @@
 #include <UCW_API.h>
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_FONA.h>
+#include <Adafruit_SleepyDog.h>
 
 class UCW_Mobile : public UCW_API {
   public:

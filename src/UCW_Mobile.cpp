@@ -47,13 +47,22 @@ char replybuffer[255];
 bool isdataPosted = false;
 bool isdataPublished = false;
 
+#define halt(s) { Serial.println(F( s )); while(1);  }
+
 UCW_Mobile::UCW_Mobile(UCWConfig *config, const char *apn, const char *username, const char *pass) : UCW_API(config) {
   _apn = P(apn);
   _user = P(username);
   _pass = P(pass);
 
   if (_config->useMqtt) {
-    mqttFONA = new Adafruit_MQTT_FONA (&fona, (_config->host).c_str(), _config->port, (_config->mqttUser).c_str(), (_config->mqttPassword).c_str());
+    char *mqttHost = ToChar(_config->host);
+    delay(2000);
+    char *mqttUser = ToChar(_config->mqttUser);
+    delay(2000);
+    char *mqttPassword = ToChar(_config->mqttPassword);
+    delay(2000);
+    mqttFONA = new Adafruit_MQTT_FONA (&fona, mqttHost, _config->port, mqttUser, mqttPassword);
+    //mqttFONA = new Adafruit_MQTT_FONA (&fona, "01.mqtt.services.unitycloudware.net", 1883, "mqttUser", "mqttPassword");
   }
 }
 
@@ -61,8 +70,8 @@ UCW_Mobile::~UCW_Mobile() {
 }
 
 void UCW_Mobile::connect(){
-  while (!Serial);
 
+  Watchdog.reset();
   Serial.println(F("Initializing....(May take a few seconds)"));
 
   fonaSerial->begin(4800);
@@ -126,31 +135,54 @@ void UCW_Mobile::readNwkStatus(){
   if (!fona.enableNetworkTimeSync(true)){
     Serial.println(F("Failed to enable time Sync"));
   }
+
+  Watchdog.reset();
+  delay(5000);  // wait a few seconds to stabilize connection
+  Watchdog.reset();
+
   // Configure a GPRS APN, username, and password. Uncomment the line below to achieve this
    fona.setGPRSNetworkSettings(_apn, _user, _pass);
 
   // Optionally configure HTTP gets to follow redirects over SSL. Uncomment the line below to achieve this
   //fona.setHTTPSRedirect(true);
 
-  delay(2000);
   //Enable GPS
   if ((type == FONA3G_A) || (type == FONA3G_E) || (type == FONA808_V1) || (type == FONA808_V2)){
-    if (!fona.enableGPS(true)){
-      Serial.println(F("Failed to turn on GPS"));
-      fona.enableGPS(false);
-      delay(500);
-      fona.enableGPS(true);
+    Watchdog.reset();
+    delay(5000);  // wait a few seconds to stabilize connection
+    Watchdog.reset();
+
+    Serial.println(F("Disabling GPS"));
+    fona.enableGPS(false);
+
+    Watchdog.reset();
+    delay(5000);
+    Watchdog.reset();
+
+    Serial.println(F("Enabling GPS"));
+    while (!fona.enableGPS(true)) {
+      Serial.println(F("Failed to turn GPS on"));
       delay(1000);
     }
     gpsData = true;
   }
+
   //Enable GPRS
   if ((type == FONA800L) || (type == FONA800H)) {
-    if (!fona.enableGPRS(true)){
-      Serial.println(F("Failed to turn on GPRS"));
-      fona.enableGPRS(false);
-      delay(500);
-      fona.enableGPRS(true);
+    Watchdog.reset();
+    delay(5000);  // wait a few seconds to stabilize connection
+    Watchdog.reset();
+
+    Serial.println(F("Disabling GPRS"));
+    fona.enableGPRS(false);
+
+    Watchdog.reset();
+    delay(5000);
+    Watchdog.reset();
+
+    Serial.println(F("Enabling GPRS"));
+    while (!fona.enableGPRS(true)) {
+      Serial.println(F("Failed to turn GPRS on"));
       delay(1000);
     }
     gprsData = true;
@@ -178,6 +210,7 @@ void UCW_Mobile::sys(){
 }
 
 bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload){
+  Serial.println(F("send data method"));
   //declare variables
   uint16_t statuscode;
   int16_t length;
@@ -192,62 +225,64 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   strcpy(myData, payload.c_str());
 
   //token, host, deviceID, datasream
-  if (!isdataPosted) {
-    newHost = ToChar(_config->host);
-    delay(2000);
-    newToken = ToChar(_config->token);
-    delay(2000);
-    newDevice = ToChar(deviceID);
-    delay(2000);
-    newName = ToChar(dataStreamName);
-    delay(2000);
-
-    isdataPosted = true;
-  }
-
-  //REST or MQTT?
   if (_config->useMqtt) {
     if (!isdataPublished) {
       //create topic
-      const char* topic = new char [strlen(newDevice)+strlen(newName)+1];
-      strcat(topic, newDevice);
-      strcat(topic,"/");
-      strcat(topic, newName);
+      char* topic = mqttTopic(deviceID,dataStreamName);
+      delay (2000);
       topic_pub = new Adafruit_MQTT_Publish(mqttFONA, topic);
+      isdataPublished = true;
     }
     mqttConnect();
+    Watchdog.reset();
+
     if (! topic_pub->publish(myData)) {
       Serial.println(F("Failed to publish"));
       return false;
     }
+    Watchdog.reset();
+
   } else {
+    if (!isdataPosted) {
+      newHost = ToChar(_config->host);
+      delay(2000);
+      newToken = ToChar(_config->token);
+      delay(2000);
+      newDevice = ToChar(deviceID);
+      delay(2000);
+      newName = ToChar(dataStreamName);
+      delay(2000);
+
+      isdataPosted = true;
+    }
     //for secure communication
     if (_config->isSecuredConnection) {
       fona.HTTP_ssl(true);
     }
+
     if (!doPost(newHost, newDevice, newName, newToken, F("application/json"), (uint8_t *) myData, strlen(myData), &statuscode, (uint16_t *)&length)) {
       Serial.println(F("Failed!"));
       return false;
     }
-  }
 
-  while (length > 0) {
-    while (fona.available()) {
-      char c = fona.read();
-      #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
+    while (length > 0) {
+      while (fona.available()) {
+        char c = fona.read();
+        #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
         loop_until_bit_is_set(UCSR0A, UDRE0); /* Wait until data register empty. */
         UDR0 = c;
-      #else
+        #else
         Serial.write(c);
-      #endif
-      length--;
-      if (! length) break;
+        #endif
+        length--;
+        if (! length) break;
+      }
     }
-  }
   Serial.println(F("\n****"));
   fona.HTTP_POST_end();
 
   return true;
+  }
 }
 
 bool UCW_Mobile::doPost(char* _host, char* _device, char* _name, char* _token, FONAFlashStringPtr contenttype,
@@ -451,8 +486,8 @@ void UCW_Mobile::printConnectionStatus(){
   }
 
   // read the CCID
-  fona.getSIMCCID(replybuffer);  // make sure replybuffer is at least 21 bytes!
-  Serial.print(F("SIM CCID = ")); Serial.println(replybuffer);
+  //fona.getSIMCCID(replybuffer);  // make sure replybuffer is at least 21 bytes!
+  //Serial.print(F("SIM CCID = ")); Serial.println(replybuffer);
 }
 
 uint8_t UCW_Mobile::connectionType(){
