@@ -47,8 +47,6 @@ char replybuffer[255];
 bool isdataPosted = false;
 bool isdataPublished = false;
 
-#define halt(s) { Serial.println(F( s )); while(1);  }
-
 UCW_Mobile::UCW_Mobile(UCWConfig *config, const char *apn, const char *username, const char *pass) : UCW_API(config) {
   _apn = P(apn);
   _user = P(username);
@@ -70,8 +68,7 @@ UCW_Mobile::~UCW_Mobile() {
 }
 
 void UCW_Mobile::connect(){
-
-  Watchdog.reset();
+  delay(2000);
   Serial.println(F("Initializing....(May take a few seconds)"));
 
   fonaSerial->begin(4800);
@@ -136,10 +133,6 @@ void UCW_Mobile::readNwkStatus(){
     Serial.println(F("Failed to enable time Sync"));
   }
 
-  Watchdog.reset();
-  delay(5000);  // wait a few seconds to stabilize connection
-  Watchdog.reset();
-
   // Configure a GPRS APN, username, and password. Uncomment the line below to achieve this
    fona.setGPRSNetworkSettings(_apn, _user, _pass);
 
@@ -148,17 +141,9 @@ void UCW_Mobile::readNwkStatus(){
 
   //Enable GPS
   if ((type == FONA3G_A) || (type == FONA3G_E) || (type == FONA808_V1) || (type == FONA808_V2)){
-    Watchdog.reset();
-    delay(5000);  // wait a few seconds to stabilize connection
-    Watchdog.reset();
-
     Serial.println(F("Disabling GPS"));
     fona.enableGPS(false);
-
-    Watchdog.reset();
-    delay(5000);
-    Watchdog.reset();
-
+    delay(1000);
     Serial.println(F("Enabling GPS"));
     while (!fona.enableGPS(true)) {
       Serial.println(F("Failed to turn GPS on"));
@@ -169,17 +154,9 @@ void UCW_Mobile::readNwkStatus(){
 
   //Enable GPRS
   if ((type == FONA800L) || (type == FONA800H)) {
-    Watchdog.reset();
-    delay(5000);  // wait a few seconds to stabilize connection
-    Watchdog.reset();
-
     Serial.println(F("Disabling GPRS"));
     fona.enableGPRS(false);
-
-    Watchdog.reset();
-    delay(5000);
-    Watchdog.reset();
-
+    delay(1000);
     Serial.println(F("Enabling GPRS"));
     while (!fona.enableGPRS(true)) {
       Serial.println(F("Failed to turn GPRS on"));
@@ -228,19 +205,17 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   if (_config->useMqtt) {
     if (!isdataPublished) {
       //create topic
-      char* topic = mqttTopic(deviceID,dataStreamName);
+      char* topic = mqttTopic(deviceID, dataStreamName);
       delay (2000);
       topic_pub = new Adafruit_MQTT_Publish(mqttFONA, topic);
       isdataPublished = true;
     }
     mqttConnect();
-    Watchdog.reset();
-
+    delay(1000);
     if (! topic_pub->publish(myData)) {
       Serial.println(F("Failed to publish"));
       return false;
     }
-    Watchdog.reset();
 
   } else {
     if (!isdataPosted) {
