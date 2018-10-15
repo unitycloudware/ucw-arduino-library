@@ -52,16 +52,6 @@ UCW_Mobile::UCW_Mobile(UCWConfig *config, const char *apn, const char *username,
   _user = P(username);
   _pass = P(pass);
 
-  if (_config->useMqtt) {
-    char *mqttHost = ToChar(_config->host);
-    delay(2000);
-    char *mqttUser = ToChar(_config->mqttUser);
-    delay(2000);
-    char *mqttPassword = ToChar(_config->mqttPassword);
-    delay(2000);
-    mqttFONA = new Adafruit_MQTT_FONA (&fona, mqttHost, _config->port, mqttUser, mqttPassword);
-    //mqttFONA = new Adafruit_MQTT_FONA (&fona, "01.mqtt.services.unitycloudware.net", 1883, "mqttUser", "mqttPassword");
-  }
 }
 
 UCW_Mobile::~UCW_Mobile() {
@@ -204,6 +194,14 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
   //token, host, deviceID, datasream
   if (_config->useMqtt) {
     if (!isdataPublished) {
+      char *mqttHost = ToChar(_config->host);
+      delay(2000);
+      char *mqttUser = ToChar(_config->mqttUser);
+      delay(2000);
+      char *mqttPassword = ToChar(_config->mqttPassword);
+      delay(2000);
+      mqttFONA = new Adafruit_MQTT_FONA (&fona, mqttHost, _config->port, mqttUser, mqttPassword);
+
       //create topic
       char* topic = mqttTopic(deviceID, dataStreamName);
       delay (2000);
@@ -216,7 +214,6 @@ bool UCW_Mobile::sendData(String deviceID, String dataStreamName, String payload
       Serial.println(F("Failed to publish"));
       return false;
     }
-
   } else {
     if (!isdataPosted) {
       newHost = ToChar(_config->host);
