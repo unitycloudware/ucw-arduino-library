@@ -6,6 +6,8 @@
 #ifndef UCW_LORASUPPORT_H
 #define UCW_LORASUPPORT_H
 
+#include <UCW_Config.h>
+
 #if defined(UCW_LORA_DEVICE)
 #if !defined(ARDUINO_SAMD_MKR1000) && defined(ARDUINO_ARCH_SAMD)
 
