@@ -87,24 +87,40 @@ static UCWConfig cfg = {
   .mqttPassword = UCW_MQTT_PASS,   
   .token = "your_token"
 };
-```     	
+     	
 Include the library needed by uncommenting accordingly.
- 
-```	
+``` 
+```
 //WiFi
 //set WiFi credentials
 #define WIFI_SSID  "your_ssid"
 #define WIFI_PASS  "your_pass"
 #include "UCW_WiFi.h"
 UCW_WiFi ucw(&cfg, WIFI_SSID, WIFI_PASS);
-  
+``` 
+``` 
 //LoRa			
 #include "UCW_LoRa_SUPPORT.h"
 UCW_LoRa_SUPPORT ucw;
-  		
+```
+```  		
 //GSM			
+const char apn[]PROGMEM = "your_apn";
+const char username[]PROGMEM = "your_username";
+const char password[]PROGMEM = "your_password";
+// uncomment the following two lines for GSM,
 #include "UCW_Mobile.h"
-UCW_Mobile ucw(&cfg);
+UCW_Mobile ucw(&cfg, apn, username, password);
+```
+```
+//Ethernet
+#include "IPAddress.h"
+Enter a MAC address for your controller below.
+byte mac_add[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
+// Comment if you are using DHCP
+IPAddress ip_add(0,0,0,0);
+#include "UCW_Ethernet.h"
+UCW_Ethernet ucw(&cfg, mac_add, ip_add);
 ```
   
   
@@ -142,9 +158,9 @@ ucw.sys();
 Collected data is sent to the server using the method below:
   
 The sendData method takes three parameters:
-1 deviceID: the unique ID of the monitoring device
-2 dataStreamName: name of the data stream
-3 payload: the collected data from the sensor or monitoring device
+* deviceID: the unique ID of the monitoring device
+* dataStreamName: name of the data stream
+* payload: the collected data from the sensor or monitoring device
 ```
 // WiFi, GSM or Ethernet
 ucw.sendData(deviceID, dataStreamName, payload);
