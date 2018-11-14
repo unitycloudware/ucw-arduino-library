@@ -86,10 +86,9 @@ static UCWConfig cfg = {
   .mqttUser = UCW_MQTT_USER,
   .mqttPassword = UCW_MQTT_PASS,   
   .token = "your_token"
-};
-     	
-Include the library needed by uncommenting accordingly.
-``` 
+};  	
+```
+Include the library needed by uncommenting accordingly. 
 ```
 //WiFi
 //set WiFi credentials
@@ -155,14 +154,11 @@ ucw.sys();
   
 ## SENDING DATA TO UCW SERVER
   
-Collected data is sent to the server using the method below:
-  
-The sendData method takes three parameters:
+Collected data is sent to the server using the sendData method. This method takes three parameters:
 * deviceID: the unique ID of the monitoring device
 * dataStreamName: name of the data stream
 * payload: the collected data from the sensor or monitoring device
 ```
-// WiFi, GSM or Ethernet
 ucw.sendData(deviceID, dataStreamName, payload);
 ```
   	
