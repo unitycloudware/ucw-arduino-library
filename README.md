@@ -3,9 +3,7 @@
 
 Clone (or download and unzip) the repository to ~/Documents/Arduino/libraries where ~/Documents/Arduino is your sketchbook directory.
 		
-* cd ~/Documents/Arduino
-* mkdir libraries
-* cd libraries
+* cd ~/Documents/Arduino/libraries
 * git clone https://gitlab.unitycloudware.com/ucw-labs/ucw-arduino-library
 
 			
