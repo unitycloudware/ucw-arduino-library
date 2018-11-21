@@ -12,8 +12,6 @@
   clients.
  */
 
-#define DATA_STREAM "ucw-test"
-
 // Track if the current message has finished sending
 bool dataSent;
 
