@@ -15,14 +15,10 @@
 
 #include <UCW_LoRa_WAN.h>
 
-//variables for LoRaWAN. Comment appropriately
-#define UCW_LORA_ABP
-//#define UCW_LORA_OTTA
-
 //declare variables to hold application-eui, application key, and device eui for OTTA.
-const uint8_t* APPEUI;
-const uint8_t* DEVEUI;
-const uint8_t* APPKEY;
+const uint8_t* _APPEUI;
+const uint8_t* _DEVEUI;
+const uint16_t* _APPKEY;
 
 // Pin mapping for gateway communication
 const lmic_pinmap lmic_pins = {
@@ -53,9 +49,9 @@ void UCW_LoRa_WAN::initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint
     memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
     memcpy_P(nwkskey,NWKSKEY, sizeof(NWKSKEY));
     LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
-    #else
+  #else
     LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-    #endif
+  #endif
 
   // Disable link check validation
   LMIC_setLinkCheckMode(0);
@@ -67,28 +63,30 @@ void UCW_LoRa_WAN::initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint
   LMIC_setDrTxpow(DR_SF7,14);
 }
 
-void UCW_LoRa_WAN::initOTTA(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI){
+void UCW_LoRa_WAN::initOTTA(const uint8_t *APPEUI, const uint16_t *APPKEY, const uint8_t *DEVEUI){
   // LMIC init
   os_init();
 
   // Reset the MAC state. Session and pending data transfers will be discarded.
   LMIC_reset();
   //save variables
-  APPEUI = _APPEUI;
-  APPKEY = _APPKEY;
-  DEVEUI = _DEVEUI;
+  _APPEUI = APPEUI;
+  _APPKEY = APPKEY;
+  _DEVEUI = DEVEUI;
+
+  #define UCW_LORA_OTTA
 }
 
-#if defined(UCW_LORA_ABP)
+#if !defined(UCW_LORA_OTTA)
 void os_getArtEui (u1_t* buf) { }
 void os_getDevEui (u1_t* buf) { }
 void os_getDevKey (u1_t* buf) { }
 #endif // defined
 
-#if !defined(UCW_LORA_ABP)
-void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
-void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
-void os_getDevKey (u1_t* buf) { memcpy_P(buf, APPKEY, 16);}
+#if defined(UCW_LORA_OTTA)
+void os_getArtEui (u1_t* buf) { memcpy_P(buf, _APPEUI, 8);}
+void os_getDevEui (u1_t* buf) { memcpy_P(buf, _DEVEUI, 8);}
+void os_getDevKey (u1_t* buf) { memcpy_P(buf, _APPKEY, 16);}
 #endif // defined
 
 void UCW_LoRa_WAN::channelConfig(bool multiChannel){
