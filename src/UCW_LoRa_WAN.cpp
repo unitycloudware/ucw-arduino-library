@@ -105,18 +105,25 @@ void UCW_LoRa_WAN::channelConfig(bool multiChannel){
   LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
   LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK,  DR_FSK),  BAND_MILLI);      // g2-band
 
+  //single or multichannel gateway
+  if (!multiChannel){
+    for (int i = 1; i<= 8; i++) {
+      LMIC_disableChannel(i);
+    }
+  }
+
   #elif defined(CFG_us915)
   // NA-US channels 0-71 are configured automatically
   // https://github.com/TheThingsNetwork/gateway-conf/blob/master/US-global_conf.json
   LMIC_selectSubBand(1);
-  #endif
 
-  //comment for multichannel gateway
+  //single or multichannel gateway
   if (!multiChannel){
     for (int i = 1; i<= 71; i++) {
       LMIC_disableChannel(i);
     }
   }
+  #endif
 }
 
 #endif //ARDUINO_ARCH_SAMD
