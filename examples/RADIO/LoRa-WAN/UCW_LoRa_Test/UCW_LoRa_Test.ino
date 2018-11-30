@@ -24,7 +24,7 @@ void setup() {
 
   // LoRaWAN steup
   lora_wan.initABP(NWKSKEY, APPSKEY, DEVADDR);
-  lora_wan.channelConfig(false);
+  lora_wan.channelConfig(true);
 }
 
 void loop() {
