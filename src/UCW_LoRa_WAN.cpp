@@ -69,6 +69,8 @@ void UCW_LoRa_WAN::initOTTA(const uint8_t *APPEUI, const uint16_t *APPKEY, const
 
   // Reset the MAC state. Session and pending data transfers will be discarded.
   LMIC_reset();
+  LMIC_setClockError(MAX_CLOCK_ERROR * 1 / 100);
+
   //save variables
   _APPEUI = APPEUI;
   _APPKEY = APPKEY;
