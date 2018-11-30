@@ -18,7 +18,7 @@ class UCW_LoRa_WAN {
     UCW_LoRa_WAN();
     ~UCW_LoRa_WAN();
     void initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint32_t DEVADDR);
-    void initOTTA(const uint8_t *_APPEUI, const uint8_t *_APPKEY, const uint8_t *_DEVEUI);
+    void initOTTA(const uint8_t *APPEUI, const uint16_t *APPKEY, const uint8_t *DEVEUI);
     void channelConfig(bool multiChannel);
 
 };
