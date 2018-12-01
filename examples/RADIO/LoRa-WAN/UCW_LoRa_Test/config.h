@@ -86,7 +86,7 @@ const uint32_t DEVADDR  = 0x00;
 
 // provide application-eui, application key, and device eui for OTTA
 //const uint8_t PROGMEM APPEUI[] = {};
-//const uint16_t PROGMEM APPKEY[] = {};
+//const uint8_t PROGMEM APPKEY[] = {};
 //const uint8_t PROGMEM DEVEUI[] = {};
 
 UCW_LoRa_WAN lora_wan;
