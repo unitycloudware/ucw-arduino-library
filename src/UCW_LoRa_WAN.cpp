@@ -78,20 +78,20 @@ void UCW_LoRa_WAN::initOTAA(const uint8_t *APPEUI, const uint8_t *APPKEY, const 
   _APPKEY = APPKEY;
   _DEVEUI = DEVEUI;
 
-  //#define UCW_LORA_OTTA
+  #define UCW_LORA_OTTA
 }
 
-//#if !defined(UCW_LORA_OTTA)
-//void os_getArtEui (u1_t* buf) { }
-//void os_getDevEui (u1_t* buf) { }
-//void os_getDevKey (u1_t* buf) { }
-//#endif // defined
+#if !defined(UCW_LORA_OTTA)
+void os_getArtEui (u1_t* buf) { }
+void os_getDevEui (u1_t* buf) { }
+void os_getDevKey (u1_t* buf) { }
+#endif // defined
 
-//#if defined(UCW_LORA_OTTA)
-//void os_getArtEui (u1_t* buf) { memcpy_P(buf, _APPEUI, 8);}
-//void os_getDevEui (u1_t* buf) { memcpy_P(buf, _DEVEUI, 8);}
-//void os_getDevKey (u1_t* buf) { memcpy_P(buf, _APPKEY, 16);}
-//#endif // defined
+#if defined(UCW_LORA_OTTA)
+void os_getArtEui (u1_t* buf) { memcpy_P(buf, _APPEUI, 8);}
+void os_getDevEui (u1_t* buf) { memcpy_P(buf, _DEVEUI, 8);}
+void os_getDevKey (u1_t* buf) { memcpy_P(buf, _APPKEY, 16);}
+#endif // defined
 
 void UCW_LoRa_WAN::channelConfig(bool multiChannel){
   #if defined(CFG_eu868)
