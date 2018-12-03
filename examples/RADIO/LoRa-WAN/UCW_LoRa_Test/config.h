@@ -85,6 +85,11 @@ const uint8_t PROGMEM APPSKEY[] = {};
 const uint32_t DEVADDR  = 0x00;
 
 // provide application-eui, application key, and device eui for OTTA
+/* APPEUI and DEVEUI must be in little-endian format, so least-significant-byte
+ first. When copying an EUI from ttnctl output, this means to reverse
+ the bytes. For TTN issued APPEUIs, the last bytes should be 0xD5, 0xB3,
+ 0x70. APPKEY however, should be in big endian format(It should copied from TTN as-is)
+ */
 //const uint8_t PROGMEM APPEUI[] = {};
 //const uint8_t PROGMEM APPKEY[] = {};
 //const uint8_t PROGMEM DEVEUI[] = {};
