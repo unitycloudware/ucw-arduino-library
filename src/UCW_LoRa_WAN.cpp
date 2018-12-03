@@ -49,9 +49,9 @@ void UCW_LoRa_WAN::initABP(const uint8_t *NWKSKEY, const uint8_t *APPSKEY,  uint
     memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
     memcpy_P(nwkskey,NWKSKEY, sizeof(NWKSKEY));
     LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
-  #else
+    #else
     LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-  #endif
+    #endif
 
   // Disable link check validation
   LMIC_setLinkCheckMode(0);
@@ -77,21 +77,11 @@ void UCW_LoRa_WAN::initOTAA(const uint8_t *APPEUI, const uint8_t *APPKEY, const 
   _APPEUI = APPEUI;
   _APPKEY = APPKEY;
   _DEVEUI = DEVEUI;
-
-  #define UCW_LORA_OTTA
 }
 
-#if !defined(UCW_LORA_OTTA)
-void os_getArtEui (u1_t* buf) { }
-void os_getDevEui (u1_t* buf) { }
-void os_getDevKey (u1_t* buf) { }
-#endif // defined
-
-#if defined(UCW_LORA_OTTA)
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, _APPEUI, 8);}
 void os_getDevEui (u1_t* buf) { memcpy_P(buf, _DEVEUI, 8);}
 void os_getDevKey (u1_t* buf) { memcpy_P(buf, _APPKEY, 16);}
-#endif // defined
 
 void UCW_LoRa_WAN::channelConfig(bool multiChannel){
   #if defined(CFG_eu868)
@@ -107,25 +97,24 @@ void UCW_LoRa_WAN::channelConfig(bool multiChannel){
   LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
   LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK,  DR_FSK),  BAND_MILLI);      // g2-band
 
-  //single or multichannel gateway
   if (!multiChannel){
-    for (int i = 1; i<= 8; i++) {
-      LMIC_disableChannel(i);
+      for (int i = 1; i <= 8; i++) {
+        LMIC_disableChannel(i);
+      }
     }
-  }
 
   #elif defined(CFG_us915)
   // NA-US channels 0-71 are configured automatically
   // https://github.com/TheThingsNetwork/gateway-conf/blob/master/US-global_conf.json
   LMIC_selectSubBand(1);
+  #endif
 
-  //single or multichannel gateway
+  //comment for multichannel gateway
   if (!multiChannel){
-    for (int i = 1; i<= 71; i++) {
+    for (int i = 1; i <= 71; i++) {
       LMIC_disableChannel(i);
     }
   }
-  #endif
 }
 
 #endif //ARDUINO_ARCH_SAMD
