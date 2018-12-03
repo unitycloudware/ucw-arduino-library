@@ -15,9 +15,6 @@
 // Track if the current message has finished sending
 bool dataSent;
 
-// Schedule TX every this many seconds (might become longer due to duty cycle limitations).
-const unsigned TX_INTERVAL = 5;
-
 void setup() {
   // Start the serial connection
   Serial.begin(9600);
@@ -50,10 +47,10 @@ void readData(){
   LMIC_setTxData2(1, (uint8_t*)mydata, sizeof(mydata), 0);
   Serial.println(F("Packet queued"));
 
-  // Wait for the data to send or timeout after 15s
+  // Wait for the data to send or timeout after 1min
   int sinceSend = 0;
   dataSent = false;
-  while (!dataSent && sinceSend < 15000) {
+  while (!dataSent && sinceSend < 60000) {
     os_runloop_once();
     sinceSend++;
     delay(1);
