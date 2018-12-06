@@ -79,7 +79,6 @@ void onEvent (ev_t ev) {
 
     case EV_REJOIN_FAILED:
       Serial.println(F("EV_REJOIN_FAILED"));
-      //os_setCallback(&initjob, initfunc);
       break;
       break;
 
